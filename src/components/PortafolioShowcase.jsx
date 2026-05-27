@@ -61,7 +61,21 @@ const projects = [
       '/screenshots/pos-desktop-2.jpeg',
       '/screenshots/pos-desktop-3.jpeg',
     ],
-    glow: '52, 199, 89',
+    glow: '30, 80, 180',
+  },
+  {
+    id: 'carperfit',
+    category: 'Salud & Nutrición',
+    title: 'CARPERfit',
+    description:
+      'App de asistencia nutricional con generador de planes dietéticos personalizados, control de citas, directorio de profesionales y seguimiento de matriz calórica diaria.',
+    tags: ['React Native', 'Supabase', 'Nutrición', 'Planes Dietéticos'],
+    type: 'phone',
+    slides: [
+      '/screenshots/carperfit-planes.png',
+      '/screenshots/carperfit-menu.png',
+    ],
+    glow: '0, 200, 180',
   },
   {
     id: 'boda',

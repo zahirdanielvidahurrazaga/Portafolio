@@ -28,7 +28,7 @@ const Navbar = () => {
         >
           <div className="nav-container">
             <a href="#" className="nav-logo">
-              Zahir<span className="logo-accent">.</span>
+              Zahir Vidahurrázaga
             </a>
             <div className="nav-links">
               <a href="#about">Mecatrónica</a>
