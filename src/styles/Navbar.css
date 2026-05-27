@@ -1,0 +1,88 @@
+.apple-navbar-wrapper {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 1000;
+  pointer-events: none; /* Let clicks pass through the wrapper outside the pill */
+}
+
+.apple-navbar {
+  pointer-events: auto; /* Enable clicks inside the pill */
+  height: 60px;
+  width: 90%;
+  max-width: 1000px;
+  background: rgba(30, 30, 30, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px; /* Pill shape */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.apple-navbar.scrolled {
+  background: rgba(20, 20, 20, 0.7);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nav-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-2) 0 var(--spacing-6);
+}
+
+.nav-logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.logo-accent {
+  color: var(--accent-color);
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+.nav-links a {
+  color: var(--text-color);
+  font-size: 0.85rem;
+  font-weight: 400;
+  opacity: 0.8;
+  text-decoration: none;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.nav-links a:hover {
+  opacity: 1;
+  color: #fff;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+}
+
+.nav-btn {
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+}

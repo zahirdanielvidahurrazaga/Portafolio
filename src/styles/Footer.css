@@ -1,0 +1,83 @@
+.footer-section {
+  background: #000;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: var(--spacing-24);
+  position: relative;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-16);
+  padding-bottom: var(--spacing-16);
+}
+
+.footer-content h2 {
+  margin-bottom: var(--spacing-4);
+  background: linear-gradient(135deg, #fff 0%, #888 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-direct {
+  margin-top: var(--spacing-8);
+}
+
+.direct-link {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--accent-color);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.footer-form {
+  background: var(--glass-bg);
+  padding: var(--spacing-8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-4);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: var(--spacing-6);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,105 @@
+.phone-mockup-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+}
+
+.phone-mockup-frame {
+  position: relative;
+  width: 320px;
+  height: 650px;
+  border-radius: 50px;
+  background: #2a2a2a;
+  padding: 10px;
+  box-shadow: 
+    0 50px 100px -20px rgba(0, 0, 0, 0.8),
+    inset 0 0 0 2px #444,
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  will-change: transform;
+}
+
+.phone-mockup-bezel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  background: #000;
+  overflow: hidden;
+  border: 4px solid #111;
+}
+
+.dynamic-island {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 30px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+  gap: 8px;
+}
+
+.dynamic-island .camera {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #111;
+  border: 1px solid #222;
+  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+.dynamic-island .sensor {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #050505;
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-color-elevated);
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Hide scrollbar for aesthetics */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.phone-screen::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hardware Buttons */
+.btn-volume-up, .btn-volume-down, .btn-power {
+  position: absolute;
+  background: #333;
+  width: 4px;
+  border-radius: 2px;
+}
+
+.btn-volume-up {
+  top: 150px;
+  left: -4px;
+  height: 45px;
+}
+
+.btn-volume-down {
+  top: 210px;
+  left: -4px;
+  height: 45px;
+}
+
+.btn-power {
+  top: 170px;
+  right: -4px;
+  height: 60px;
+}
