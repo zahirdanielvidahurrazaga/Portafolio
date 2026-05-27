@@ -1,12 +1,46 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import PhoneMockup from './PhoneMockup';
+import DesktopMockup from './DesktopMockup';
 import '../styles/PortafolioBento.css';
+
+const BEFIT_SLIDES = [
+  '/screenshots/befit-home.jpeg',
+  '/screenshots/befit-reservas.jpeg',
+  '/screenshots/befit-qr.jpeg',
+];
+
+const DENTAL_SLIDES = [
+  '/screenshots/dental-consentimiento.jpeg',
+  '/screenshots/dental-agenda.jpeg',
+];
+
+const POS_SLIDES = [
+  '/screenshots/pos-dashboard.jpeg',
+  '/screenshots/pos-pedidos.jpeg',
+  '/screenshots/pos-inventario.jpeg',
+];
+
+const SANTUARIO_DESKTOP = [
+  '/screenshots/santuario-desktop-1.png',
+  '/screenshots/santuario-desktop-2.png',
+];
+
+const SANTUARIO_PHONE = [
+  '/screenshots/santuario-phone-1.jpeg',
+  '/screenshots/santuario-phone-2.jpeg',
+  '/screenshots/boda-galeria.jpeg',
+];
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (delay) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay } }),
+};
 
 const PortafolioBento = () => {
   return (
     <section id="portfolio" className="section-container bento-section">
-      <motion.div 
+      <motion.div
         className="bento-header"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -17,78 +51,84 @@ const PortafolioBento = () => {
       </motion.div>
 
       <div className="bento-grid">
-        {/* Card 1: Fitness & Wellness with Phone Mockup inside */}
-        <motion.div 
+
+        {/* Card 1: Fitness & Wellness — BEFIT LAB */}
+        <motion.div
           className="bento-card card-large"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          custom={0}
+          initial="hidden"
+          whileInView="visible"
+          variants={cardVariants}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
         >
           <div className="bento-content">
             <h3>Fitness & Wellness</h3>
             <p>Apps y PWA para coaches. Dashboards de administrador. Accesos automatizados por QR y biometría.</p>
           </div>
           <div className="bento-mockup-container">
-             <PhoneMockup className="bento-phone">
-               {/* Inside the mock screen */}
-               <div className="app-ui fitness-ui">
-                 <div className="app-header">Dashboard</div>
-                 <div className="app-metric">
-                   <span>Usuarios Activos</span>
-                   <strong>1,240</strong>
-                 </div>
-                 <div className="app-qr"></div>
-                 <button className="app-btn">Escanear QR</button>
-               </div>
-             </PhoneMockup>
+            <PhoneMockup className="bento-phone" slides={BEFIT_SLIDES} />
           </div>
         </motion.div>
 
         {/* Card 2: Plataformas Clínicas */}
-        <motion.div 
+        <motion.div
           className="bento-card"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          custom={0.2}
+          initial="hidden"
+          whileInView="visible"
+          variants={cardVariants}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="bento-content">
             <h3>Plataformas Clínicas</h3>
             <p>Agendas inteligentes, expedientes seguros y finanzas para dentistas y nutriólogos.</p>
           </div>
-          <div className="bento-visual clinic-visual"></div>
+          <div className="bento-phone-corner">
+            <PhoneMockup slides={DENTAL_SLIDES} />
+          </div>
         </motion.div>
 
-        {/* Card 3: E-commerce */}
-        <motion.div 
+        {/* Card 3: E-commerce — POS Retail */}
+        <motion.div
           className="bento-card"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          custom={0.3}
+          initial="hidden"
+          whileInView="visible"
+          variants={cardVariants}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
         >
           <div className="bento-content">
             <h3>E-commerce & Retail</h3>
             <p>Tiendas online avanzadas con sincronización de inventario en tiempo real.</p>
           </div>
-          <div className="bento-visual ecommerce-visual"></div>
+          <div className="bento-phone-corner">
+            <PhoneMockup slides={POS_SLIDES} />
+          </div>
         </motion.div>
 
-        {/* Card 4: IA & Especializadas */}
-        <motion.div 
+        {/* Card 4: IA & Eventos — Santuario + Boda */}
+        <motion.div
           className="bento-card card-wide"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          custom={0.4}
+          initial="hidden"
+          whileInView="visible"
+          variants={cardVariants}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
         >
           <div className="bento-content">
             <h3>Experiencias IA & Eventos Especializados</h3>
             <p>Implementaciones de Inteligencia Artificial a medida y plataformas interactivas (Ej. álbumes para bodas con códigos de acceso).</p>
           </div>
-          <div className="bento-visual ia-visual"></div>
+          <div className="bento-ia-visuals">
+            <div className="bento-desktop-wrap">
+              <DesktopMockup slides={SANTUARIO_DESKTOP} />
+            </div>
+            <div className="bento-phone-side">
+              <PhoneMockup slides={SANTUARIO_PHONE} />
+            </div>
+          </div>
         </motion.div>
+
       </div>
     </section>
   );

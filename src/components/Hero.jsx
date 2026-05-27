@@ -27,7 +27,8 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
-          Fusionando el<br/>Mundo <span className="text-gradient">Físico y Digital.</span>
+          <span className="hero-line-break">Fusionando el</span>{' '}
+          Mundo <span className="text-gradient">Físico y Digital.</span>
         </motion.h1>
         
         <motion.p

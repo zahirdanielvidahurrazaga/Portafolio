@@ -45,7 +45,7 @@ const ProcesoTrabajo = () => {
     <section id="process" className="section-container process-section">
       <div className="process-header text-center">
         <h2>Ingeniería de Precisión.</h2>
-        <p className="text-muted">Tres pasos para transformar tu negocio.</p>
+        <p className="text-muted">Siete pasos para transformar tu negocio.</p>
       </div>
 
       <div className="timeline">

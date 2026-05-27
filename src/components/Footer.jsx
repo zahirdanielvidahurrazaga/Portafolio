@@ -14,90 +14,130 @@ const Footer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-
-    const { data, error } = await supabase
-      .from('leads')
-      .insert([
-        { 
-          nombre: formData.nombre, 
-          email: formData.email, 
-          tipo_proyecto: formData.tipo, 
-          descripcion: formData.descripcion 
-        }
-      ]);
-
+    const { error } = await supabase.from('leads').insert([{
+      nombre: formData.nombre,
+      email: formData.email,
+      tipo_proyecto: formData.tipo,
+      descripcion: formData.descripcion
+    }]);
     if (error) {
-      console.error('Error inserting data:', error);
       setStatus('error');
-      alert('Hubo un error al enviar tu solicitud. Inténtalo de nuevo.');
     } else {
       setStatus('success');
       setFormData({ nombre: '', email: '', tipo: '', descripcion: '' });
-      alert('¡Solicitud enviada con éxito! Me pondré en contacto contigo muy pronto.');
     }
   };
 
+  const set = (field) => (e) => setFormData({ ...formData, [field]: e.target.value });
+
   return (
     <footer id="contact" className="footer-section">
-      <div className="section-container footer-container">
-        <div className="footer-content">
-          <h2>Hablemos de tu próximo salto tecnológico.</h2>
-          <p className="text-muted">Desarrollo a medida, automatización e Inteligencia Artificial.</p>
-          
-          <div className="footer-direct">
-            <a href="#" className="direct-link">Agendar videollamada directa &rarr;</a>
-          </div>
+
+      {/* ── CTA headline ── */}
+      <div className="footer-cta section-container">
+        <p className="footer-eyebrow">Trabajemos juntos</p>
+        <h2 className="footer-headline">
+          ¿Tienes un proyecto<br className="footer-br"/> en mente?
+        </h2>
+        <p className="footer-subline">
+          Cuéntame tu idea y te respondo en menos de 24 horas.
+        </p>
+      </div>
+
+      {/* ── Form card ── */}
+      <div className="footer-form-wrap section-container">
+        <div className="footer-form-card">
+
+          {status === 'success' ? (
+            <div className="footer-success">
+              <div className="success-icon">✓</div>
+              <h3>¡Solicitud enviada!</h3>
+              <p>Me pondré en contacto contigo muy pronto.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} noValidate>
+              <div className="form-row">
+                <div className="form-field">
+                  <label>Nombre completo</label>
+                  <input
+                    type="text"
+                    placeholder="Tu nombre"
+                    required
+                    value={formData.nombre}
+                    onChange={set('nombre')}
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Correo electrónico</label>
+                  <input
+                    type="email"
+                    placeholder="tu@email.com"
+                    required
+                    value={formData.email}
+                    onChange={set('email')}
+                  />
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label>¿Qué tipo de proyecto tienes?</label>
+                <div className="form-select-wrap">
+                  <select required value={formData.tipo} onChange={set('tipo')}>
+                    <option value="" disabled>Selecciona una opción</option>
+                    <option value="app">App Móvil o PWA</option>
+                    <option value="biometrico">Sistema de Acceso / Biometría</option>
+                    <option value="ecommerce">E-commerce o POS</option>
+                    <option value="ia">Proyecto con Inteligencia Artificial</option>
+                  </select>
+                  <span className="select-arrow">↓</span>
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label>Cuéntame sobre tu proyecto</label>
+                <textarea
+                  placeholder="Describe brevemente qué quieres construir, para cuándo lo necesitas y cualquier detalle relevante..."
+                  rows="5"
+                  required
+                  value={formData.descripcion}
+                  onChange={set('descripcion')}
+                />
+              </div>
+
+              {status === 'error' && (
+                <p className="form-error">Hubo un error. Inténtalo de nuevo.</p>
+              )}
+
+              <button
+                type="submit"
+                className="form-submit"
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' ? (
+                  <span className="submit-loading">Enviando…</span>
+                ) : (
+                  <>
+                    <span>Enviar solicitud</span>
+                    <span className="submit-arrow">→</span>
+                  </>
+                )}
+              </button>
+            </form>
+          )}
         </div>
 
-        <form className="footer-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <input 
-              type="text" 
-              placeholder="Nombre completo" 
-              required 
-              value={formData.nombre}
-              onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-            />
-          </div>
-          <div className="form-group">
-            <input 
-              type="email" 
-              placeholder="Correo electrónico" 
-              required 
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-            />
-          </div>
-          <div className="form-group">
-            <select 
-              required 
-              value={formData.tipo}
-              onChange={(e) => setFormData({...formData, tipo: e.target.value})}
-            >
-              <option value="" disabled>Tipo de Proyecto</option>
-              <option value="app">App Móvil</option>
-              <option value="biometrico">Sistema de Acceso/Biometría</option>
-              <option value="ecommerce">E-commerce</option>
-              <option value="ia">Proyecto con IA</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <textarea 
-              placeholder="Cuéntame sobre tu proyecto..." 
-              rows="4" 
-              required
-              value={formData.descripcion}
-              onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
-            ></textarea>
-          </div>
-          <button type="submit" className="btn-metallic w-100" disabled={status === 'loading'}>
-            {status === 'loading' ? 'Enviando...' : 'Enviar solicitud'}
-          </button>
-        </form>
+        {/* Direct links */}
+        <div className="footer-direct-links">
+          <a href="mailto:zahirteamironman@gmail.com" className="direct-pill">
+            <span className="pill-dot" />
+            zahirteamironman@gmail.com
+          </a>
+        </div>
       </div>
-      
+
+      {/* ── Bottom bar ── */}
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Zahir Daniel Vidahurrazaga Marin. Todos los derechos reservados.</p>
+        <p>© {new Date().getFullYear()} Zahir Daniel Vidahurrazaga Marin</p>
       </div>
     </footer>
   );

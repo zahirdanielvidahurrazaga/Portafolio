@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import FactorMecatronico from './components/FactorMecatronico';
-import PortafolioBento from './components/PortafolioBento';
+import PortafolioShowcase from './components/PortafolioShowcase';
 import TechStack from './components/TechStack';
 import ProcesoTrabajo from './components/ProcesoTrabajo';
 import Footer from './components/Footer';
@@ -26,7 +26,7 @@ function App() {
       <main>
         <Hero />
         <FactorMecatronico />
-        <PortafolioBento />
+        <PortafolioShowcase />
         <TechStack />
         <ProcesoTrabajo />
       </main>
