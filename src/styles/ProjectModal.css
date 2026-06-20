@@ -1,0 +1,486 @@
+/* ════════ Backdrop (contenedor con scroll) ════════ */
+.pm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(0.5rem, 3vw, 2.5rem);
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+}
+
+/* ════════ Panel ════════ */
+.pm-panel {
+  position: relative;
+  width: 100%;
+  max-width: 1080px;
+  margin: auto;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #161617 0%, #0c0c0d 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 140px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+}
+
+/* Las secciones por encima del glow viajero */
+.pm-hero, .pm-roles, .pm-stage, .pm-foot { position: relative; z-index: 1; }
+
+/* ════════ Glow viajero ════════ */
+.pm-roam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 620px;
+  height: 620px;
+  margin-left: -310px;
+  margin-top: -310px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(40px);
+  will-change: transform;
+  animation: pmRoam 26s ease-in-out infinite;
+}
+@keyframes pmRoam {
+  0%   { transform: translate(20vw, 12vh); }
+  18%  { transform: translate(78vw, 26vh); }
+  36%  { transform: translate(34vw, 64vh); }
+  54%  { transform: translate(82vw, 104vh); }
+  72%  { transform: translate(22vw, 142vh); }
+  88%  { transform: translate(70vw, 70vh); }
+  100% { transform: translate(20vw, 12vh); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pm-roam { animation: none; transform: translate(50vw, 20vh); }
+}
+
+/* ════════ Close ════════ */
+.pm-close {
+  position: fixed;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2.2rem);
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(20, 20, 22, 0.7);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.pm-close:hover { background: rgba(255, 255, 255, 0.18); transform: rotate(90deg); }
+
+/* ════════ HERO (tipográfico, centrado) ════════ */
+.pm-hero {
+  position: relative;
+  padding: clamp(3rem, 7vw, 5.5rem) clamp(1.5rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.5rem);
+  overflow: hidden;
+  text-align: center;
+}
+.pm-hero-text {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.pm-category {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pm-accent);
+}
+.pm-title {
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  margin: 0.5rem 0 0;
+}
+.pm-tagline {
+  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+  font-weight: 500;
+  color: var(--text-color);
+  margin: 1rem 0 0;
+}
+.pm-description {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 1rem auto 0;
+  max-width: 560px;
+}
+.pm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* ════════ Pestañas de perfil (liquid glass) ════════ */
+.pm-roles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: calc(100% - 3rem);
+  border-radius: var(--radius-full);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 12px 34px rgba(0, 0, 0, 0.4);
+}
+.pm-role {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  transition: color 0.25s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+.pm-role:hover { color: var(--text-color); background: rgba(255, 255, 255, 0.06); }
+.pm-role.is-active {
+  color: #fff;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--pm-accent) 100%, transparent) 0%,
+    color-mix(in srgb, var(--pm-accent) 82%, #000) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 22px color-mix(in srgb, var(--pm-accent) 45%, transparent);
+}
+.pm-role-count {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.08);
+}
+.pm-role.is-active .pm-role-count {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+/* ════════ STAGE: función por función, sin scroll largo ════════ */
+.pm-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  min-height: 78vh;
+  max-height: 820px;
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
+}
+
+/* ── Device side ── */
+.pm-stage-device {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pm-device-glow {
+  position: absolute;
+  inset: -12% -18%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(12px);
+}
+
+.pm-phone, .pm-browser { position: relative; z-index: 2; }
+
+.pm-phone {
+  width: 300px;
+  height: 620px;
+  margin: 0;
+}
+.pm-phone-screen { background: #0c0c0d; }
+
+.pm-browser {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+  background: #1a1a1c;
+}
+.pm-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: #1f1f22;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.pm-dot { width: 11px; height: 11px; border-radius: 50%; background: #3a3a3e; }
+.pm-dot:nth-child(1) { background: #ff5f57; }
+.pm-dot:nth-child(2) { background: #febc2e; }
+.pm-dot:nth-child(3) { background: #28c840; }
+.pm-browser-url {
+  margin-left: 10px;
+  flex: 1;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: #141416;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-align: center;
+}
+.pm-browser-screen { position: relative; width: 100%; aspect-ratio: 16 / 10; background: #0c0c0d; }
+
+/* Crossfade de la pantalla (con desliz vertical = sensación de scroll) */
+.pm-screen-fade { position: absolute; inset: 0; }
+.pm-screen-fade img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* Placeholder cuando la función aún no tiene captura */
+.pm-shot-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  background:
+    radial-gradient(ellipse at center, color-mix(in srgb, var(--pm-accent) 14%, transparent) 0%, transparent 70%),
+    #111113;
+  color: var(--text-muted);
+}
+.pm-shot-placeholder-icon {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  color: var(--pm-accent);
+  background: color-mix(in srgb, var(--pm-accent) 16%, transparent);
+}
+.pm-shot-placeholder-label { font-size: 0.85rem; letter-spacing: 0.02em; }
+
+/* ── Info side ── */
+.pm-stage-info {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 420px;
+}
+.pm-stage-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.pm-counter {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--pm-accent);
+}
+.pm-counter-total { color: var(--text-muted); font-weight: 500; font-size: 0.9rem; }
+.pm-device-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* El bloque de texto que entra/sale como scroll */
+.pm-stage-copy { min-height: 230px; }
+
+.pm-step-title {
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+.pm-step-desc {
+  font-size: 1.08rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0.9rem 0 0;
+  max-width: 460px;
+}
+.pm-step-pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+  margin-top: 1.2rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.76rem;
+  border-radius: 999px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+/* ── Controles ── */
+.pm-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 2rem;
+}
+.pm-ctrl-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+.pm-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Riel horizontal de progreso */
+.pm-rail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0.3rem;
+}
+.pm-rail-dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+}
+.pm-rail-dot:hover { background: rgba(255, 255, 255, 0.4); }
+.pm-rail-dot.is-active {
+  width: 40px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.pm-rail-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  border-radius: 999px;
+  background: var(--pm-accent);
+}
+
+/* ════════ CTAs ════════ */
+.pm-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.78rem 1.5rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--pm-accent);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.pm-cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.pm-cta--ghost {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.pm-platforms { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.pm-platform {
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+/* ════════ Footer CTA ════════ */
+.pm-foot {
+  text-align: center;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem clamp(3rem, 7vw, 5rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: radial-gradient(ellipse at center bottom, color-mix(in srgb, var(--pm-accent) 12%, transparent) 0%, transparent 70%);
+}
+.pm-foot h3 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.5rem;
+}
+.pm-foot-actions { display: inline-flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+
+/* ════════ Responsive ════════ */
+@media (max-width: 860px) {
+  .pm-stage {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    max-height: none;
+    gap: 2rem;
+    text-align: center;
+  }
+  .pm-stage-info { min-height: auto; align-items: center; }
+  .pm-stage-top { justify-content: center; }
+  .pm-step-desc { max-width: 100%; }
+  .pm-step-pending { margin-left: auto; margin-right: auto; }
+  .pm-controls { justify-content: center; }
+  .pm-phone { transform: scale(0.9); transform-origin: top center; }
+}

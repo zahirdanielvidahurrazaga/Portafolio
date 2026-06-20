@@ -1,96 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import PhoneMockup from './PhoneMockup';
 import DesktopMockup from './DesktopMockup';
+import ProjectModal from './ProjectModal';
+import { projects } from '../data/projects';
 import '../styles/PortafolioShowcase.css';
 
-
-const projects = [
-  {
-    id: 'befit',
-    category: 'Fitness & Wellness',
-    title: 'BEFIT LAB',
-    description:
-      'PWA y app nativa para estudios de fitness. Reserva de clases, membresías digitales, acceso por QR y dashboard de administrador con métricas en tiempo real.',
-    tags: ['React Native', 'PWA', 'Supabase', 'QR & Biometría'],
-    type: 'phone',
-    slides: [
-      '/screenshots/befit-home.jpeg',
-      '/screenshots/befit-reservas.jpeg',
-      '/screenshots/befit-qr.jpeg',
-    ],
-    glow: '255, 140, 60',
-  },
-  {
-    id: 'dental',
-    category: 'Plataformas Clínicas',
-    title: 'Portal Dental',
-    description:
-      'Sistema de gestión clínica con agenda inteligente, expedientes digitales, consentimientos informados y registro de pacientes paso a paso.',
-    tags: ['React', 'Node.js', 'PostgreSQL', 'PDF Generation'],
-    type: 'phone',
-    slides: [
-      '/screenshots/dental-consentimiento.jpeg',
-      '/screenshots/dental-agenda.jpeg',
-    ],
-    glow: '10, 132, 255',
-  },
-  {
-    id: 'santuario',
-    category: 'Sitio Web & Portal',
-    title: 'Landing + Portal Premium',
-    description:
-      'Sitio web de alto impacto para gimnasio de calistenia y rendimiento. Landing page inmersiva con portal privado de membresías y acceso restringido.',
-    tags: ['React', 'Framer Motion', 'Portal de Acceso', 'Diseño Premium'],
-    type: 'desktop',
-    slides: [
-      '/screenshots/santuario-desktop-1.png',
-    ],
-    glow: '220, 40, 40',
-  },
-  {
-    id: 'pos',
-    category: 'E-commerce & Retail',
-    title: 'POS Admin System',
-    description:
-      'Sistema de punto de venta web con dashboard financiero, terminal de cobro, control de inventario y sincronización en tiempo real para negocios retail.',
-    tags: ['React', 'Supabase', 'POS', 'Dashboard Analytics'],
-    type: 'desktop',
-    slides: [
-      '/screenshots/pos-desktop-1.jpeg',
-      '/screenshots/pos-desktop-2.jpeg',
-      '/screenshots/pos-desktop-3.jpeg',
-    ],
-    glow: '30, 80, 180',
-  },
-  {
-    id: 'carperfit',
-    category: 'Salud & Nutrición',
-    title: 'CARPERfit',
-    description:
-      'App de asistencia nutricional con generador de planes dietéticos personalizados, control de citas, directorio de profesionales y seguimiento de matriz calórica diaria.',
-    tags: ['React Native', 'Supabase', 'Nutrición', 'Planes Dietéticos'],
-    type: 'phone',
-    slides: [
-      '/screenshots/carperfit-planes.png',
-      '/screenshots/carperfit-menu.png',
-    ],
-    glow: '0, 200, 180',
-  },
-  {
-    id: 'boda',
-    category: 'IA & Eventos',
-    title: 'Galería de Bodas',
-    description:
-      'Plataforma interactiva para eventos. Los invitados acceden con un código único a su galería personalizada, suben fotos desde cámara y visualizan el álbum compartido.',
-    tags: ['React', 'Supabase Storage', 'Código de Acceso', 'Upload en tiempo real'],
-    type: 'phone',
-    slides: ['/screenshots/boda-galeria.jpeg'],
-    glow: '191, 90, 242',
-  },
-];
-
-const ShowcaseItem = ({ project, index }) => {
+const ShowcaseItem = ({ project, index, onOpen }) => {
   const isEven = index % 2 === 0;
 
   return (
@@ -123,6 +40,22 @@ const ShowcaseItem = ({ project, index }) => {
             <span key={tag} className="showcase-tag">{tag}</span>
           ))}
         </div>
+
+        <div className="showcase-cta-row">
+          <button className="showcase-cta" onClick={() => onOpen(project)}>
+            Ver funciones <ArrowRight size={16} />
+          </button>
+          {project.website && (
+            <a
+              className="showcase-link"
+              href={project.website}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Sitio web <ExternalLink size={14} />
+            </a>
+          )}
+        </div>
       </motion.div>
 
       {/* Device mockup */}
@@ -133,21 +66,29 @@ const ShowcaseItem = ({ project, index }) => {
         viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        {project.type === 'desktop' ? (
-          <div className={`showcase-desktop-wrap ${isEven ? 'tilt-right' : 'tilt-left'}`}>
-            <DesktopMockup slides={project.slides} />
-          </div>
-        ) : (
-          <div className="showcase-phone-wrap">
-            <PhoneMockup slides={project.slides} />
-          </div>
-        )}
+        <button
+          className="showcase-device-trigger"
+          onClick={() => onOpen(project)}
+          aria-label={`Ver funciones de ${project.title}`}
+        >
+          {project.type === 'desktop' ? (
+            <div className={`showcase-desktop-wrap ${isEven ? 'tilt-right' : 'tilt-left'}`}>
+              <DesktopMockup slides={project.slides} />
+            </div>
+          ) : (
+            <div className="showcase-phone-wrap">
+              <PhoneMockup slides={project.slides} />
+            </div>
+          )}
+        </button>
       </motion.div>
     </motion.div>
   );
 };
 
 const PortafolioShowcase = () => {
+  const [active, setActive] = useState(null);
+
   return (
     <section id="portfolio" className="showcase-section">
       <motion.div
@@ -156,15 +97,18 @@ const PortafolioShowcase = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
       >
+        <span className="showcase-eyebrow">Proyectos recientes</span>
         <h2>Soluciones de Alto Nivel.</h2>
-        <p className="text-muted">Diseñadas para escalar y dominar el mercado.</p>
+        <p className="text-muted">Entra a cada proyecto para ver sus funciones a detalle.</p>
       </motion.div>
 
       <div className="showcase-list">
         {projects.map((project, i) => (
-          <ShowcaseItem key={project.id} project={project} index={i} />
+          <ShowcaseItem key={project.id} project={project} index={i} onOpen={setActive} />
         ))}
       </div>
+
+      <ProjectModal project={active} onClose={() => setActive(null)} />
     </section>
   );
 };
