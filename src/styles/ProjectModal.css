@@ -131,13 +131,16 @@
 /* ════════ Pestañas de perfil (liquid glass) ════════ */
 .pm-roles {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   gap: 0.4rem;
   padding: 0.55rem;
   margin: 0 auto;
   width: fit-content;
-  max-width: calc(100% - 3rem);
+  max-width: calc(100% - 2rem);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border-radius: var(--radius-full);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -148,9 +151,12 @@
     inset 0 -1px 0 rgba(0, 0, 0, 0.25),
     0 12px 34px rgba(0, 0, 0, 0.4);
 }
+.pm-roles::-webkit-scrollbar { display: none; }
 .pm-role {
   position: relative;
   display: inline-flex;
+  flex: 0 0 auto;
+  white-space: nowrap;
   align-items: center;
   gap: 0.55rem;
   padding: 0.7rem 1.5rem;
@@ -470,17 +476,33 @@
 
 /* ════════ Responsive ════════ */
 @media (max-width: 860px) {
+  .pm-hero { padding-top: clamp(3rem, 9vw, 4rem); }
+  .pm-roles { justify-content: flex-start; }
+
   .pm-stage {
     grid-template-columns: 1fr;
     min-height: auto;
     max-height: none;
-    gap: 2rem;
+    gap: 1.8rem;
     text-align: center;
   }
   .pm-stage-info { min-height: auto; align-items: center; }
   .pm-stage-top { justify-content: center; }
   .pm-step-desc { max-width: 100%; }
   .pm-step-pending { margin-left: auto; margin-right: auto; }
-  .pm-controls { justify-content: center; }
-  .pm-phone { transform: scale(0.9); transform-origin: top center; }
+  .pm-controls { justify-content: center; margin-top: 1.5rem; }
+
+  /* Teléfono más chico y centrado en móvil */
+  .pm-phone {
+    width: 240px;
+    height: 496px;
+  }
+  .pm-device-glow { inset: -8% -25%; }
+}
+
+@media (max-width: 480px) {
+  .pm-title { font-size: clamp(2.2rem, 13vw, 2.8rem); }
+  .pm-step-title { font-size: clamp(1.5rem, 7vw, 1.9rem); }
+  .pm-phone { width: 210px; height: 434px; }
+  .pm-role { padding: 0.6rem 1.1rem; font-size: 0.9rem; }
 }

@@ -129,9 +129,11 @@ const ProjectModal = ({ project, onClose }) => {
     };
     window.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('pm-open');
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
+      document.body.classList.remove('pm-open');
     };
   }, [project, onClose, go]);
 
