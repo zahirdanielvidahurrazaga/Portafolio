@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CalendarCheck, QrCode, Coffee, Bell, Camera, Award, Gift,
   Moon, CreditCard, Zap, Users, Cake, ExternalLink, X,
   Sparkles, MapPin, Ticket, BarChart3, FileText, Lock, TrendingUp,
   Home, ShoppingCart, Flame, Dumbbell, LayoutDashboard, ChefHat, ScanLine,
-  CalendarPlus, UserPlus, Utensils, Share2,
+  CalendarPlus, UserPlus, Utensils, Share2, Wallet,
   ImageIcon, ChevronLeft, ChevronRight, Pause, Play, Smartphone, Monitor,
 } from 'lucide-react';
 import '../styles/PhoneMockup.css';
@@ -15,10 +15,17 @@ const ICONS = {
   CalendarCheck, QrCode, Coffee, Bell, Camera, Award, Gift, Moon,
   CreditCard, Zap, Users, Cake, Sparkles, MapPin, Ticket, BarChart3,
   FileText, Lock, TrendingUp, Home, ShoppingCart, Flame, Dumbbell,
-  LayoutDashboard, ChefHat, ScanLine, CalendarPlus, UserPlus, Utensils, Share2,
+  LayoutDashboard, ChefHat, ScanLine, CalendarPlus, UserPlus, Utensils, Share2, Wallet,
 };
 
 const AUTO_MS = 5000;
+
+// Blur-fade refinado para el título y la descripción al cambiar de función.
+const copyItem = {
+  enter: { opacity: 0, y: 12, filter: 'blur(8px)' },
+  center: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+  exit: { opacity: 0, y: -8, filter: 'blur(8px)', transition: { duration: 0.28, ease: 'easeIn' } },
+};
 
 const FeatureIcon = ({ name, size = 22 }) => {
   const Cmp = ICONS[name] || Sparkles;
@@ -34,57 +41,39 @@ const ShotPlaceholder = ({ icon }) => (
 );
 
 /* Dispositivo: teléfono o navegador según la función activa.
-   El MARCO se mantiene; sólo la pantalla hace crossfade entre funciones. */
-const DeviceFrame = ({ step, index }) => {
+   El marco completo hace el blur-fade (lo anima el wrapper keyed en el escenario);
+   aquí sólo se renderiza la pantalla actual. */
+const DeviceFrame = ({ step, url }) => {
   const device = step.device || 'phone';
 
   const screen = (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={index}
-        className="pm-screen-fade"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -16 }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {step.image
-          ? <img src={step.image} alt={step.title} draggable={false} />
-          : <ShotPlaceholder icon={step.icon} />}
-      </motion.div>
-    </AnimatePresence>
+    <div className="pm-screen-fade">
+      {step.image
+        ? <img src={step.image} alt={step.title} draggable={false} />
+        : <ShotPlaceholder icon={step.icon} />}
+    </div>
   );
 
   if (device === 'desktop') {
     return (
-      <motion.div
-        className="pm-browser"
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-      >
+      <div className="pm-browser">
         <div className="pm-browser-bar">
           <span className="pm-dot" /><span className="pm-dot" /><span className="pm-dot" />
-          <div className="pm-browser-url">befitlab.app</div>
+          <div className="pm-browser-url">{url}</div>
         </div>
         <div className="pm-browser-screen">{screen}</div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      className="phone-mockup-frame pm-phone"
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-    >
+    <div className="phone-mockup-frame pm-phone">
       {/* Sin dynamic island: las capturas ya traen su barra de estado nativa. */}
       <div className="phone-mockup-bezel">
         <div className="phone-screen pm-phone-screen">{screen}</div>
       </div>
       <div className="btn-volume-up" /><div className="btn-volume-down" /><div className="btn-power" />
-    </motion.div>
+    </div>
   );
 };
 
@@ -112,12 +101,32 @@ const ProjectModal = ({ project, onClose }) => {
     setActiveIndex(0);
   }, []);
 
+  // Swipe en móvil: deslizar el escenario cambia de captura (sin bajar a los botones).
+  const touchX = useRef(null);
+  const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    touchX.current = null;
+    if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
+  };
+
   // Reset SOLO al abrir/cambiar de proyecto (no al cambiar de perfil).
   useEffect(() => {
     setActiveRole(0);
     setActiveIndex(0);
     setPaused(false);
   }, [project]);
+
+  // Precarga TODAS las capturas al abrir → el cambio entre funciones es instantáneo.
+  useEffect(() => {
+    allSteps.forEach((s) => {
+      if (s.image) {
+        const img = new Image();
+        img.src = s.image;
+      }
+    });
+  }, [allSteps]);
 
   // Listeners de teclado + bloquear scroll de fondo mientras está abierto.
   useEffect(() => {
@@ -147,6 +156,7 @@ const ProjectModal = ({ project, onClose }) => {
   if (!project) return null;
   const active = steps[activeIndex] || steps[0];
   const activeDevice = active.device || 'phone';
+  const browserUrl = (project.website || `${project.id}.app`).replace(/^https?:\/\//, '');
 
   return (
     <AnimatePresence>
@@ -230,6 +240,8 @@ const ProjectModal = ({ project, onClose }) => {
               className="pm-stage"
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
             >
               {/* Dispositivo */}
               <div className="pm-stage-device">
@@ -239,7 +251,18 @@ const ProjectModal = ({ project, onClose }) => {
                   animate={{ opacity: [0.55, 0.85, 0.55], scale: [0.95, 1.05, 0.95] }}
                   transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                 />
-                <DeviceFrame step={active} index={`${activeRole}-${activeIndex}`} />
+                <motion.div
+                  key={`${activeRole}-${activeIndex}`}
+                  className="pm-device-anim"
+                  initial={{ scale: 0.95, filter: 'blur(12px)' }}
+                  animate={{ scale: 1, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <DeviceFrame step={active} url={browserUrl} />
+                </motion.div>
+                <span className="pm-swipe-hint">
+                  <ChevronLeft size={14} /> Desliza para cambiar <ChevronRight size={14} />
+                </span>
               </div>
 
               {/* Texto de la función activa */}
@@ -259,15 +282,20 @@ const ProjectModal = ({ project, onClose }) => {
                   <motion.div
                     key={`${activeRole}-${activeIndex}`}
                     className="pm-stage-copy"
-                    initial={{ opacity: 0, y: 42 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -42 }}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    variants={{
+                      center: { transition: { staggerChildren: 0.07 } },
+                      exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
+                    }}
                   >
-                    <h3 className="pm-step-title">{active.title}</h3>
-                    <p className="pm-step-desc">{active.desc}</p>
+                    <motion.h3 className="pm-step-title" variants={copyItem}>{active.title}</motion.h3>
+                    <motion.p className="pm-step-desc" variants={copyItem}>{active.desc}</motion.p>
                     {!active.image && (
-                      <span className="pm-step-pending"><ImageIcon size={13} /> Captura por agregar</span>
+                      <motion.span className="pm-step-pending" variants={copyItem}>
+                        <ImageIcon size={13} /> Captura por agregar
+                      </motion.span>
                     )}
                   </motion.div>
                 </AnimatePresence>
