@@ -14,8 +14,8 @@
   height: 60px;
   width: 90%;
   max-width: 1000px;
-  background: rgba(30, 30, 30, 0.4);
-  backdrop-filter: blur(24px);
+  background: rgba(30, 30, 30, 0.02);
+  backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9999px; /* Pill shape */
@@ -24,10 +24,21 @@
   justify-content: center;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden; /* recorta el canvas de cristal al pill */
+}
+.apple-navbar .nav-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.apple-navbar .nav-container {
+  position: relative;
+  z-index: 1;
 }
 
 .apple-navbar.scrolled {
-  background: rgba(20, 20, 20, 0.7);
+  background: rgba(20, 20, 20, 0.28);
   border-color: rgba(255, 255, 255, 0.15);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
@@ -37,7 +48,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing-2) 0 var(--spacing-6);
+  padding: 0 var(--spacing-4) 0 var(--spacing-6);
 }
 
 .nav-logo {
@@ -54,7 +65,7 @@
 
 .nav-links {
   display: flex;
-  gap: var(--spacing-8);
+  gap: var(--spacing-6);
 }
 
 .nav-links a {
@@ -111,8 +122,11 @@
 .mobile-menu {
   position: fixed;
   top: 90px;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Centrado con left/right (no con transform: framer-motion usa transform
+     para animar y pisaría el translateX, rompiendo el centrado). */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
   width: 90%;
   max-width: 420px;
   background: rgba(18, 18, 18, 0.96);

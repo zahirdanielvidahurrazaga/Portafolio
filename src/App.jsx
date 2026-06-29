@@ -3,9 +3,11 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import FactorMecatronico from './components/FactorMecatronico';
+import SobreMi from './components/SobreMi';
 import PortafolioShowcase from './components/PortafolioShowcase';
-import TechStack from './components/TechStack';
+import Testimonios from './components/Testimonios';
 import ProcesoTrabajo from './components/ProcesoTrabajo';
+import Faq from './components/Faq';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 
@@ -25,10 +27,12 @@ function App() {
 
       <main>
         <Hero />
+        <SobreMi />
         <FactorMecatronico />
         <PortafolioShowcase />
-        <TechStack />
+        <Testimonios />
         <ProcesoTrabajo />
+        <Faq />
       </main>
 
       <Footer />

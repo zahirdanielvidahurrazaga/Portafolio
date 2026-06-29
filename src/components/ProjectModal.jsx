@@ -8,6 +8,7 @@ import {
   CalendarPlus, UserPlus, Utensils, Share2, Wallet,
   ImageIcon, ChevronLeft, ChevronRight, Pause, Play, Smartphone, Monitor,
 } from 'lucide-react';
+import LiquidGlass from './LiquidGlass';
 import '../styles/PhoneMockup.css';
 import '../styles/ProjectModal.css';
 
@@ -81,6 +82,11 @@ const ProjectModal = ({ project, onClose }) => {
   const [activeRole, setActiveRole] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [lightbox, setLightbox] = useState(null);
+  // En móvil (≤860px) se muestra una lista escaneable en vez del recorrido.
+  const [isNarrow, setIsNarrow] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 860px)').matches
+  );
 
   const allSteps = useMemo(() => project?.walkthrough || [], [project]);
   // Perfiles (roles) en orden de aparición; vacío = recorrido plano sin pestañas.
@@ -116,7 +122,17 @@ const ProjectModal = ({ project, onClose }) => {
     setActiveRole(0);
     setActiveIndex(0);
     setPaused(false);
+    setLightbox(null);
   }, [project]);
+
+  // Seguir el breakpoint móvil del modal.
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 860px)');
+    const update = () => setIsNarrow(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
   // Precarga TODAS las capturas al abrir → el cambio entre funciones es instantáneo.
   useEffect(() => {
@@ -146,12 +162,12 @@ const ProjectModal = ({ project, onClose }) => {
     };
   }, [project, onClose, go]);
 
-  // Auto-avance (se pausa con hover o botón).
+  // Auto-avance (se pausa con hover/botón; NO corre en móvil: ahí es lista).
   useEffect(() => {
-    if (!project || paused || len <= 1) return undefined;
+    if (!project || paused || len <= 1 || isNarrow) return undefined;
     const t = setTimeout(() => setActiveIndex((i) => (i + 1) % len), AUTO_MS);
     return () => clearTimeout(t);
-  }, [project, activeIndex, paused, len]);
+  }, [project, activeIndex, paused, len, isNarrow]);
 
   if (!project) return null;
   const active = steps[activeIndex] || steps[0];
@@ -199,43 +215,106 @@ const ProjectModal = ({ project, onClose }) => {
                 <span className="pm-category">{project.category}</span>
                 <h2 className="pm-title">{project.title}</h2>
                 {project.tagline && <p className="pm-tagline">{project.tagline}</p>}
-                <p className="pm-description">{project.description}</p>
-                <div className="pm-actions">
-                  {project.website && (
-                    <a className="pm-cta" href={project.website} target="_blank" rel="noopener noreferrer">
-                      Visitar sitio web <ExternalLink size={16} />
-                    </a>
-                  )}
-                  {project.platforms?.length > 0 && (
+                {project.result && (
+                  <p className="pm-result">
+                    <TrendingUp size={17} aria-hidden="true" />
+                    <span>{project.result}</span>
+                  </p>
+                )}
+                {project.platforms?.length > 0 && (
+                  <div className="pm-actions">
                     <div className="pm-platforms">
                       {project.platforms.map((p) => (
                         <span key={p} className="pm-platform">{p}</span>
                       ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </motion.div>
             </header>
 
             {/* ════ PESTAÑAS DE PERFIL ════ */}
             {hasRoles && (
               <div className="pm-roles">
-                {roles.map((r, i) => (
-                  <button
-                    key={r}
-                    className={`pm-role ${i === activeRole ? 'is-active' : ''}`}
-                    onClick={() => selectRole(i)}
-                  >
-                    {r}
-                    <span className="pm-role-count">
-                      {allSteps.filter((s) => s.role === r && s.image).length || '·'}
-                    </span>
-                  </button>
-                ))}
+                <LiquidGlass shape="rounded" radius={0.5} intensity={0.6} className="pm-roles-glass" />
+                <div className="pm-roles-track">
+                  {roles.map((r, i) => (
+                    <button
+                      key={r}
+                      className={`pm-role ${i === activeRole ? 'is-active' : ''}`}
+                      onClick={() => selectRole(i)}
+                    >
+                      {r}
+                      <span className="pm-role-count">
+                        {allSteps.filter((s) => s.role === r && s.image).length || '·'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* ════ ESCENARIO: función por función, sin scroll largo ════ */}
+            {/* ════ MÓVIL: carrusel grande con swipe (capturas a su marco) ════ */}
+            {isNarrow ? (
+              <div className="pm-mcar">
+                <div
+                  className="pm-mcar-stage"
+                  onTouchStart={onTouchStart}
+                  onTouchEnd={onTouchEnd}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.button
+                      type="button"
+                      key={`${activeRole}-${activeIndex}`}
+                      className="pm-mcar-media"
+                      onClick={() => active.image && setLightbox(active.image)}
+                      aria-label={active.image ? `Ampliar ${active.title}` : active.title}
+                      initial={{ opacity: 0, x: 28 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -28 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <DeviceFrame step={active} url={browserUrl} />
+                    </motion.button>
+                  </AnimatePresence>
+
+                  {len > 1 && (
+                    <>
+                      <button className="pm-mcar-arrow pm-mcar-arrow--left" onClick={() => go(-1)} aria-label="Anterior">
+                        <ChevronLeft size={22} />
+                      </button>
+                      <button className="pm-mcar-arrow pm-mcar-arrow--right" onClick={() => go(1)} aria-label="Siguiente">
+                        <ChevronRight size={22} />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                <div className="pm-mcar-caption">
+                  <span className="pm-mcar-step">
+                    {String(activeIndex + 1).padStart(2, '0')} / {String(len).padStart(2, '0')}
+                  </span>
+                  <span className="pm-mtitle">
+                    <FeatureIcon name={active.icon} size={16} /> {active.title}
+                  </span>
+                  <p>{active.desc}</p>
+                </div>
+
+                {len > 1 && (
+                  <div className="pm-mcar-dots">
+                    {steps.map((s, i) => (
+                      <button
+                        key={s.title}
+                        className={`pm-mdot ${i === activeIndex ? 'is-active' : ''}`}
+                        onClick={() => setActiveIndex(i)}
+                        aria-label={`Ir a ${s.title}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+            /* ════ DESKTOP: escenario función por función ════ */
             <div
               className="pm-stage"
               onMouseEnter={() => setPaused(true)}
@@ -335,6 +414,7 @@ const ProjectModal = ({ project, onClose }) => {
                 </div>
               </div>
             </div>
+            )}
 
             {/* ════ CIERRE ════ */}
             <footer className="pm-foot">
@@ -348,6 +428,24 @@ const ProjectModal = ({ project, onClose }) => {
                 <button className="pm-cta pm-cta--ghost" onClick={onClose}>Cerrar</button>
               </div>
             </footer>
+
+            {/* Lightbox: captura grande al tocar una miniatura (móvil) */}
+            <AnimatePresence>
+              {lightbox && (
+                <motion.div
+                  className="pm-lightbox"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setLightbox(null)}
+                >
+                  <button className="pm-lightbox-close" aria-label="Cerrar">
+                    <X size={20} />
+                  </button>
+                  <img src={lightbox} alt="" draggable={false} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </motion.div>
       )}

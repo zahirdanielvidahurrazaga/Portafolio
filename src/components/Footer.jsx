@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
 import '../styles/Footer.css';
+
+const WHATSAPP = '522221622676';
+const TIPO_LABEL = {
+  app: 'App Móvil o PWA',
+  biometrico: 'Sistema de Acceso / Biometría',
+  ecommerce: 'E-commerce o POS',
+  ia: 'Proyecto con Inteligencia Artificial',
+};
 
 const Footer = () => {
   const [formData, setFormData] = useState({
@@ -11,21 +18,21 @@ const Footer = () => {
   });
   const [status, setStatus] = useState('idle');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setStatus('loading');
-    const { error } = await supabase.from('leads').insert([{
-      nombre: formData.nombre,
-      email: formData.email,
-      tipo_proyecto: formData.tipo,
-      descripcion: formData.descripcion
-    }]);
-    if (error) {
-      setStatus('error');
-    } else {
-      setStatus('success');
-      setFormData({ nombre: '', email: '', tipo: '', descripcion: '' });
-    }
+    const { nombre, email, tipo, descripcion } = formData;
+    const msg =
+      `Hola Zahir, soy ${nombre}.\n` +
+      `Tipo de proyecto: ${TIPO_LABEL[tipo] || tipo}\n` +
+      `Correo: ${email}\n\n` +
+      `${descripcion}`;
+    window.open(
+      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,
+      '_blank',
+      'noopener'
+    );
+    setStatus('success');
+    setFormData({ nombre: '', email: '', tipo: '', descripcion: '' });
   };
 
   const set = (field) => (e) => setFormData({ ...formData, [field]: e.target.value });
@@ -51,11 +58,11 @@ const Footer = () => {
           {status === 'success' ? (
             <div className="footer-success">
               <div className="success-icon">✓</div>
-              <h3>¡Solicitud enviada!</h3>
-              <p>Me pondré en contacto contigo muy pronto.</p>
+              <h3>¡Mensaje listo en WhatsApp!</h3>
+              <p>Solo dale enviar en el chat y te respondo en menos de 24 horas.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleSubmit}>
               <div className="form-row">
                 <div className="form-field">
                   <label>Nombre completo</label>
@@ -104,23 +111,9 @@ const Footer = () => {
                 />
               </div>
 
-              {status === 'error' && (
-                <p className="form-error">Hubo un error. Inténtalo de nuevo.</p>
-              )}
-
-              <button
-                type="submit"
-                className="form-submit"
-                disabled={status === 'loading'}
-              >
-                {status === 'loading' ? (
-                  <span className="submit-loading">Enviando…</span>
-                ) : (
-                  <>
-                    <span>Enviar solicitud</span>
-                    <span className="submit-arrow">→</span>
-                  </>
-                )}
+              <button type="submit" className="form-submit">
+                <span>Enviar por WhatsApp</span>
+                <span className="submit-arrow">→</span>
               </button>
             </form>
           )}
@@ -128,9 +121,9 @@ const Footer = () => {
 
         {/* Direct links */}
         <div className="footer-direct-links">
-          <a href="mailto:zahirteamironman@gmail.com" className="direct-pill">
+          <a href="mailto:zahirdaniel@hotmail.com" className="direct-pill">
             <span className="pill-dot" />
-            zahirteamironman@gmail.com
+            zahirdaniel@hotmail.com
           </a>
         </div>
       </div>

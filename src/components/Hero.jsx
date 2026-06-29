@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { BadgeCheck } from 'lucide-react';
 import '../styles/Hero.css';
 
 const Hero = () => {
@@ -13,40 +14,42 @@ const Hero = () => {
         className="hero-content"
         style={{ y: y1, opacity }}
       >
-        <motion.div 
+        <motion.div
           className="hero-badge"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          Zahir Daniel Vidahurrazaga Marin
+          Ingeniería en Mecatrónica · Software + Hardware
         </motion.div>
-        
+
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="hero-line-break">Fusionando el</span>{' '}
-          Mundo <span className="text-gradient">Físico y Digital.</span>
+          <span className="hero-line-break">Software a tu medida:</span>{' '}
+          que se adapte a ti, <span className="text-gradient">no tú a él.</span>
         </motion.h1>
-        
-        <motion.p
-          className="hero-subtitle"
+
+        <motion.ul
+          className="hero-proof"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          Ingeniería en Mecatrónica y Desarrollo de Software. Soluciones automatizadas, IA y apps nativas que llevan la tecnología de tu negocio al siguiente nivel.
-        </motion.p>
-        
-        <motion.div 
+          <li><BadgeCheck size={18} /> En App Store y Google Play</li>
+          <li><BadgeCheck size={18} /> Sistemas en producción</li>
+          <li><BadgeCheck size={18} /> Proyectos reales, no demos</li>
+        </motion.ul>
+
+        <motion.div
           className="hero-actions"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <a href="#contact" className="btn-metallic btn-large">Cotizar mi proyecto</a>
+          <a href="#contact" className="btn-metallic btn-large">Cuéntame tu proyecto</a>
           <a href="#portfolio" className="btn-secondary btn-large">Ver soluciones</a>
         </motion.div>
       </motion.div>

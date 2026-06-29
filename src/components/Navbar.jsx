@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import LiquidGlass from './LiquidGlass';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
@@ -26,15 +27,18 @@ const Navbar = () => {
           animate={{ y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
+          <LiquidGlass shape="rounded" radius={0.5} intensity={0.45} className="nav-glass" />
           <div className="nav-container">
             <a href="#" className="nav-logo">
               Zahir Vidahurrázaga
             </a>
             <div className="nav-links">
-              <a href="#about">Mecatrónica</a>
+              <a href="#sobre-mi">Sobre mí</a>
+              <a href="#about">Servicios</a>
               <a href="#portfolio">Soluciones</a>
-              <a href="#tech">Tecnologías</a>
+              <a href="#testimonios">Testimonios</a>
               <a href="#process">Proceso</a>
+              <a href="#faq">FAQ</a>
             </div>
             <div className="nav-actions">
               <a href="#contact" className="btn-metallic nav-btn nav-desktop-cta">Cotizar</a>
@@ -61,10 +65,12 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
           >
-            <a href="#about" onClick={closeMenu}>Mecatrónica</a>
+            <a href="#sobre-mi" onClick={closeMenu}>Sobre mí</a>
+            <a href="#about" onClick={closeMenu}>Servicios</a>
             <a href="#portfolio" onClick={closeMenu}>Soluciones</a>
-            <a href="#tech" onClick={closeMenu}>Tecnologías</a>
+            <a href="#testimonios" onClick={closeMenu}>Testimonios</a>
             <a href="#process" onClick={closeMenu}>Proceso</a>
+            <a href="#faq" onClick={closeMenu}>FAQ</a>
             <a href="#contact" className="btn-metallic mobile-cta" onClick={closeMenu}>Cotizar proyecto</a>
           </motion.div>
         )}

@@ -176,15 +176,40 @@ a:hover {
     inset 0 -1px 0 rgba(0, 0, 0, 0.2),
     0 10px 30px rgba(0, 0, 0, 0.45);
   transition: background 0.25s ease, border-color 0.25s ease;
+  overflow: hidden; /* recorta el canvas WebGL al círculo */
 }
 .floating-whatsapp:hover {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.09) 100%);
   border-color: rgba(255, 255, 255, 0.3);
+}
+/* Capa de cristal líquido REAL (WebGL) detrás del ícono */
+.floating-whatsapp .fw-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.floating-whatsapp .whatsapp-icon {
+  position: relative;
+  z-index: 1;
 }
 
 /* Ocultar el botón flotante mientras un modal de proyecto está abierto */
 body.pm-open .floating-whatsapp {
   opacity: 0;
   pointer-events: none;
+}
+
+/* En móvil el botón flotante y su ícono van un poco más chicos */
+@media (max-width: 768px) {
+  .floating-whatsapp {
+    width: 52px;
+    height: 52px;
+    bottom: 22px;
+    right: 22px;
+  }
+  .floating-whatsapp .whatsapp-icon {
+    width: 26px;
+    height: 26px;
+  }
 }
 

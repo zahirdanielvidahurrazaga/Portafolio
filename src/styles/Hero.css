@@ -48,10 +48,32 @@
   font-size: clamp(1.1rem, 2vw, 1.3rem);
   color: var(--text-muted);
   margin-top: var(--spacing-6);
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-6);
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.hero-proof {
+  list-style: none;
+  margin: var(--spacing-8) 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-2) var(--spacing-6);
+}
+.hero-proof li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.hero-proof svg {
+  color: var(--accent-color);
+  flex-shrink: 0;
 }
 
 .hero-actions {
@@ -143,11 +165,34 @@
 }
 
 @media (max-width: 768px) {
+  /* Anclar el contenido más arriba (no flotando en el centro) y darle aire */
+  .hero-section {
+    justify-content: flex-start;
+    padding-top: 19vh;
+    padding-bottom: var(--spacing-16);
+  }
+  .hero-badge {
+    margin-bottom: var(--spacing-8);
+  }
+  .hero-content h1 {
+    margin-bottom: var(--spacing-4);
+  }
+  /* Franja de prueba en columna para que no se amontone */
+  .hero-proof {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin: var(--spacing-10, 2.5rem) 0;
+  }
+  .hero-proof li {
+    font-size: 0.9rem;
+  }
   .hero-actions {
     flex-direction: column;
+    gap: var(--spacing-3);
     padding: 0 var(--spacing-4);
   }
-  /* Let "Fusionando el" flow inline so the full heading wraps naturally */
+  /* Que la primera línea fluya en línea para que el titular envuelva natural */
   .hero-line-break {
     display: inline;
   }

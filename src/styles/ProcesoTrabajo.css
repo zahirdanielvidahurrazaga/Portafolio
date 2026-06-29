@@ -1,9 +1,38 @@
 .process-section {
   padding-top: var(--spacing-32);
   padding-bottom: var(--spacing-32);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Luz viajera que recorre toda la sección por detrás de las tarjetas */
+.process-glow {
+  position: absolute;
+  width: 460px;
+  height: 460px;
+  margin: -230px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.5) 0%, rgba(94, 92, 230, 0.18) 55%, transparent 72%);
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  will-change: top, left;
+  animation: processRoam 18s ease-in-out infinite;
+}
+@keyframes processRoam {
+  0%   { top: 8%;  left: 32%; }
+  25%  { top: 30%; left: 72%; }
+  50%  { top: 60%; left: 34%; }
+  75%  { top: 85%; left: 66%; }
+  100% { top: 8%;  left: 32%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .process-glow { animation: none; top: 40%; left: 50%; }
 }
 
 .process-header {
+  position: relative;
+  z-index: 1;
   margin-bottom: var(--spacing-16);
 }
 
@@ -14,6 +43,7 @@
   max-width: 800px;
   margin: 0 auto;
   position: relative;
+  z-index: 1;
 }
 
 .timeline::before {
@@ -50,12 +80,26 @@
 }
 
 .timeline-content {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  /* Glass sutil: deja ver la luz viajera de fondo */
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   padding: var(--spacing-6);
   border-radius: var(--radius-md);
   flex-grow: 1;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.timeline-time {
+  display: inline-block;
+  margin-bottom: var(--spacing-2);
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
 .timeline-content h3 {

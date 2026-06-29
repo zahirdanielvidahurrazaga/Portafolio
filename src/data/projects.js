@@ -12,7 +12,7 @@
 //       image = ruta de la captura de ESA función (o null = placeholder elegante).
 //     👉 Para enriquecerlo: pon la captura en /public/screenshots y referénciala aquí.
 
-export const projects = [
+const allProjects = [
   {
     id: 'befit',
     category: 'Fitness & Wellness',
@@ -20,6 +20,8 @@ export const projects = [
     tagline: 'El estudio de pilates, en el bolsillo de tus clientas.',
     description:
       'PWA y app nativa (iOS / Android) para un estudio de pilates premium: reserva de clases, membresías con acceso por QR, una cafetería con pago nativo estilo Uber Eats y un panel de administración en tiempo real.',
+    result:
+      'Reemplazó las reservas por WhatsApp y el control manual de membresías: reservas, acceso por QR, cafetería con pago nativo y panel en tiempo real en una sola app, publicada en App Store y Google Play.',
     tags: ['React', 'Capacitor', 'Supabase', 'Stripe', 'Apple Pay'],
     type: 'phone',
     // Imagen estática del card en el home (hero de marca, no rota).
@@ -216,6 +218,8 @@ export const projects = [
     tagline: 'Punto de venta multi-sucursal, en tiempo real.',
     description:
       'Sistema de punto de venta web y móvil con dashboard financiero, terminal de cobro, control de inventario y sincronización en tiempo real para negocios retail.',
+    result:
+      'Plásticos y Jarciería Tito digitalizó su operación: 215 productos por sucursal, cobro en terminal, cortes de caja e inventario en tiempo real, funcionando en web, iOS y Android.',
     tags: ['React', 'Supabase', 'Capacitor', 'Multi-sucursal'],
     type: 'desktop',
     // Card del home: capturas reales del POS (formato PC).
@@ -328,31 +332,45 @@ export const projects = [
     tagline: 'El álbum del evento, construido por los invitados.',
     description:
       'Plataforma interactiva para eventos. Los invitados acceden con un código único, suben fotos desde la cámara y visualizan el álbum compartido en tiempo real.',
+    result:
+      'Los invitados arman el álbum del evento en vivo: entran con un código y suben fotos en tiempo real, sin descargar ninguna app ni juntar memorias después.',
     tags: ['React', 'Supabase Storage', 'Realtime', 'Cloudflare'],
     type: 'phone',
-    slides: ['/screenshots/boda-galeria.jpeg'],
+    slides: ['/screenshots/boda-entrada.jpg', '/screenshots/boda-album.jpg'],
     glow: '191, 90, 242',
     accent: '#BF5AF2',
     platforms: ['Web'],
-    heroImage: '/screenshots/boda-galeria.jpeg',
+    heroImage: '/screenshots/boda-album.jpg',
     walkthrough: [
       {
+        icon: 'QrCode',
+        title: 'Sin apps: escanea y entra',
+        desc: 'Cada mesa lleva un QR ("Captura el amor"). Los invitados lo escanean y entran a la galería al instante, desde el navegador y sin descargar nada.',
+        image: '/screenshots/boda-qr.jpg',
+      },
+      {
         icon: 'Ticket',
-        title: 'Acceso por código',
-        desc: 'Cada invitado entra a la galería del evento con un código único, sin descargar nada.',
-        image: '/screenshots/boda-galeria.jpeg',
+        title: 'Acceso con tu nombre',
+        desc: 'Cada invitado entra a la galería del evento poniendo su nombre, desde el navegador y sin descargar ninguna app.',
+        image: '/screenshots/boda-entrada.jpg',
       },
       {
         icon: 'Camera',
-        title: 'Subida desde la cámara',
-        desc: 'Captura y sube fotos al instante desde el celular durante la fiesta.',
-        image: null,
+        title: 'Sube tus fotos al instante',
+        desc: 'Toma una foto o elígela de tu galería y súbela al álbum en segundos, en plena fiesta.',
+        image: '/screenshots/boda-subir.jpg',
       },
       {
         icon: 'Zap',
         title: 'Álbum en tiempo real',
-        desc: 'Las fotos de todos aparecen en la galería compartida en el momento en que se suben.',
-        image: null,
+        desc: 'Las fotos de todos aparecen al instante en un álbum compartido estilo polaroid, con el nombre de quien las subió.',
+        image: '/screenshots/boda-album.jpg',
+      },
+      {
+        icon: 'LayoutDashboard',
+        title: 'Panel del organizador',
+        desc: 'Los novios entran con un código a un panel para administrar y moderar la galería del evento.',
+        image: '/screenshots/boda-admin.jpg',
       },
     ],
   },
@@ -475,3 +493,17 @@ export const projects = [
     ],
   },
 ];
+
+// ─── Curaduría ───
+// Solo se MUESTRAN los proyectos más recientes y visualmente completos
+// (mejor pocos y fuertes que muchos a medias → más eficaz para convertir).
+// Para volver a mostrar uno, agrega su id a esta lista (en el orden deseado).
+// Archivados por ahora: 'carperfit', 'dental', 'santuario'.
+const VISIBLES = ['befit', 'pos', 'boda'];
+
+export const projects = VISIBLES
+  .map((id) => allProjects.find((p) => p.id === id))
+  .filter(Boolean);
+
+// Catálogo completo por si se necesita (no se renderiza).
+export const allProjectsCatalog = allProjects;
