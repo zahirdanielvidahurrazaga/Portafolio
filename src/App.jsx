@@ -25,12 +25,18 @@ function App() {
         style={{ y: backgroundY }}
       />
 
+      {/* Orden pensado para conversión: sigue las preguntas del cliente en el
+          orden en que se las hace. ¿Qué hace? (Servicios) → ¿le creo?
+          (Testimonios, con el video de cliente) → ¿ya lo hizo? (Proyectos) →
+          ¿quién es? (Sobre mí) → ¿cómo trabajamos? (Proceso) → dudas (FAQ) →
+          contacto. La prueba social va ARRIBA a propósito: antes vivía al 51%
+          del scroll y casi nadie llegaba al video. */}
       <main>
         <Hero />
-        <SobreMi />
         <FactorMecatronico />
-        <PortafolioShowcase />
         <Testimonios />
+        <PortafolioShowcase />
+        <SobreMi />
         <ProcesoTrabajo />
         <Faq />
       </main>

@@ -33,10 +33,10 @@ const Navbar = () => {
               Zahir Vidahurrázaga
             </a>
             <div className="nav-links">
-              <a href="#sobre-mi">Sobre mí</a>
               <a href="#about">Servicios</a>
-              <a href="#portfolio">Soluciones</a>
               <a href="#testimonios">Testimonios</a>
+              <a href="#portfolio">Soluciones</a>
+              <a href="#sobre-mi">Sobre mí</a>
               <a href="#process">Proceso</a>
               <a href="#faq">FAQ</a>
             </div>
@@ -65,10 +65,10 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
           >
-            <a href="#sobre-mi" onClick={closeMenu}>Sobre mí</a>
             <a href="#about" onClick={closeMenu}>Servicios</a>
-            <a href="#portfolio" onClick={closeMenu}>Soluciones</a>
             <a href="#testimonios" onClick={closeMenu}>Testimonios</a>
+            <a href="#portfolio" onClick={closeMenu}>Soluciones</a>
+            <a href="#sobre-mi" onClick={closeMenu}>Sobre mí</a>
             <a href="#process" onClick={closeMenu}>Proceso</a>
             <a href="#faq" onClick={closeMenu}>FAQ</a>
             <a href="#contact" className="btn-metallic mobile-cta" onClick={closeMenu}>Cotizar proyecto</a>
