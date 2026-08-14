@@ -1,32 +1,228 @@
+/* ============================================================================
+   TEMA
+   Todos los colores del sitio salen de estos tokens. El tema OSCURO es el
+   default (:root). El tema CLARO solo redefine valores en el bloque de abajo:
+   ningún componente debería tener un color escrito a mano.
+
+   Cómo elegir token:
+   - fondo de página .............. --bg-color / --bg-color-elevated
+   - fondo de tarjeta/panel ....... --tint-1 … --tint-6 (velo sobre el fondo)
+   - línea divisoria .............. --border-subtle / --border-color / --border-strong
+   - texto ........................ --text-color / --text-muted / --text-strong
+   - sombra ....................... --shadow-sm … --shadow-xl
+   Los --tint-* son velos: CLAROS sobre fondo oscuro, OSCUROS sobre fondo claro.
+   Por eso invertirlos en el tema claro arregla la mayoría de los componentes solo.
+   ============================================================================ */
 :root {
+  color-scheme: dark;
+
+  /* Fondos */
   --bg-color: #000000;
   --bg-color-elevated: #161617;
+  --card-bg: #1d1d1f;
+
+  /* Velos de superficie */
+  --tint-1: rgba(255, 255, 255, 0.03);
+  --tint-2: rgba(255, 255, 255, 0.05);
+  --tint-3: rgba(255, 255, 255, 0.07);
+  --tint-4: rgba(255, 255, 255, 0.1);
+  --tint-5: rgba(255, 255, 255, 0.16);
+  --tint-6: rgba(255, 255, 255, 0.26);
+
+  /* Bordes */
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+
+  /* Texto */
   --text-color: #f5f5f7;
+  --text-strong: #ffffff;
   --text-muted: #86868b;
-  --text-dark: #1d1d1f;
-  --accent-color: #0A84FF; /* Apple's Dark Mode Blue */
-  --accent-hover: #409CFF;
-  --accent-metallic: linear-gradient(135deg, #0A84FF, #0056b3);
+  --text-gradient: linear-gradient(135deg, #ffffff 0%, #a5a5ac 100%);
+
+  /* Acento */
+  --accent-color: #0a84ff; /* azul de modo oscuro de Apple */
+  --accent-hover: #409cff;
+  --accent-rgb: 10, 132, 255;
+  --accent-metallic: linear-gradient(135deg, #0a84ff, #0056b3);
+  --accent-soft: rgba(10, 132, 255, 0.05);
+
+  /* Estado */
+  --success-color: #34c759;
+  --success-rgb: 52, 199, 89;
+  --danger-color: #ff453a;
+  --star-color: #ffc83d;
+
+  /* Sombras */
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 34px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+  --shadow-xl: 0 30px 60px rgba(0, 0, 0, 0.6);
+
+  /* Cristal (el WebGL de LiquidGlass va encima de esto) */
   --glass-bg: rgba(45, 45, 45, 0.6);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --card-bg: #1d1d1f;
-  
-  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --glass-sheen-top: rgba(255, 255, 255, 0.16);
+  --glass-sheen-bottom: rgba(255, 255, 255, 0.05);
+  --glass-sheen-top-hover: rgba(255, 255, 255, 0.24);
+  --glass-sheen-bottom-hover: rgba(255, 255, 255, 0.09);
+  /* Bisel interno que le da volumen al cristal (luz arriba, sombra abajo) */
+  --shadow-glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+
+  /* Esferas de glow que viajan por el fondo */
+  --glow-blue: rgba(10, 132, 255, 0.55);
+  --glow-purple: rgba(191, 90, 242, 0.5);
+  --glow-indigo: rgba(94, 92, 230, 0.2);
+  --glow-opacity: 0.75;
+
+  /* Marcos de dispositivo (mockups). El cuerpo del teléfono se queda oscuro
+     en los dos temas a propósito: un iPhone real es oscuro y así se lee como
+     objeto, no como caja de color. El navegador sí sigue al tema. */
+  --device-body: #2a2a2a;
+  --device-bezel: #111111;
+  --device-screen: #000000;
+  --browser-chrome: #1e1e1e;
+  --browser-bar: #2a2a2a;
+  --browser-screen: #111111;
+  --device-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8);
+  --device-drop-shadow: 0 40px 60px rgba(0, 0, 0, 0.6);
+
+  /* Cromo de la navbar: casi invisible sin scroll, con cuerpo al bajar */
+  --nav-bg: rgba(30, 30, 30, 0.02);
+  --nav-bg-scrolled: rgba(20, 20, 20, 0.28);
+  --menu-bg: rgba(18, 18, 18, 0.96);
+
+  --text-placeholder: rgba(255, 255, 255, 0.28);
+  --photo-bg: linear-gradient(160deg, #1c1c1f 0%, #0d0d0f 100%);
+  --browser-url-bg: #141416;
+
+  /* Modal de proyecto */
+  --pm-scrim: rgba(0, 0, 0, 0.65);
+  --pm-panel-bg: linear-gradient(180deg, #161617 0%, #0c0c0d 100%);
+  --pm-panel-shadow: 0 40px 140px rgba(0, 0, 0, 0.75);
+  --pm-chip-bg: rgba(20, 20, 22, 0.7);
+
+  --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
   --radius-sm: 8px;
   --radius-md: 18px;
   --radius-lg: 32px;
   --radius-full: 9999px;
-  
+
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
   --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
   --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
   --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
   --spacing-12: 3rem;
   --spacing-16: 4rem;
   --spacing-24: 6rem;
   --spacing-32: 8rem;
+
+  /* Aire vertical de una sección. Existe porque varias secciones fijaban
+     `--spacing-32` (8rem) a pelo y su CSS le ganaba a la escala responsiva de
+     `.section-container` → en móvil quedaban 256px de nada por sección. Medido
+     2026-08-13: 1504px de la página (1.8 pantallas) eran solo padding.
+     Usa este token, no --spacing-32, para el padding vertical de una sección. */
+  --section-pad-y: 8rem;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-pad-y: 4rem;
+  }
+}
+@media (max-width: 480px) {
+  :root {
+    --section-pad-y: 3.25rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   TEMA CLARO
+   Los velos se invierten (blanco → negro) y las sombras bajan mucho de opacidad:
+   una sombra al 45% que en negro es sutil, sobre blanco se ve como una mancha.
+   Los glows también bajan: a intensidad de modo oscuro manchan el fondo claro.
+   --------------------------------------------------------------------------- */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg-color: #ffffff;
+  --bg-color-elevated: #f5f5f7;
+  --card-bg: #ffffff;
+
+  --tint-1: rgba(0, 0, 0, 0.022);
+  --tint-2: rgba(0, 0, 0, 0.035);
+  --tint-3: rgba(0, 0, 0, 0.05);
+  --tint-4: rgba(0, 0, 0, 0.07);
+  --tint-5: rgba(0, 0, 0, 0.1);
+  --tint-6: rgba(0, 0, 0, 0.16);
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-color: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.24);
+
+  --text-color: #1d1d1f;
+  --text-strong: #000000;
+  --text-muted: #6e6e73;
+  --text-gradient: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
+
+  /* Azul de modo claro de Apple: el #0a84ff del modo oscuro no pasa contraste
+     sobre blanco para texto chico. */
+  --accent-color: #0071e3;
+  --accent-hover: #0056b3;
+  --accent-rgb: 0, 113, 227;
+  --accent-soft: rgba(0, 113, 227, 0.07);
+
+  --success-color: #248a3d;
+  --success-rgb: 36, 138, 61;
+  --danger-color: #d70015;
+  --star-color: #e0930b;
+
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.07);
+  --shadow-md: 0 12px 34px rgba(0, 0, 0, 0.09);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 30px 60px rgba(0, 0, 0, 0.16);
+
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-sheen-top: rgba(255, 255, 255, 0.85);
+  --glass-sheen-bottom: rgba(255, 255, 255, 0.35);
+  --glass-sheen-top-hover: rgba(255, 255, 255, 0.95);
+  --glass-sheen-bottom-hover: rgba(255, 255, 255, 0.5);
+  --shadow-glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+
+  --glow-blue: rgba(10, 132, 255, 0.46);
+  --glow-purple: rgba(191, 90, 242, 0.42);
+  --glow-indigo: rgba(94, 92, 230, 0.2);
+  --glow-opacity: 0.85;
+
+  --browser-chrome: #e8e8ed;
+  --browser-bar: #dcdce1;
+  --browser-screen: #ffffff;
+  --device-shadow: 0 40px 80px -24px rgba(0, 0, 0, 0.28);
+  --device-drop-shadow: 0 30px 50px rgba(0, 0, 0, 0.18);
+
+  --nav-bg: rgba(255, 255, 255, 0.25);
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.72);
+  --menu-bg: rgba(255, 255, 255, 0.97);
+
+  --text-placeholder: rgba(0, 0, 0, 0.32);
+  --photo-bg: linear-gradient(160deg, #f5f5f7 0%, #e6e6eb 100%);
+  --browser-url-bg: #ffffff;
+
+  /* El velo detrás del modal sigue siendo OSCURO en tema claro (es lo que hace
+     que el panel se despegue del fondo), solo que más suave. */
+  --pm-scrim: rgba(0, 0, 0, 0.32);
+  --pm-panel-bg: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
+  --pm-panel-shadow: 0 40px 140px rgba(0, 0, 0, 0.2);
+  --pm-chip-bg: rgba(255, 255, 255, 0.82);
 }
 
 * {
@@ -42,9 +238,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: 600;
   letter-spacing: -0.015em;
@@ -87,6 +289,7 @@ a:hover {
   border-radius: var(--radius-md);
 }
 
+/* Botón sólido invertido: en oscuro sale blanco, en claro sale negro. */
 .btn-primary {
   background: var(--text-color);
   color: var(--bg-color);
@@ -106,7 +309,7 @@ a:hover {
 
 .btn-metallic {
   background: var(--accent-metallic);
-  color: #fff;
+  color: #fff; /* siempre blanco: va sobre azul sólido en los dos temas */
   border: none;
   border-radius: var(--radius-full);
   padding: 0.8rem 1.8rem;
@@ -114,7 +317,7 @@ a:hover {
   font-weight: 500;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease;
-  box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(var(--accent-rgb), 0.3);
 }
 
 .btn-metallic:hover {
@@ -143,15 +346,33 @@ a:hover {
 }
 
 /* Utilities */
-.text-center { text-align: center; }
-.text-muted { color: var(--text-muted); }
-.d-flex { display: flex; }
-.flex-col { flex-direction: column; }
-.align-center { align-items: center; }
-.justify-center { justify-content: center; }
-.gap-2 { gap: var(--spacing-2); }
-.gap-4 { gap: var(--spacing-4); }
-.gap-8 { gap: var(--spacing-8); }
+.text-center {
+  text-align: center;
+}
+.text-muted {
+  color: var(--text-muted);
+}
+.d-flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.align-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+.gap-2 {
+  gap: var(--spacing-2);
+}
+.gap-4 {
+  gap: var(--spacing-4);
+}
+.gap-8 {
+  gap: var(--spacing-8);
+}
 
 .floating-whatsapp {
   position: fixed;
@@ -159,7 +380,7 @@ a:hover {
   right: 30px;
   width: 60px;
   height: 60px;
-  color: #fff;
+  color: var(--text-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -167,20 +388,25 @@ a:hover {
   z-index: 1000;
   cursor: pointer;
   /* Liquid glass */
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    180deg,
+    var(--glass-sheen-top) 0%,
+    var(--glass-sheen-bottom) 100%
+  );
+  border: 1px solid var(--glass-border);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
-    0 10px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-glass-inset), var(--shadow-md);
   transition: background 0.25s ease, border-color 0.25s ease;
   overflow: hidden; /* recorta el canvas WebGL al círculo */
 }
 .floating-whatsapp:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.09) 100%);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(
+    180deg,
+    var(--glass-sheen-top-hover) 0%,
+    var(--glass-sheen-bottom-hover) 100%
+  );
+  border-color: var(--border-strong);
 }
 /* Capa de cristal líquido REAL (WebGL) detrás del ícono */
 .floating-whatsapp .fw-glass {
@@ -212,4 +438,3 @@ body.pm-open .floating-whatsapp {
     height: 26px;
   }
 }
-

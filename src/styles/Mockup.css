@@ -1,0 +1,28 @@
+.mockup {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Render con canal alfa: la sombra sigue la silueta del aparato, no una caja.
+   Va por CSS (no horneada en el PNG) para que se adapte al tema. */
+.mockup.is-render {
+  filter: drop-shadow(var(--device-drop-shadow));
+}
+
+/* Respaldo mientras no exista el render: una captura plana necesita marco
+   propio, si no queda flotando sin peso en la página. */
+.mockup.is-flat {
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xl);
+}
+.mockup--phone.is-flat {
+  border-radius: 22px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mockup {
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}

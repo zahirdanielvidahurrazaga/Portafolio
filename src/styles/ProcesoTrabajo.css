@@ -1,6 +1,6 @@
 .process-section {
-  padding-top: var(--spacing-32);
-  padding-bottom: var(--spacing-32);
+  padding-top: var(--section-pad-y);
+  padding-bottom: var(--section-pad-y);
   position: relative;
   overflow: hidden;
 }
@@ -12,8 +12,9 @@
   height: 460px;
   margin: -230px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(10, 132, 255, 0.5) 0%, rgba(94, 92, 230, 0.18) 55%, transparent 72%);
+  background: radial-gradient(circle, var(--glow-blue) 0%, var(--glow-indigo) 55%, transparent 72%);
   filter: blur(90px);
+  opacity: var(--glow-opacity);
   pointer-events: none;
   z-index: 0;
   will-change: top, left;
@@ -53,7 +54,7 @@
   left: 24px;
   height: 100%;
   width: 2px;
-  background: linear-gradient(to bottom, var(--accent-color), rgba(10, 132, 255, 0.1));
+  background: linear-gradient(to bottom, var(--accent-color), rgba(var(--accent-rgb), 0.1));
 }
 
 .timeline-item {
@@ -76,30 +77,18 @@
   font-size: 1.2rem;
   color: var(--accent-color);
   flex-shrink: 0;
-  box-shadow: 0 0 15px rgba(10, 132, 255, 0.3);
+  box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
 }
 
 .timeline-content {
   /* Glass sutil: deja ver la luz viajera de fondo */
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: var(--tint-2);
+  border: 1px solid var(--border-color);
   padding: var(--spacing-6);
   border-radius: var(--radius-md);
   flex-grow: 1;
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
-}
-
-.timeline-time {
-  display: inline-block;
-  margin-bottom: var(--spacing-2);
-  padding: 0.2rem 0.7rem;
-  border-radius: var(--radius-full);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--accent-color);
-  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
 .timeline-content h3 {
@@ -112,6 +101,9 @@
 }
 
 @media (max-width: 768px) {
+  .process-header { margin-bottom: var(--spacing-8); }
+  /* los huecos de 3rem entre pasos eran de los mayores gastos de alto */
+  .timeline { gap: var(--spacing-8); }
   .timeline::before {
     left: 20px;
   }

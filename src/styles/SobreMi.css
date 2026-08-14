@@ -25,9 +25,9 @@
   aspect-ratio: 4 / 5;
   border-radius: 26px;
   overflow: hidden;
-  background: linear-gradient(160deg, #1c1c1f 0%, #0d0d0f 100%);
+  background: var(--photo-bg);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
 }
 .sobre-photo::after {
   /* glow de marca detrás de la foto */
@@ -35,7 +35,7 @@
   position: absolute;
   inset: -30% -20% auto -20%;
   height: 70%;
-  background: radial-gradient(circle, rgba(10, 132, 255, 0.35) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.35) 0%, transparent 70%);
   filter: blur(50px);
   pointer-events: none;
   z-index: 0;
@@ -58,7 +58,7 @@
   font-size: 4rem;
   font-weight: 800;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-color);
   background: linear-gradient(135deg, var(--accent-color), #5e5ce6);
   -webkit-background-clip: text;
   background-clip: text;
@@ -98,7 +98,7 @@
   font-weight: 600;
   text-decoration: none;
   color: #fff;
-  background: var(--accent-metallic, linear-gradient(135deg, #0A84FF, #0056b3));
+  background: var(--accent-metallic);
   transition: opacity 0.2s ease;
 }
 .sobre-cta:hover { opacity: 0.92; }

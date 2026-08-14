@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
-import PhoneMockup from './PhoneMockup';
-import DesktopMockup from './DesktopMockup';
+import Mockup from './Mockup';
 import ProjectModal from './ProjectModal';
 import { projects } from '../data/projects';
 import '../styles/PortafolioShowcase.css';
 
+/* Portada de la tarjeta: el mockup del sitio web si el proyecto tiene, y si no
+   (los que son solo móvil, como el álbum de bodas) el de la app. */
+function portadaDe(project) {
+  const web = project.mockups?.web;
+  if (web) return { ...web, kind: 'mac' };
+  const app = project.mockups?.app;
+  return app ? { ...app, kind: 'phone' } : null;
+}
+
 const ShowcaseItem = ({ project, index, onOpen }) => {
   const isEven = index % 2 === 0;
+  const portada = portadaDe(project);
 
   return (
     <motion.div
@@ -34,7 +43,11 @@ const ShowcaseItem = ({ project, index, onOpen }) => {
       >
         <span className="showcase-category">{project.category}</span>
         <h2 className="showcase-title">{project.title}</h2>
-        <p className="showcase-description">{project.description}</p>
+        {/* El GANCHO, no el detalle: la tarjeta se lee en segundos y la
+            descripción larga (209 caracteres en Be Fit Lab) hacía que las tres
+            tarjetas ocuparan 3 pantallas de móvil. El caso completo está a un
+            clic, en el modal. `description` queda en projects.js sin usarse. */}
+        <p className="showcase-description">{project.tagline || project.description}</p>
         <div className="showcase-tags">
           {project.tags.map(tag => (
             <span key={tag} className="showcase-tag">{tag}</span>
@@ -43,7 +56,7 @@ const ShowcaseItem = ({ project, index, onOpen }) => {
 
         <div className="showcase-cta-row">
           <button className="showcase-cta" onClick={() => onOpen(project)}>
-            Ver funciones <ArrowRight size={16} />
+            Ver el proyecto <ArrowRight size={16} />
           </button>
           {project.website && (
             <a
@@ -66,21 +79,23 @@ const ShowcaseItem = ({ project, index, onOpen }) => {
         viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        <button
-          className="showcase-device-trigger"
-          onClick={() => onOpen(project)}
-          aria-label={`Ver funciones de ${project.title}`}
-        >
-          {project.type === 'desktop' ? (
-            <div className={`showcase-desktop-wrap ${isEven ? 'tilt-right' : 'tilt-left'}`}>
-              <DesktopMockup slides={project.slides} />
-            </div>
-          ) : (
-            <div className="showcase-phone-wrap">
-              <PhoneMockup slides={project.slides} />
-            </div>
-          )}
-        </button>
+        {portada && (
+          <button
+            className={`showcase-device-trigger showcase-device-trigger--${portada.kind}`}
+            onClick={() => onOpen(project)}
+            aria-label={`Ver el proyecto ${project.title}`}
+          >
+            {/* Sin inclinación por CSS: el ángulo ya viene en el render. Si se
+                le sumara un rotateY encima, el aparato saldría doblemente
+                deformado. */}
+            <Mockup
+              kind={portada.kind}
+              src={portada.src}
+              fallback={portada.fallback}
+              alt={project.title}
+            />
+          </button>
+        )}
       </motion.div>
     </motion.div>
   );
@@ -99,7 +114,7 @@ const PortafolioShowcase = () => {
       >
         <span className="showcase-eyebrow">Proyectos recientes</span>
         <h2>Soluciones de Alto Nivel.</h2>
-        <p className="text-muted">Entra a cada proyecto para ver sus funciones a detalle.</p>
+        <p className="text-muted">Entra a cada uno para ver el sitio y la app.</p>
       </motion.div>
 
       <div className="showcase-list">

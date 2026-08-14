@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { createLiquidGlass } from '../lib/liquidGlass';
+import { useTheme } from '../lib/ThemeContext';
 import '../styles/LiquidGlass.css';
 
 /**
@@ -15,13 +16,18 @@ export default function LiquidGlass({
   style,
 }) {
   const canvasRef = useRef(null);
+  const { theme } = useTheme();
+  // 1 = brillo blanco sobre fondo oscuro; 0 = filo oscuro sobre fondo claro.
+  const tone = theme === 'light' ? 0 : 1;
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const instance = createLiquidGlass(canvas, { shape, radius, intensity });
+    // Al cambiar de tema se recrea el contexto WebGL a propósito: el tono va
+    // horneado en los uniforms al crearlo, y solo pasa al tocar el switch.
+    const instance = createLiquidGlass(canvas, { shape, radius, intensity, tone });
     return () => instance?.destroy();
-  }, [shape, radius, intensity]);
+  }, [shape, radius, intensity, tone]);
 
   return (
     <canvas

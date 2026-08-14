@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import '../styles/Footer.css';
 
 const WHATSAPP = '522221622676';
+// Las opciones siguen a las tarjetas de "Qué puedo construir": si alguien tocó
+// un servicio en el carrusel, espera encontrarlo aquí con el mismo nombre.
+// (Faltaba "Sitio web", que es de los servicios principales; y "Biometría"
+// prometía algo que no se hace.)
 const TIPO_LABEL = {
-  app: 'App Móvil o PWA',
-  biometrico: 'Sistema de Acceso / Biometría',
-  ecommerce: 'E-commerce o POS',
-  ia: 'Proyecto con Inteligencia Artificial',
+  sitio: 'Sitio web',
+  app: 'App móvil (iOS / Android)',
+  ecommerce: 'Tienda en línea',
+  pos: 'Punto de venta',
+  ia: 'Automatización o IA',
+  otro: 'Otra cosa',
 };
 
 const Footer = () => {
@@ -91,10 +97,9 @@ const Footer = () => {
                 <div className="form-select-wrap">
                   <select required value={formData.tipo} onChange={set('tipo')}>
                     <option value="" disabled>Selecciona una opción</option>
-                    <option value="app">App Móvil o PWA</option>
-                    <option value="biometrico">Sistema de Acceso / Biometría</option>
-                    <option value="ecommerce">E-commerce o POS</option>
-                    <option value="ia">Proyecto con Inteligencia Artificial</option>
+                    {Object.entries(TIPO_LABEL).map(([valor, texto]) => (
+                      <option key={valor} value={valor}>{texto}</option>
+                    ))}
                   </select>
                   <span className="select-arrow">↓</span>
                 </div>

@@ -1,6 +1,6 @@
 .testimonios-section {
-  padding-top: var(--spacing-32);
-  padding-bottom: var(--spacing-32);
+  padding-top: var(--section-pad-y);
+  padding-bottom: var(--section-pad-y);
 }
 
 .testimonios-header {
@@ -24,7 +24,7 @@
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
@@ -42,7 +42,7 @@
 .testimonio-stars {
   display: flex;
   gap: 2px;
-  color: #ffc83d;
+  color: var(--star-color);
 }
 
 /* `margin: auto 0` reparte arriba y abajo el espacio sobrante cuando la rejilla
@@ -72,7 +72,8 @@
   border-radius: 50%;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
 }
 .testimonio-avatar img {
   width: 100%;
@@ -143,12 +144,12 @@
   border-radius: 16px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .testimonio-video-btn:hover .testimonio-video-thumb {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-xl);
 }
 .testimonio-video-thumb img {
   width: 100%;
@@ -271,7 +272,7 @@
 
 @media (max-width: 768px) {
   .testimonios-header {
-    margin-bottom: var(--spacing-12);
+    margin-bottom: var(--spacing-8);
   }
   .testimonio-card {
     padding: var(--spacing-6);

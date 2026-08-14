@@ -10,7 +10,7 @@
     <title>Zahir Vidahurrázaga · Apps, sitios web y software a la medida</title>
     <meta
       name="description"
-      content="Ingeniero en Mecatrónica. Construyo apps móviles, sitios web, e-commerce, puntos de venta y automatización a la medida para tu negocio — del software al hardware, listos para producción."
+      content="Construyo apps móviles, sitios web, e-commerce, puntos de venta y automatización a la medida para tu negocio — del software al hardware, listos para producción."
     />
     <meta name="author" content="Zahir Daniel Vidahurrázaga Marín" />
 
@@ -38,11 +38,37 @@
     />
     <meta name="twitter:image" content="/og-image.jpg" />
 
+    <!-- Anti-parpadeo: fija el tema en el <html> ANTES de pintar. Sin esto, la
+         página aparece un instante en oscuro y luego salta a claro. Debe ir en
+         el <head> y ser síncrono (nada de defer/module). -->
+    <script>
+      (function () {
+        var t;
+        try {
+          t = localStorage.getItem('tema');
+        } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t =
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+        if (t === 'light') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#ffffff');
+        }
+      })();
+    </script>
     <style>
       body {
         background-color: #000000;
         color: #f5f5f7;
         margin: 0;
+      }
+      html[data-theme='light'] body {
+        background-color: #ffffff;
+        color: #1d1d1f;
       }
     </style>
   </head>

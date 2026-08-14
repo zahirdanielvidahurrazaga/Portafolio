@@ -6,7 +6,7 @@ import '../styles/Faq.css';
 const FAQS = [
   {
     q: '¿Cuánto tarda mi proyecto?',
-    a: 'Depende del proyecto: un sitio web suele tomar de 2 a 4 semanas, y una app completa de 7 a 8 semanas. Te doy un tiempo estimado claro desde la propuesta.',
+    a: 'Alrededor de 2 meses desde que firmamos el contrato hasta que está operando. Un sitio web sencillo puede ser bastante menos. El tiempo exacto de tu caso va por escrito en la propuesta.',
   },
   {
     q: '¿El código y la información son míos?',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from './LiquidGlass';
+import ThemeToggle from './ThemeToggle';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
@@ -41,6 +42,7 @@ const Navbar = () => {
               <a href="#faq">FAQ</a>
             </div>
             <div className="nav-actions">
+              <ThemeToggle />
               <a href="#contact" className="btn-metallic nav-btn nav-desktop-cta">Cotizar</a>
               <button
                 className={`hamburger ${menuOpen ? 'open' : ''}`}

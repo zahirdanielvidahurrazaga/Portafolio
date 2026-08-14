@@ -1,5 +1,5 @@
 .showcase-section {
-  padding-bottom: var(--spacing-32);
+  padding-bottom: var(--section-pad-y);
 }
 
 .showcase-header {
@@ -43,7 +43,7 @@
   left: 5%;
   width: 90%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--border-color);
 }
 
 /* Even items: text left, phone right (default) */
@@ -58,6 +58,7 @@
 .showcase-glow {
   position: absolute;
   inset: 0;
+  opacity: var(--glow-opacity);
   pointer-events: none;
   z-index: 0;
 }
@@ -107,8 +108,8 @@
   font-weight: 500;
   padding: 0.3rem 0.85rem;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--tint-3);
+  border: 1px solid var(--border-color);
   color: var(--text-muted);
 }
 
@@ -133,7 +134,7 @@
   font-weight: 600;
   color: #fff;
   background: var(--accent-color);
-  box-shadow: 0 8px 26px rgba(10, 132, 255, 0.28);
+  box-shadow: 0 8px 26px rgba(var(--accent-rgb), 0.28);
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 .showcase-cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
@@ -172,37 +173,28 @@
   appearance: none;
 }
 
-/* Phone — full visible, no crop */
-.showcase-phone-wrap {
+/* El aparato lo dibuja <Mockup>: un PNG renderizado que YA trae su ángulo, su
+   material y sus reflejos. Aquí solo se decide el tamaño. Nada de rotateY por
+   CSS — se le sumaría al ángulo del render y saldría deformado. */
+.showcase-device-trigger--phone {
   display: flex;
   justify-content: center;
 }
-
-.showcase-phone-wrap .phone-mockup-wrapper {
-  margin: 0;
+/* OJO: el mockup de "teléfono" son DOS aparatos en una sola imagen, así que es
+   casi cuadrada (boda 1.13, pos 0.93, befit 0.81) — no una silueta vertical.
+   Tratarla como un teléfono suelto y limitarla a 280px la dejaba enana y con un
+   hueco enorme al lado. Llena su columna, igual que el mockup de escritorio. */
+.showcase-device-trigger--phone .mockup {
+  width: min(520px, 100%);
 }
-
-/* Desktop mockup with 3D tilt */
-.showcase-desktop-wrap {
-  position: relative;
+.showcase-device-trigger--mac .mockup {
   width: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.4s ease;
-  filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.6));
 }
 
-/* text-left → desktop on right tilts toward viewer on the left */
-.showcase-desktop-wrap.tilt-right {
-  transform: perspective(1400px) rotateY(-15deg) rotateX(2deg);
-}
-
-/* text-right → desktop on left tilts toward viewer on the right */
-.showcase-desktop-wrap.tilt-left {
-  transform: perspective(1400px) rotateY(15deg) rotateX(2deg);
-}
-
-.showcase-desktop-wrap:hover {
-  transform: perspective(1400px) rotateY(0deg) rotateX(0deg) !important;
+@media (prefers-reduced-motion: no-preference) {
+  .showcase-device-trigger:hover .mockup {
+    transform: translateY(-8px) scale(1.015);
+  }
 }
 
 /* ── Responsive ── */
@@ -222,21 +214,10 @@
   .showcase-description {
     max-width: 100%;
   }
-
-  /* Flatten tilt on small screens */
-  .showcase-desktop-wrap.tilt-right,
-  .showcase-desktop-wrap.tilt-left {
-    transform: none;
-  }
 }
 
 @media (max-width: 600px) {
   .showcase-item {
-    padding: var(--spacing-12) var(--spacing-4);
-  }
-
-  .showcase-phone-wrap .phone-mockup-frame {
-    transform: scale(0.85);
-    transform-origin: top center;
+    padding: var(--spacing-8) var(--spacing-4);
   }
 }

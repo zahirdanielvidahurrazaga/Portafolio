@@ -3,49 +3,41 @@ import { motion } from 'framer-motion';
 import '../styles/ProcesoTrabajo.css';
 
 const ProcesoTrabajo = () => {
-  // ⚠️ Los tiempos son ESTIMADOS de referencia; confírmalos/ajústalos a tu realidad.
+  // Los tiempos POR PASO se quitaron el 2026-08-13: los había estimado yo y el
+  // usuario nunca los validó. Él confirmó UNO solo —~2 meses de la firma del
+  // contrato a producción— y ese vive en el encabezado. Cinco estimaciones
+  // inventadas junto a un dato real restan, no suman.
+  //
+  // De 7 pasos a 5 (2026-08-13). "Formalización del Proyecto" (firmar el acuerdo)
+  // y "Sincronización Continua" (juntas de avance) son higiene del trabajo, no
+  // razones por las que un dueño de negocio contrata: ocupaban 2 de las 7
+  // casillas y ~0.6 pantallas de móvil. No se perdió el mensaje — la firma vive
+  // ahora dentro de "Propuesta y Acuerdo" y las juntas dentro de "Desarrollo".
   const steps = [
     {
       num: "01",
-      time: "1–2 días",
       title: "Descubrimiento y Diagnóstico",
       desc: "Charla inicial donde entendemos tu negocio a fondo, identificando necesidades clave y procesos a optimizar."
     },
     {
       num: "02",
-      time: "3–5 días",
-      title: "Arquitectura de la Solución",
-      desc: "Diseñamos y te presentamos una propuesta tecnológica detallada con el software ideal para tus objetivos."
+      title: "Propuesta y Acuerdo",
+      desc: "Te presento una propuesta tecnológica detallada y la cerramos por escrito: alcance, tiempos y costo claros antes de escribir una línea de código."
     },
     {
       num: "03",
-      time: "1 día",
-      title: "Formalización del Proyecto",
-      desc: "Aseguramos la transparencia, los tiempos y los compromisos mediante la firma de nuestro acuerdo de desarrollo."
+      title: "Ingeniería y Desarrollo",
+      desc: "Construyo tu sistema y te muestro avances cada semana, en persona o en línea, para que nunca te enteres del resultado hasta el final."
     },
     {
       num: "04",
-      time: "2–6 semanas",
-      title: "Ingeniería y Desarrollo",
-      desc: "Comenzamos la construcción de tu ecosistema utilizando las tecnologías más avanzadas y robustas del mercado."
+      title: "Pruebas y Refinamiento",
+      desc: "Auditorías y ajustes precisos sobre la versión casi terminada, para que llegue fluida y sin errores a manos de tu equipo."
     },
     {
       num: "05",
-      time: "Continuo",
-      title: "Sincronización Continua",
-      desc: "Mantenemos una comunicación constante, ya sea presencial o en línea, para mostrarte los avances y asegurar el alineamiento."
-    },
-    {
-      num: "06",
-      time: "3–7 días",
-      title: "Pruebas y Refinamiento",
-      desc: "Realizamos auditorías y ajustes precisos de la versión casi terminada para garantizar una calidad Apple-like, fluida y sin errores."
-    },
-    {
-      num: "07",
-      time: "1–2 días",
       title: "Lanzamiento y Entrega",
-      desc: "Desplegamos tu proyecto finalizado, listo para operar, escalar y llevar tu negocio al siguiente nivel tecnológico."
+      desc: "Despliego tu proyecto listo para operar, con tu equipo capacitado y todo funcionando en producción."
     }
   ];
 
@@ -56,7 +48,10 @@ const ProcesoTrabajo = () => {
 
       <div className="process-header text-center">
         <h2>Ingeniería de Precisión.</h2>
-        <p className="text-muted">Siete pasos para transformar tu negocio, con tiempos claros desde el inicio.</p>
+        <p className="text-muted">
+          Cinco pasos para transformar tu negocio. De la firma del contrato a
+          producción: alrededor de <strong>2 meses</strong>.
+        </p>
       </div>
 
       <div className="timeline">
@@ -71,7 +66,6 @@ const ProcesoTrabajo = () => {
           >
             <div className="timeline-num">{step.num}</div>
             <div className="timeline-content">
-              <span className="timeline-time">{step.time}</span>
               <h3>{step.title}</h3>
               <p>{step.desc}</p>
             </div>

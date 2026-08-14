@@ -14,16 +14,16 @@
   height: 60px;
   width: 90%;
   max-width: 1000px;
-  background: rgba(30, 30, 30, 0.02);
+  background: var(--nav-bg);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: 9999px; /* Pill shape */
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden; /* recorta el canvas de cristal al pill */
 }
@@ -38,9 +38,9 @@
 }
 
 .apple-navbar.scrolled {
-  background: rgba(20, 20, 20, 0.28);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  background: var(--nav-bg-scrolled);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lg);
 }
 
 .nav-container {
@@ -79,7 +79,7 @@
 
 .nav-links a:hover {
   opacity: 1;
-  color: #fff;
+  color: var(--text-strong);
 }
 
 .nav-actions {
@@ -129,10 +129,10 @@
   margin-inline: auto;
   width: 90%;
   max-width: 420px;
-  background: rgba(18, 18, 18, 0.96);
+  background: var(--menu-bg);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: 24px;
   z-index: 998;
   padding: 1.25rem;
@@ -152,8 +152,8 @@
 }
 
 .mobile-menu a:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #fff;
+  background: var(--tint-3);
+  color: var(--text-strong);
 }
 
 .mobile-menu .mobile-cta {
@@ -161,6 +161,9 @@
   text-align: center;
   margin-top: 0.5rem;
   padding: 0.85rem 1rem;
+  /* `.mobile-menu a` (0,1,1) le gana a `.btn-metallic` (0,1,0) y le imponía
+     --text-color. Va sobre azul sólido: siempre blanco. */
+  color: #fff;
 }
 
 @media (max-width: 768px) {

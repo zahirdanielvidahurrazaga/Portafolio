@@ -30,6 +30,7 @@ uniform vec2  u_res;     // tamaño del canvas en px
 uniform float u_radius;  // radio de esquina (rect redondeado), en unidades-y
 uniform float u_shape;     // 0 = rect redondeado, 1 = círculo
 uniform float u_intensity; // 1 = fuerte (botón); <1 = más sutil/transparente
+uniform float u_tone;      // 1 = tema oscuro (brillo blanco); 0 = tema claro (filo oscuro)
 
 // SDF de rectángulo redondeado (p centrado, b = media-extensión, r = radio)
 float sdRoundRect(vec2 p, vec2 b, float r) {
@@ -68,34 +69,42 @@ void main() {
 
   vec3 col = vec3(0.0);
 
+  // El cristal se dibuja con el MISMO relieve en los dos temas; lo que cambia es
+  // el color de la luz. Sobre fondo oscuro el filo brilla en blanco; sobre fondo
+  // claro un brillo blanco sería invisible, así que el filo se vuelve sombra.
+  vec3 luz     = mix(vec3(0.10, 0.11, 0.14), vec3(1.00), u_tone);
+  vec3 luzSpec = mix(vec3(0.13, 0.14, 0.18), vec3(0.95, 0.97, 1.00), u_tone);
+
   // Banda refractiva del borde (luz neutra que se concentra en el filo, tipo
   // lente). Sin color: cristal claro.
   float band = smoothstep(0.5, 1.0, bend);
-  col += vec3(0.5) * band;
+  col += luz * 0.5 * band;
 
   // Especular: luz desde arriba-izquierda concentrada en el borde.
   vec2 L = normalize(vec2(-0.5, 0.82));
   float spec = pow(clamp(dot(n, L), 0.0, 1.0), 2.2) * bend;
-  col += vec3(0.95, 0.97, 1.0) * spec * 0.75;
+  col += luzSpec * spec * 0.75;
 
   // Barrido de luz que viaja (mata lo "estático").
   vec2 sd = normalize(vec2(0.7, 0.7));
   float proj = dot(p, sd) / aspect;                 // ~[-0.5, 0.5]
   float pos = fract(u_time * 0.16) * 1.6 - 0.8;     // recorre la lente
   float sweep = smoothstep(0.14, 0.0, abs(proj - pos));
-  col += vec3(1.0) * sweep * (0.18 + 0.5 * bend);
+  col += luz * sweep * (0.18 + 0.5 * bend);
 
-  // Línea de filo brillante (highlight nítido del cristal), blanco puro.
+  // Línea de filo nítida (highlight del cristal).
   float line = smoothstep(0.0, aa * 2.5, -d) - smoothstep(aa * 2.5, aa * 8.0, -d);
-  col += vec3(1.0) * max(line, 0.0) * 0.55;
+  col += luz * max(line, 0.0) * 0.55;
 
   // Reflejo superior interno tenue.
   float topHi = smoothstep(0.2, 0.55, edge) * smoothstep(0.5, 1.0, uv.y);
-  col += vec3(0.14) * topHi;
+  col += mix(vec3(0.02), vec3(0.14), u_tone) * topHi;
 
   // Casi transparente en el centro (se ve el frost real de CSS); sólido al filo.
   // La intensidad controla cuánto "cuerpo" tiene el cristal (transparencia).
-  float alpha = mask * clamp((0.07 + 0.85 * fres + sweep * 0.25) * u_intensity, 0.0, 1.0);
+  // En tema claro se baja: un filo oscuro pesa más a la vista que uno blanco.
+  float alphaTema = mix(0.6, 1.0, u_tone);
+  float alpha = mask * clamp((0.07 + 0.85 * fres + sweep * 0.25) * u_intensity * alphaTema, 0.0, 1.0);
   gl_FragColor = vec4(col, alpha);
 }
 `;
@@ -154,11 +163,13 @@ export function createLiquidGlass(canvas, opts = {}) {
     radius: gl.getUniformLocation(prog, 'u_radius'),
     shape: gl.getUniformLocation(prog, 'u_shape'),
     intensity: gl.getUniformLocation(prog, 'u_intensity'),
+    tone: gl.getUniformLocation(prog, 'u_tone'),
   };
 
   gl.uniform1f(u.shape, opts.shape === 'circle' ? 1 : 0);
   gl.uniform1f(u.radius, opts.radius ?? 0.5);
   gl.uniform1f(u.intensity, opts.intensity ?? 1.0);
+  gl.uniform1f(u.tone, opts.tone ?? 1.0);
 
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let w = 0;

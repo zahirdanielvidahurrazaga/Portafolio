@@ -6,11 +6,15 @@
 //  - website:   URL pública para el botón "Visitar sitio web".
 //  - platforms: ['iOS', 'Android', 'Web'] (chips).
 //  - heroImage: captura del hero del modal.
-//  - walkthrough: RECORRIDO función por función. Cada item:
-//       { icon, title, desc, image }
-//       icon  = nombre de ícono de lucide-react (ver ICONS en ProjectModal).
-//       image = ruta de la captura de ESA función (o null = placeholder elegante).
-//     👉 Para enriquecerlo: pon la captura en /public/screenshots y referénciala aquí.
+//  - mockups:   LO QUE SE MUESTRA HOY. Un mockup del sitio web + el intro de la
+//       app (entrada y login), nada más. Viene de la retroalimentación de 2026-08-13:
+//       enseñar las 24 pantallas de una app es un manual de usuario, no un caso de
+//       estudio. Cada imagen trae `src` (el render de Rotato, con fondo transparente
+//       y SIN sombra horneada) y `fallback` (la captura plana, que se usa sola
+//       mientras el render no exista). Ver CLAUDE.md.
+//  - walkthrough: (YA NO SE RENDERIZA) recorrido función por función. Se conserva
+//       porque son capturas y textos reales que puede que reusemos; no lo borres
+//       sin avisar.
 
 const allProjects = [
   {
@@ -21,7 +25,7 @@ const allProjects = [
     description:
       'PWA y app nativa (iOS / Android) para un estudio de pilates premium: reserva de clases, membresías con acceso por QR, una cafetería con pago nativo estilo Uber Eats y un panel de administración en tiempo real.',
     result:
-      'Reemplazó las reservas por WhatsApp y el control manual de membresías: reservas, acceso por QR, cafetería con pago nativo y panel en tiempo real en una sola app, publicada en App Store y Google Play.',
+      'Reemplazó las reservas por WhatsApp y el control manual de membresías: reservas, pase de acceso en Apple y Google Wallet, cafetería con pago nativo y panel en tiempo real en una sola app, publicada en App Store y Google Play.',
     tags: ['React', 'Capacitor', 'Supabase', 'Stripe', 'Apple Pay'],
     type: 'phone',
     // Imagen estática del card en el home (hero de marca, no rota).
@@ -31,6 +35,18 @@ const allProjects = [
     website: 'https://befitlab.app',
     platforms: ['iOS', 'Android', 'Web (PWA)'],
     heroImage: '/screenshots/befit-home.png',
+    mockups: {
+      web: {
+        src: '/mockups/befit-mac.webp',
+        fallback: '/screenshots/befit-web.jpg',
+        caption: 'El sitio público en befitlab.app: clases, horarios, precios y cafetería.',
+      },
+      app: {
+        src: '/mockups/befit-phones.webp',
+        fallback: '/screenshots/befit-onboarding.png',
+        caption: 'Bienvenida de marca y acceso al portal personal de cada clienta.',
+      },
+    },
     walkthrough: [
       // ───── Perfil CLIENTA ─────
       {
@@ -231,6 +247,18 @@ const allProjects = [
     accent: '#1E50B4',
     platforms: ['Web', 'iOS', 'Android'],
     heroImage: null,
+    mockups: {
+      web: {
+        src: '/mockups/pos-mac.webp',
+        fallback: '/screenshots/pos-desktop-1.jpeg',
+        caption: 'Historial de ventas y métricas financieras, en tiempo real.',
+      },
+      app: {
+        src: '/mockups/pos-phones.webp',
+        fallback: '/screenshots/pos-admin-login.png',
+        caption: 'El dueño trae la tienda en el bolsillo.',
+      },
+    },
     walkthrough: [
       // ───── Perfil EMPLEADO — formato PC (navegador) ─────
       {
@@ -341,6 +369,14 @@ const allProjects = [
     accent: '#BF5AF2',
     platforms: ['Web'],
     heroImage: '/screenshots/boda-album.jpg',
+    // Sin `web`: este proyecto es solo móvil (se entra por QR desde el celular).
+    mockups: {
+      app: {
+        src: '/mockups/boda-phones.webp',
+        fallback: '/screenshots/boda-entrada.jpg',
+        caption: 'Los invitados entran escaneando un QR en la mesa.',
+      },
+    },
     walkthrough: [
       {
         icon: 'QrCode',

@@ -20,7 +20,7 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          Ingeniería en Mecatrónica · Software + Hardware
+          Apps móviles · Sitios web · Punto de venta
         </motion.div>
 
         <motion.h1

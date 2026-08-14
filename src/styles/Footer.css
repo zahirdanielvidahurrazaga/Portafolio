@@ -1,6 +1,6 @@
 .footer-section {
-  background: #000;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--bg-color);
+  border-top: 1px solid var(--border-subtle);
 }
 
 /* ── CTA headline ── */
@@ -42,8 +42,8 @@
 }
 
 .footer-form-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--tint-1);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: var(--spacing-8);
   backdrop-filter: blur(20px);
@@ -79,8 +79,8 @@
 .form-field textarea {
   width: 100%;
   padding: 0.85rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--tint-2);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-color);
   font-family: var(--font-family);
@@ -92,14 +92,14 @@
 
 .form-field input::placeholder,
 .form-field textarea::placeholder {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--text-placeholder);
 }
 
 .form-field input:focus,
 .form-field textarea:focus {
   outline: none;
   border-color: var(--accent-color);
-  background: rgba(10, 132, 255, 0.05);
+  background: var(--accent-soft);
 }
 
 /* Custom select */
@@ -110,8 +110,8 @@
 .form-select-wrap select {
   width: 100%;
   padding: 0.85rem 2.5rem 0.85rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--tint-2);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-color);
   font-family: var(--font-family);
@@ -125,11 +125,11 @@
 .form-select-wrap select:focus {
   outline: none;
   border-color: var(--accent-color);
-  background: rgba(10, 132, 255, 0.05);
+  background: var(--accent-soft);
 }
 
 .form-select-wrap select option {
-  background: #1d1d1f;
+  background: var(--card-bg);
   color: var(--text-color);
 }
 
@@ -161,13 +161,13 @@
   justify-content: center;
   gap: 0.5rem;
   transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 20px rgba(10, 132, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(var(--accent-rgb), 0.3);
 }
 
 .form-submit:hover:not(:disabled) {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 8px 28px rgba(10, 132, 255, 0.45);
+  box-shadow: 0 8px 28px rgba(var(--accent-rgb), 0.45);
 }
 
 .form-submit:disabled {
@@ -186,7 +186,7 @@
 
 .form-error {
   font-size: 0.85rem;
-  color: #ff453a;
+  color: var(--danger-color);
   margin-top: var(--spacing-2);
   text-align: center;
 }
@@ -204,14 +204,14 @@
 .success-icon {
   width: 56px;
   height: 56px;
-  background: rgba(52, 199, 89, 0.15);
-  border: 1px solid rgba(52, 199, 89, 0.4);
+  background: rgba(var(--success-rgb), 0.15);
+  border: 1px solid rgba(var(--success-rgb), 0.4);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.4rem;
-  color: #34c759;
+  color: var(--success-color);
 }
 
 .footer-success h3 {
@@ -235,8 +235,8 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.5rem 1.2rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--tint-2);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
   color: var(--text-muted);
   font-size: 0.9rem;
@@ -245,7 +245,7 @@
 }
 
 .direct-pill:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--border-strong);
   color: var(--text-color);
 }
 
@@ -253,16 +253,16 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #34c759;
+  background: var(--success-color);
   flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(52, 199, 89, 0.6);
+  box-shadow: 0 0 6px rgba(var(--success-rgb), 0.6);
 }
 
 /* ── Bottom bar ── */
 .footer-bottom {
   text-align: center;
   padding: var(--spacing-6);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-subtle);
   color: var(--text-muted);
   font-size: 0.85rem;
 }

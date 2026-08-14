@@ -1,0 +1,35 @@
+.theme-toggle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  margin-right: var(--spacing-2);
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-color);
+  background: var(--tint-2);
+  border: 1px solid var(--border-color);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--tint-4);
+  border-color: var(--border-strong);
+  color: var(--text-strong);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* El icono se posiciona absoluto para que el saliente y el entrante compartan
+   el centro durante el cruce (si no, el botón "salta" de tamaño). */
+.theme-toggle-icon {
+  position: absolute;
+  display: grid;
+  place-items: center;
+}
