@@ -133,9 +133,10 @@ Motivo: al mostrar el sitio, a varias personas **no les gustó que fuera solo os
 - **Inutilizar un QR** sin que pierda el look: PIL, revolver ~45% de los módulos de datos (rebasa la corrección de errores → indecodificable) dejando intactas las 3 esquinas. (Privacidad: no publicar QR funcional de galería privada.)
 - **Imágenes del usuario** suelen llegar a `~/Downloads` como `IMG_*.HEIC`/`.jpg`, o copiadas en el portapapeles (a veces como ARCHIVO Finder → `osascript -e 'POSIX path of (the clipboard as «class furl»)'`; a veces es HTML de Canva sin imagen usable).
 
-## Estado (al 2026-08-13) — modo claro HECHO en local, SIN desplegar
-Último commit en `main`: `f7bd19a` (video de testimonio + reorden), ya en vivo en Cloudflare.
-Encima hay cambios **sin commitear**: tema claro/oscuro completo.
+## Estado (al 2026-08-14) — DESPLEGADO
+Commit **`0f9ead6`** en `main` → Cloudflare Pages lo publica solo. Incluye todo lo de la sesión
+2026-08-13: tema claro/oscuro, mockups reales, modal reescrito, recorte de la página, posicionamiento
+sin mecatrónica y el carrusel de servicios que se abre solo.
 
 ### Retroalimentación de la gente a la que Zahir le mostró el sitio (2026-08-13)
 Tres observaciones, que dirigen el trabajo actual:
