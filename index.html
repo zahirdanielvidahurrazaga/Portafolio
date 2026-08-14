@@ -2,7 +2,14 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <!-- Marca: tile azul con la Z. El SVG lo usan los navegadores modernos; el PNG y el .ico
+         son respaldo (Safari viejo, Windows), y el apple-touch-icon es para "Agregar a inicio"
+         en iPhone. La Z del SVG es TRAZO, no texto: se ve igual sin la fuente SF Pro. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
 
@@ -15,19 +22,26 @@
     <meta name="author" content="Zahir Daniel Vidahurrázaga Marín" />
 
     <!-- Open Graph (vista previa al compartir en WhatsApp / redes) -->
-    <!-- ⚠️ Al desplegar: cambia og:url y og:image a la URL ABSOLUTA de tu dominio
-         (ej. https://tudominio.com/og-image.jpg) para que el preview funcione en todas las apps. -->
+    <!-- ⚠️ Al conectar dominio propio: cambiar el dominio en og:url, og:image y twitter:image.
+         Van en URL ABSOLUTA a propósito: varias apps no resuelven rutas relativas.
+         ⚠️ WhatsApp CACHEA la vista previa por URL. Si cambias el diseño de la imagen,
+         renómbrala (og-image-v3.jpg…) o seguirá enseñando la vieja durante días. -->
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_MX" />
     <meta property="og:site_name" content="Zahir Vidahurrázaga" />
+    <meta property="og:url" content="https://zahirportafolio.pages.dev/" />
     <meta property="og:title" content="Software a tu medida: que se adapte a ti, no tú a él." />
     <meta
       property="og:description"
       content="Apps móviles, sitios web, e-commerce, POS y automatización a la medida para tu negocio. Soluciones reales, ya en producción."
     />
-    <meta property="og:image" content="/og-image.jpg" />
+    <meta property="og:image" content="https://zahirportafolio.pages.dev/og-image-v2.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Zahir Vidahurrázaga — software a tu medida: que se adapte a ti, no tú a él."
+    />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -36,7 +50,7 @@
       name="twitter:description"
       content="Apps, sitios web, e-commerce, POS y automatización a la medida para tu negocio. Soluciones reales, ya en producción."
     />
-    <meta name="twitter:image" content="/og-image.jpg" />
+    <meta name="twitter:image" content="https://zahirportafolio.pages.dev/og-image-v2.jpg" />
 
     <!-- Anti-parpadeo: fija el tema en el <html> ANTES de pintar. Sin esto, la
          página aparece un instante en oscuro y luego salta a claro. Debe ir en

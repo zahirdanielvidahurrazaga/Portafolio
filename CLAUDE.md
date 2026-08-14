@@ -115,9 +115,59 @@ Motivo: al mostrar el sitio, a varias personas **no les gustó que fuera solo os
 - Prop `intensity` (botón flotante 1.0; navbar 0.45; pestañas del modal 0.6). Patrón: padre `position:relative; overflow:hidden`, `<LiquidGlass>` absolute inset:0 z-index:0, contenido z-index:1.
 - ⚠️ **CAVEAT HMR:** el `useEffect` crea el contexto WebGL una vez; editar `liquidGlass.js` NO lo recrea → **reiniciar dev server** + refresh fuerte para ver cambios del shader.
 
+## Marca: logo y favicon (2026-08-14)
+Antes el favicon era **un rayo morado `#863bff` que venía de la plantilla original** — ni era suyo ni
+era su azul. Ahora hay marca propia: **tile redondeado con el degradado azul (`#0A84FF → #0052CC`) y
+una Z blanca**. Se eligió entre 4 candidatos viéndolos **a 16px**, que es donde un logo se rompe.
+- ⚠️ **La Z es un TRAZO, no texto.** Un `<text font-family="-apple-system">` dentro de un SVG lo
+  resuelve *el sistema que lo abre*: en Windows/Android saldría con otra fuente. Se extrajo el glifo
+  real de **SF Pro Display Bold** con `fontTools` (`instancer` a `wght=700, opsz=96`, `SVGPathPen`) y
+  se horneó como `<path>`. **SFNS.ttf es fuente VARIABLE**: hay que instanciarla, no basta abrirla.
+  `fontTools` no está en esta Mac; se instaló con `pip3 install --target` en el scratchpad.
+- Archivos en `public/`: **`favicon.svg`** (el bueno, vectorial) + `favicon-32.png` / `favicon-96.png`
+  / `favicon.ico` (respaldo: Safari viejo, Windows) + **`apple-touch-icon.png`** (180×180).
+  ⚠️ El apple-touch-icon va **a sangre, con `rx=0`**: iOS le pone sus propias esquinas redondeadas y
+  si el PNG ya trae las suyas queda doble redondeo.
+  Los PNG se generan desde el mismo SVG con playwright (`logo/iconos.mjs`), así nunca se despegan.
+- **En la navbar** va la marca junto al nombre (`.nav-logo-mark`, 26px).
+  ⚠️ Al volver `.nav-logo` un flex, el nombre pasó a ser un ítem encogible y **se partía en
+  "Zahir / Vidahurrázaga"** en teléfonos: se arregla con `white-space: nowrap` (sí cabe, son 141px de
+  188 disponibles a 320px). Abajo de **340px** el nombre se esconde y queda solo la marca.
+  Medido: hueco logo↔acciones de 33-75px entre 360 y 430px.
+
 ## SEO / compartir
-- `index.html` con `lang=es`, title, meta description, **Open Graph + Twitter Card**. Imagen de marca `public/og-image.jpg` (1200×630, generada con PIL).
-- ⚠️ **PENDIENTE al tener dominio:** cambiar `og:image`/`og:url` a URL **ABSOLUTA** (ej. `https://dominio.com/og-image.jpg`) para que el preview de WhatsApp funcione en todas las apps.
+- `index.html` con `lang=es`, title, meta description, **Open Graph + Twitter Card**.
+- **Imagen al compartir: `public/og-image-v2.jpg`** (1200×630, 66 KB). Diseño: **avatar redondo con
+  su cara + nombre y servicios** arriba, titular, y **2 sellos** (App Store/Play · negocios reales),
+  todo a ras del margen izquierdo, sobre los glows azul/morado del hero. Se genera con
+  **`tools/marca/og.mjs` + `og.html`**: se diseña como página web y se fotografía, así se edita con
+  CSS y no a mano con PIL.
+  - **Va en OSCURO aunque el sitio tenga los dos temas.** Se probaron 3 versiones claras y el usuario
+    prefirió la oscura: contra la burbuja verde clara de WhatsApp destaca más. **La imagen NO tiene
+    nada que ver con el tema del sitio** (es un JPG aparte; el sitio sigue su switch sol/luna).
+  - **La foto arrancó ocupando el 40% a cuerpo completo y el usuario la sintió con demasiado
+    protagonismo** → pasó a círculo de 118px, ~4% del área. Ojo: `sobre-mi.jpg` es de cuerpo entero,
+    así que el círculo necesita un **recorte a la cara** (la caja va en `CAJA` dentro de `og.mjs`);
+    metida tal cual, la cabeza sale diminuta y la foto deja de aportar confianza.
+  - **Ritmo vertical AGRUPADO, no huecos iguales:** 46px entre la identidad y el titular, 26px entre
+    el titular y los sellos. Con los tres a 34px iguales, los sellos se leían como un bloque suelto en
+    vez de como la prueba de lo que promete el titular.
+  - Se evaluó **sangrar el titular hasta el eje del nombre** (x=206, dejando el avatar colgando en el
+    margen) para no tener dos alineaciones izquierdas compitiendo; el usuario prefirió **todo a ras**.
+    La variante con sangría está descrita aquí por si se retoma.
+  - La anterior decía **"INGENIERÍA EN MECATRÓNICA"**, que ya se había quitado del posicionamiento en
+    agosto: la imagen se había quedado rezagada. Al cambiarla revisar SIEMPRE que el texto horneado
+    siga coincidiendo con el discurso del sitio.
+  - ⚠️ **WhatsApp cachea la vista previa por URL.** Sobrescribir el archivo con el mismo nombre NO
+    basta: seguiría enseñando la vieja por días. **Hay que renombrar** (`og-image-v3.jpg`…) y
+    actualizar los 2 metas (`og:image` y `twitter:image`).
+  - ⚠️ Ojo con el ancho del titular: a 58px "…no tú a él." se iba a un tercer renglón y se veía roto.
+  - **Cómo se decidió:** renderizando cada opción **dentro de una burbuja de WhatsApp a escala real**
+    (la imagen se ve a 336px de ancho, o sea a poco más de la cuarta parte). Un diseño que se ve bien
+    a 1200px puede no registrar nada a ese tamaño. Vale la pena rehacer esa hoja antes de cambiarla.
+- **`og:url` / `og:image` / `twitter:image` ya van en URL ABSOLUTA** (`https://zahirportafolio.pages.dev/…`),
+  porque varias apps no resuelven rutas relativas. **PENDIENTE al tener dominio propio:** cambiar el
+  dominio en esos 3 metas.
 
 ## Trucos / gotchas útiles
 - **Redefinir una variable NO alcanza al texto heredado.** Fijar `--text-color` en un contenedor no
@@ -204,7 +254,12 @@ Cómo se midió: `medir.mjs` en el scratchpad (playwright + Chrome del sistema) 
 ### Pendientes
 - [ ] **Citas reales** de testimonios (Carlos de Plásticos Tito, dueña de Be Fit Lab) — hoy son borrador.
 - [ ] **Dominio** + conectarlo en Cloudflare. Recomendados: `zahir.dev` o `zahirdaniel.com` (evitar el apellido completo). Comprar en Cloudflare Registrar.
-- [ ] **og:image a URL absoluta** una vez haya dominio.
+- [x] ~~og:image a URL absoluta~~ — **HECHO 2026-08-14**, apuntando a `zahirportafolio.pages.dev`.
+      Falta solo cambiar el dominio ahí cuando haya uno propio.
+- [x] ~~Logo propio~~ — **HECHO 2026-08-14** (el rayo morado era de la plantilla).
+- [ ] **Foto de la imagen al compartir**: hoy usa `sobre-mi.jpg`, donde Zahir sale con gorra y ropa
+      deportiva. Él la aprobó sabiéndolo. Si algún día hay retrato sin gorra, se cambia el archivo,
+      se reencuadra `CAJA` en `tools/marca/og.mjs` y se regenera.
 - [ ] Confirmar/ajustar **tiempos** del Proceso.
 - [ ] **Revisión final completa en móvil** de arriba a abajo.
 - [x] ~~Videos de experiencia de clientes~~ — **Be Fit Lab LISTO (2026-08-04)**. Falta el de Plásticos Tito (Carlos), si se consigue.
@@ -228,4 +283,5 @@ scratchpad. Sirve para capturas a 1280/390px, abrir modales, y leer estado real 
 sacar fotogramas de un video, cargarlo en una página local con `<video>`, hacer seek y tomar screenshot;
 para leer duración/resolución/bitrate, `mdls`; para el orden de átomos MP4 (faststart), Python plano.
 
-Mensajes de commit terminan con: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+Mensajes de commit terminan con `Co-Authored-By: Claude <modelo> <noreply@anthropic.com>`, con el
+modelo que realmente hizo el commit (los de agosto 2026 en adelante van con Opus 5).

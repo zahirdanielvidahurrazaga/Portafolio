@@ -31,7 +31,9 @@ const Navbar = () => {
           <LiquidGlass shape="rounded" radius={0.5} intensity={0.45} className="nav-glass" />
           <div className="nav-container">
             <a href="#" className="nav-logo">
-              Zahir Vidahurrázaga
+              {/* alt vacío a propósito: el nombre de al lado ya dice la marca */}
+              <img src="/favicon.svg" alt="" className="nav-logo-mark" width="26" height="26" />
+              <span className="nav-logo-nombre">Zahir Vidahurrázaga</span>
             </a>
             <div className="nav-links">
               <a href="#about">Servicios</a>
