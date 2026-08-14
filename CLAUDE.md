@@ -129,11 +129,16 @@ una Z blanca**. Se eligió entre 4 candidatos viéndolos **a 16px**, que es dond
   ⚠️ El apple-touch-icon va **a sangre, con `rx=0`**: iOS le pone sus propias esquinas redondeadas y
   si el PNG ya trae las suyas queda doble redondeo.
   Los PNG se generan desde el mismo SVG con playwright (`logo/iconos.mjs`), así nunca se despegan.
-- **En la navbar** va la marca junto al nombre (`.nav-logo-mark`, 26px).
-  ⚠️ Al volver `.nav-logo` un flex, el nombre pasó a ser un ítem encogible y **se partía en
-  "Zahir / Vidahurrázaga"** en teléfonos: se arregla con `white-space: nowrap` (sí cabe, son 141px de
-  188 disponibles a 320px). Abajo de **340px** el nombre se esconde y queda solo la marca.
-  Medido: hueco logo↔acciones de 33-75px entre 360 y 430px.
+- ⚠️ **La marca NO va en la navbar.** Se probó al lado del nombre y el usuario la quitó: *"lo siento
+  repetitivo"* — la marca y el nombre completo dicen lo mismo pegados uno al lado del otro. La navbar
+  se queda solo con el nombre. No reponerla sin pedírselo.
+- ⚠️ **CACHÉ DE FAVICON:** los navegadores lo guardan en un almacén aparte que **ni un refresh
+  forzado limpia** — tras desplegar la marca nueva, la pestaña seguía enseñando el rayo morado.
+  Por eso los `<link rel="icon">` llevan **`?v=2`**. Si algún día se rediseña el ícono, **hay que
+  subir ese número**, igual que se renombra la imagen OG.
+- **Nombre en la navbar:** lleva `white-space: nowrap` y baja a `1.05rem` bajo 380px. Sin eso se
+  partía en "Zahir / Vidahurrázaga" a 320px (necesita 200px y solo hay 188). Era un defecto viejo,
+  no lo introdujo el logo.
 
 ## SEO / compartir
 - `index.html` con `lang=es`, title, meta description, **Open Graph + Twitter Card**.

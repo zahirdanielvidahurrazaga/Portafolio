@@ -5,11 +5,15 @@
     <!-- Marca: tile azul con la Z. El SVG lo usan los navegadores modernos; el PNG y el .ico
          son respaldo (Safari viejo, Windows), y el apple-touch-icon es para "Agregar a inicio"
          en iPhone. La Z del SVG es TRAZO, no texto: se ve igual sin la fuente SF Pro. -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
-    <link rel="icon" href="/favicon.ico" sizes="48x48" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- ⚠️ El `?v=` NO es decorativo: los navegadores guardan el favicon en un caché
+         aparte que ni un refresh forzado limpia, así que al cambiar la marca la
+         pestaña seguía enseñando la vieja. Cambiar el número obliga a pedirlo de
+         nuevo. Si algún día se rediseña el ícono, SUBIR ESTE NÚMERO. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png?v=2" />
+    <link rel="icon" href="/favicon.ico?v=2" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
 
