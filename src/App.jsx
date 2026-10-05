@@ -10,6 +10,7 @@ import ProcesoTrabajo from './components/ProcesoTrabajo';
 import Faq from './components/Faq';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
+import BarraScroll from './components/BarraScroll';
 import HeroRibbon from './components/HeroRibbon';
 import DiagonalReveal from './components/DiagonalReveal';
 import Nube from './components/Nube';
@@ -86,6 +87,7 @@ function App() {
 
       <Footer />
       <FloatingWhatsApp />
+      <BarraScroll />
     </div>
   );
 }

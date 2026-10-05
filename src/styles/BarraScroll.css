@@ -1,0 +1,50 @@
+/* Indicador de scroll (BarraScroll.jsx). Riel fino centrado a la derecha;
+   el pulgar se mueve con --p (0…1) y mide --tam del riel. */
+.barra-scroll {
+  position: fixed;
+  right: 14px;
+  top: 50%;
+  height: 30vh;
+  width: 2px;
+  transform: translateY(-50%);
+  z-index: 950;
+  /* Diferencia: blanco que se invierte con el fondo → se ve oscura sobre claro
+     y clara sobre oscuro (hueso, velo negro, tema oscuro) sin ajustes por sección */
+  mix-blend-mode: difference;
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 2px;
+  pointer-events: none;
+  transition: opacity 0.9s ease;
+}
+.barra-scroll-pulgar {
+  --p: 0;
+  --tam: 10%;
+  position: absolute;
+  left: -1px;
+  width: 4px;
+  height: var(--tam);
+  /* top = p × (riel − pulgar): llega exacto al fondo al final de la página */
+  top: calc(var(--p) * (100% - var(--tam)));
+  border-radius: 4px;
+  background: #fff;
+}
+/* Dónde empieza cada sección */
+.barra-scroll-marca {
+  position: absolute;
+  right: 4px;
+  width: 6px;
+  height: 1px;
+  background: #fff;
+  opacity: 0.55;
+}
+
+html.intro .barra-scroll {
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .barra-scroll {
+    right: 6px;
+    height: 24vh;
+  }
+}

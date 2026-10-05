@@ -494,6 +494,15 @@ a:hover {
 }
 
 /* Ocultar el botón flotante mientras un modal de proyecto está abierto */
+/* La barra nativa se esconde: la reemplaza BarraScroll.jsx (como lusion.co).
+   El scroll sigue funcionando igual (rueda, touch, teclado). */
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
+
 /* Pantalla de carga (html.intro, ver index.html y nube.js): mientras la nube
    arma ΚΛΙΖΣΝ no hay barra, ni botones, ni texto. Aparecen juntos al final. */
 /* Los textos de la apertura se esconden con su CONTENEDOR (.hero-kaizen-textos = la capa .hero-kaizen):

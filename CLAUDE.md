@@ -73,6 +73,12 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
       - ⚠️ La nube RELEE las escenas (`[data-nube]`) con un MutationObserver: antes las leía una sola vez y, tras
         una recarga en caliente, seguía buscando escenas viejas (el teléfono de Nosotros "no salía"). Editar
         `nube.js` en sí NO recrea la nube: recargar la página.
+      - **Barra de scroll propia** (`BarraScroll.jsx`, como lusion.co): riel fino a la derecha (30vh), pulgar = cuánto
+        va de la página y MARCAS donde empieza cada sección (ids en `SECCIONES`). `mix-blend-mode: difference` → se ve
+        sobre claro y oscuro. La barra nativa se esconde en index.css. Oculta durante html.intro.
+      - **Calidad en celular (2026-10-05):** se veía borrosa/rala en iPhone por (1) tope de DPR en 2 (iPhone es 3 →
+        lienzo estirado 1.5×), (2) solo 3200 partículas, (3) borde difuminado fijo que en puntos chicos se comía todo.
+        Ahora: DPR hasta 3, 5000 partículas en móvil, borde de ~1px físico (`1.2 / gl_PointSize`) en el shader.
       - **Sin polvo de fondo (pedido de Zahir):** las partículas SOLO se ven cuando forman algo; entre estaciones la
         nube ni calcula ni dibuja (`renderer.clear()` una vez). Llegan apareciendo desde toda la pantalla y al
         explotar se desvanecen. NO reponer el polvo ambiental.

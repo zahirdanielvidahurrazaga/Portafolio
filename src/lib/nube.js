@@ -309,7 +309,9 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   let vw = window.innerWidth;
   let vh = window.innerHeight;
   const movil = vw < 768;
-  const N = movil ? 3200 : 7000;
+  // Celular: 5000 (antes 3200 y las figuras se veían ralas). Un teléfono actual
+  // mueve esto sin problema: el cálculo es lineal y solo corre con forma en pantalla.
+  const N = movil ? 5000 : 7000;
   const rand = mulberry32(20261005);
 
   // Semillas por partícula (constantes)
@@ -358,17 +360,24 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
       attribute float aSize;
       uniform float uPR;
       varying float vAlpha;
+      varying float vPx;
       void main() {
         vAlpha = aAlpha;
         gl_PointSize = aSize * uPR;
+        vPx = gl_PointSize;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }`,
     fragmentShader: /* glsl */ `
       uniform vec3 uColor;
       varying float vAlpha;
+      varying float vPx;
       void main() {
         float d = length(gl_PointCoord - 0.5);
-        float a = smoothstep(0.5, 0.15, d) * vAlpha;
+        // Borde de ~1 píxel FÍSICO, sea cual sea el tamaño del punto. Antes era
+        // un difuminado fijo (0.15→0.5) que en pantallas chicas se comía casi
+        // todo el punto y en celular se veían manchitas en vez de puntos.
+        float borde = min(0.35, 1.2 / vPx);
+        float a = smoothstep(0.5, 0.5 - borde, d) * vAlpha;
         if (a < 0.01) discard;
         gl_FragColor = vec4(uColor, a);
       }`,
@@ -390,7 +399,9 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   const resize = () => {
     vw = window.innerWidth;
     vh = window.innerHeight;
-    const pr = Math.min(window.devicePixelRatio || 1, 2);
+    // Resolución real de la pantalla (iPhone = 3×). Con tope en 2 el lienzo se
+    // estiraba 1.5× y las partículas se veían borrosas en el celular.
+    const pr = Math.min(window.devicePixelRatio || 1, 3);
     renderer.setPixelRatio(pr);
     renderer.setSize(vw, vh, false);
     material.uniforms.uPR.value = pr;
