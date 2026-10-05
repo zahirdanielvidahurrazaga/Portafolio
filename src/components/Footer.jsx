@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SectionHead from './SectionHead';
 import '../styles/Footer.css';
 
-const WHATSAPP = '522221622676';
+const WHATSAPP = '528138833422';
 // Las opciones siguen a las tarjetas de "Lo que construimos": si alguien tocó
 // un servicio en el carrusel, espera encontrarlo aquí con el mismo nombre.
 // (Faltaba "Sitio web", que es de los servicios principales; y "Biometría"
