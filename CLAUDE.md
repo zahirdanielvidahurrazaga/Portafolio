@@ -140,6 +140,9 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
 
 ## Stack y despliegue
 - **React 19 + Vite 8**, Framer Motion, lucide-react.
+- **Dominio: `kaizenstudiomx.com`** (comprado en Cloudflare Registrar el 2026-10-05, renueva sola ~$10.46/año) +
+  `www`. Conectado como Custom domain al MISMO proyecto de Pages `zahirportafolio` (CNAME `@` y `www` →
+  `zahirportafolio.pages.dev`, proxied). og:url/og:image/twitter:image ya apuntan a él.
 - **Despliegue:** Cloudflare Pages. **`git push` a `main` auto-despliega.** Repo `github.com/zahirdanielvidahurrazaga/Portafolio`.
 - **Build:** `npx vite build` (rápido, <1s). **Dev:** `npm run dev -- --host` (para probar en iPhone en la IP de red; OJO la IP cambia, verla en el log de vite).
 - **REGLA DE TRABAJO:** trabajar en LOCAL; desplegar (push) hasta el final / cuando el usuario lo aprueba. Verificar con `npx vite build` tras cada cambio.
