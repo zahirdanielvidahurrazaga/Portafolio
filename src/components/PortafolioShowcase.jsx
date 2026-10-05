@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import Mockup from './Mockup';
 import ProjectModal from './ProjectModal';
+import ProyectosReel from './ProyectosReel';
+import SectionHead from './SectionHead';
 import { projects } from '../data/projects';
 import '../styles/PortafolioShowcase.css';
 
@@ -15,7 +17,7 @@ function portadaDe(project) {
   return app ? { ...app, kind: 'phone' } : null;
 }
 
-const ShowcaseItem = ({ project, index, onOpen }) => {
+const ShowcaseItem = ({ project, index, total, onOpen }) => {
   const isEven = index % 2 === 0;
   const portada = portadaDe(project);
 
@@ -27,12 +29,8 @@ const ShowcaseItem = ({ project, index, onOpen }) => {
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 0.8 }}
     >
-      {/* Glow background */}
-      <div
-        className="showcase-glow"
-        style={{ background: `radial-gradient(ellipse at center, rgba(${project.glow}, 0.18) 0%, transparent 65%)` }}
-      />
-
+      {/* Sin glow de color detrás (2026-10-05): con la paleta mármol se veían
+          como manchas. El color de cada proyecto vive solo en sus capturas. */}
       {/* Text block */}
       <motion.div
         className="showcase-text"
@@ -41,18 +39,17 @@ const ShowcaseItem = ({ project, index, onOpen }) => {
         viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.7, delay: 0.1 }}
       >
-        <span className="showcase-category">{project.category}</span>
+        <span className="showcase-category">
+          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')} — {project.category}
+        </span>
         <h2 className="showcase-title">{project.title}</h2>
         {/* El GANCHO, no el detalle: la tarjeta se lee en segundos y la
             descripción larga (209 caracteres en Be Fit Lab) hacía que las tres
             tarjetas ocuparan 3 pantallas de móvil. El caso completo está a un
             clic, en el modal. `description` queda en projects.js sin usarse. */}
         <p className="showcase-description">{project.tagline || project.description}</p>
-        <div className="showcase-tags">
-          {project.tags.map(tag => (
-            <span key={tag} className="showcase-tag">{tag}</span>
-          ))}
-        </div>
+        {/* Tecnologías como línea de créditos, no como píldoras */}
+        <p className="showcase-tags">{project.tags.join(' · ')}</p>
 
         <div className="showcase-cta-row">
           <button className="showcase-cta" onClick={() => onOpen(project)}>
@@ -106,20 +103,27 @@ const PortafolioShowcase = () => {
 
   return (
     <section id="portfolio" className="showcase-section">
-      <motion.div
-        className="showcase-header section-container"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-      >
-        <span className="showcase-eyebrow">Proyectos recientes</span>
-        <h2>Soluciones de Alto Nivel.</h2>
-        <p className="text-muted">Entra a cada uno para ver el sitio y la app.</p>
-      </motion.div>
+      {/* Entrada estilo Lusion: la laptop crece a pantalla completa */}
+      <ProyectosReel />
+      <div className="showcase-header section-container">
+        <SectionHead
+          num="04"
+          label="Proyectos"
+          lede="Entra a cada uno para ver el sitio y la app."
+        >
+          Soluciones <em>en producción</em>
+        </SectionHead>
+      </div>
 
       <div className="showcase-list">
         {projects.map((project, i) => (
-          <ShowcaseItem key={project.id} project={project} index={i} onOpen={setActive} />
+          <ShowcaseItem
+            key={project.id}
+            project={project}
+            index={i}
+            total={projects.length}
+            onOpen={setActive}
+          />
         ))}
       </div>
 

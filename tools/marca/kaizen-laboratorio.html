@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KaiZen · laboratorio de marca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=general-sans@400,500,600,700&f[]=clash-grotesk@500,600,700&f[]=cabinet-grotesk@500,700,800&f[]=switzer@400,500,600,700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Familjen+Grotesk:wght@500;600;700&family=Funnel+Display:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=Mona+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Geist:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  :root {
+    --a1: #0a84ff; --a2: #0052cc; --on: #fff;
+    --title: -apple-system, sans-serif; --body: -apple-system, sans-serif;
+    --tw: 700; --tls: -0.03em; --tcase: none;
+  }
+  body { font-family: Manrope, -apple-system, sans-serif; background: #0b0b0c; color: #f5f5f7; padding: 28px 16px 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 26px; }
+  .intro { color: #a1a1a6; line-height: 1.5; margin: 6px 0 24px; max-width: 760px; }
+  .controls { display: grid; gap: 14px; margin-bottom: 22px; position: sticky; top: 0; z-index: 5; background: #0b0b0cee; backdrop-filter: blur(10px); padding: 12px 0; }
+  .ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .ctl b { width: 92px; font-size: 13px; color: #a1a1a6; font-weight: 600; }
+  .chip { border: 1px solid #333; background: #161617; color: #f5f5f7; border-radius: 999px; padding: 7px 13px; font: 500 13px Manrope, sans-serif; cursor: pointer; display: flex; align-items: center; gap: 7px; }
+  .chip[aria-pressed="true"] { border-color: #f5f5f7; background: #2a2a2c; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; }
+  .note { font-size: 14px; color: #a1a1a6; margin: 8px 0 0; line-height: 1.5; min-height: 42px; }
+
+  /* ---------- Maqueta ---------- */
+  .site { --bg: #000; --bg2: #161617; --fg: #f5f5f7; --muted: #a1a1a6; --line: rgba(255,255,255,.1);
+    position: relative; overflow: hidden; border-radius: 24px; background: var(--bg); color: var(--fg); border: 1px solid #222; font-family: var(--body); }
+  .site.light { --bg: #fbfbfd; --bg2: #fff; --fg: #1d1d1f; --muted: #6e6e73; --line: rgba(0,0,0,.08); border-color: #ddd; }
+  .glow { position: absolute; width: 620px; height: 620px; border-radius: 50%; filter: blur(110px); opacity: .35; pointer-events: none; }
+  .glow.g1 { background: var(--a1); top: -260px; left: -160px; }
+  .glow.g2 { background: var(--a2); bottom: -300px; right: -180px; opacity: .25; }
+  .light .glow { opacity: .18; } .light .glow.g2 { opacity: .12; }
+  .nav { position: relative; margin: 18px auto 0; width: min(92%, 760px); display: flex; align-items: center; justify-content: space-between; padding: 12px 22px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 5%, transparent); border: 1px solid var(--line); font-size: 14px; }
+  .nav .links { display: flex; gap: 22px; color: var(--muted); }
+  .nav .cta { background: var(--a1); color: var(--on); padding: 7px 14px; border-radius: 999px; font-weight: 600; }
+  .hero { position: relative; text-align: center; padding: 84px 24px 64px; }
+  .eyebrow { display: inline-block; font-size: 13px; color: var(--muted); border: 1px solid var(--line); padding: 6px 14px; border-radius: 999px; margin-bottom: 26px; }
+  .hero h2 { font-family: var(--title); font-weight: var(--tw); letter-spacing: var(--tls); text-transform: var(--tcase); font-size: clamp(38px, 6.4vw, 78px); line-height: 1.02; max-width: 900px; margin: 0 auto; }
+  .grad { background: linear-gradient(120deg, var(--a1), var(--a2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--muted); font-size: 18px; line-height: 1.55; max-width: 560px; margin: 22px auto 30px; }
+  .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn { padding: 14px 24px; border-radius: 999px; font-weight: 600; font-size: 15px; font-family: var(--body); }
+  .btn.p { background: linear-gradient(135deg, var(--a1), var(--a2)); color: var(--on); }
+  .btn.s { border: 1px solid var(--line); color: var(--fg); }
+  .cards { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 28px 34px; }
+  .card { background: var(--bg2); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .card .tag { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--a1); }
+  .light .card .tag { filter: brightness(.8); }
+  .card h3 { font-family: var(--title); font-weight: var(--tw); letter-spacing: calc(var(--tls) / 2); text-transform: var(--tcase); font-size: 20px; margin: 8px 0 6px; }
+  .card p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } .nav .links { display: none; } }
+
+  .tabbar { display: flex; gap: 20px; align-items: center; margin: 18px 0 30px; flex-wrap: wrap; }
+  .tab { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 9px 14px; border-radius: 10px 10px 0 0; background: #2a2a2c; min-width: 250px; }
+  .tab.l { background: #e8e8ed; color: #1d1d1f; }
+  .bigicons { display: flex; gap: 14px; align-items: end; }
+
+  h3.sec { font-size: 18px; margin: 34px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .mini { border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px; cursor: pointer; border: 1px solid #222; background: #000; }
+  .mini .r { display: flex; align-items: center; gap: 12px; }
+  .mini span { font-size: 13px; color: #a1a1a6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>KaiZen · laboratorio de marca</h1>
+  <p class="intro">Combina color, tipografía y modo claro/oscuro, y ve cómo quedaría el sitio. El ícono ya es la Κ y el nombre es el wordmark ΚΛΙΖΣΝ. La tipografía elegida va en titulares y texto, no en el logo: el logo es un dibujo propio, y la letra del sitio debe acompañarlo sin copiarlo.</p>
+
+  <div class="controls">
+    <div class="ctl" id="c-color"><b>Color</b></div>
+    <div class="ctl" id="c-font"><b>Tipografía</b></div>
+    <div class="ctl" id="c-mode"><b>Modo</b></div>
+    <p class="note" id="note"></p>
+  </div>
+
+  <div class="site" id="site">
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="nav">
+      <svg class="wm" height="17" width="70" viewBox="-8 -10 498 120"><use href="#wm" /></svg>
+      <span class="links"><span>Servicios</span><span>Proyectos</span><span>Proceso</span></span>
+      <span class="cta">Cotizar</span>
+    </div>
+    <div class="hero">
+      <span class="eyebrow">Apps móviles · Sitios web · Punto de venta</span>
+      <h2>Evoluciona la forma en que <span class="grad">haces negocio</span></h2>
+      <p>Diseñamos y construimos el software que tu negocio necesita: apps, sitios y sistemas reales, ya en producción.</p>
+      <div class="btns"><span class="btn p">Cotiza tu proyecto</span><span class="btn s">Ver proyectos</span></div>
+    </div>
+    <div class="cards">
+      <div class="card"><span class="tag">App móvil</span><h3>Be Fit Lab</h3><p>Reservas, pagos y cafetería para un estudio de pilates.</p></div>
+      <div class="card"><span class="tag">Punto de venta</span><h3>Plásticos Tito</h3><p>Cobro, inventario y cortes en tiempo real.</p></div>
+      <div class="card"><span class="tag">Galería</span><h3>Álbum de bodas</h3><p>Los invitados suben fotos al instante con un QR.</p></div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab"><span id="fav16"></span>KaiZen · Software a la medida</div>
+    <div class="tab l"><span id="fav16l"></span>KaiZen · Software a la medida</div>
+    <div class="bigicons" id="big"></div>
+  </div>
+
+  <h3 class="sec">Todas las tipografías con el titular (toca una para probarla arriba)</h3>
+  <div id="fontcmp"></div>
+  <h3 class="sec">Todas las paletas de un vistazo (toca una para probarla arriba)</h3>
+  <div class="grid" id="grid"></div>
+</div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="wm" viewBox="-8 -10 498 120"><g fill="none" stroke="currentColor" stroke-width="13" stroke-linejoin="miter">
+    <path d="M7 0V100 M66 0 12 54 M30 37 70 100" /><path d="M92 100 132 6 172 100" /><path d="M201 0V100" />
+    <path d="M230 7H300L230 93H300" /><path d="M388 7H322L360 50 322 93H388" /><path d="M417 100V7L473 93V0" /></g></symbol>
+</defs></svg>
+
+<script>
+const PALETTES = [
+  { id: 'azul', name: 'Azul (el actual)', a1: '#0a84ff', a2: '#0052cc', on: '#fff', note: 'El de hoy, como referencia. Es el azul de Apple: seguro y conocido, pero genérico. Muchas marcas de tecnología y bancos usan uno igual.' },
+  { id: 'terracota', name: 'Terracota', a1: '#e0662f', a2: '#9c3214', on: '#fff', note: 'El naranja-arcilla de las vasijas griegas de figuras negras, junto al negro. Es cálido y artesanal, se siente hecho con cuidado. Ojo: se acerca al naranja de Be Fit Lab, que sale en tus proyectos.' },
+  { id: 'egeo', name: 'Egeo', a1: '#14b8a6', a2: '#0b6e7a', on: '#fff', note: 'El turquesa del mar Egeo. Es fresco, sigue siendo tech y se aleja del azul de banco.' },
+  { id: 'olivo', name: 'Oro olivo', a1: '#d4af37', a2: '#8a7420', on: '#111', note: 'El dorado de las coronas de laurel y los mosaicos. Se ve premium y es el más "griego". En modo claro el dorado pierde fuerza; hay que oscurecerlo un poco.' },
+  { id: 'indigo', name: 'Índigo', a1: '#7c6cff', a2: '#4330d6', on: '#fff', note: 'Violeta eléctrico. Es creativo y digital, de estudio de diseño, y combina muy bien con fondos 3D brillantes como los de Lusion.' },
+  { id: 'lima', name: 'Lima ácida', a1: '#c6f432', a2: '#7cb305', on: '#111', note: 'El más atrevido: verde neón sobre negro, muy de estudio creativo. Es memorable, pero en modo claro casi no se ve y hay que usar la versión oscura.' },
+  { id: 'coral', name: 'Coral', a1: '#ff5a5f', a2: '#c4213b', on: '#fff', note: 'Rojo-coral vivo. Es energético y humano, y se recuerda fácil.' },
+  { id: 'marmol', name: 'Mármol (mono)', a1: '#f5f2ea', a2: '#a8a29e', on: '#111', light: { a1: '#1d1d1f', a2: '#57534e', on: '#fff' }, note: 'Sin color: blanco hueso en oscuro y negro en claro, como mármol y tinta. Es el más elegante y atemporal, y deja que los proyectos pongan el color.' },
+];
+const FONTS = [
+  { id: 'space', name: 'Space Grotesk + Inter (ronda 1)', title: "'Space Grotesk'", body: 'Inter', tw: 700, tls: '-0.04em', note: 'La de la ronda 1, como referencia. Las de abajo van en la misma línea (grotescas modernas con carácter) pero con otro acabado.' },
+  { id: 'satoshi', name: 'Satoshi', title: 'Satoshi', body: 'Satoshi', tw: 700, tls: '-0.035em', note: 'Geométrica pero cálida. Es de las favoritas de los estudios digitales en 2025-26: moderna sin ser rara. Gratis para uso comercial (Fontshare).' },
+  { id: 'general', name: 'General Sans', title: "'General Sans'", body: "'General Sans'", tw: 600, tls: '-0.035em', note: 'Prima de Space Grotesk pero más pulida y menos "rara". Muy limpia en párrafos. Gratis (Fontshare).' },
+  { id: 'clash', name: 'Clash Grotesk + Inter', title: "'Clash Grotesk'", body: 'Inter', tw: 600, tls: '-0.025em', note: 'Condensada y elegante, con mucha presencia en titulares. Tiene el aire de agencia creativa sin ser excéntrica. Gratis (Fontshare).' },
+  { id: 'cabinet', name: 'Cabinet Grotesk + Inter', title: "'Cabinet Grotesk'", body: 'Inter', tw: 800, tls: '-0.03em', note: 'Grotesca con mucho carácter en negrita, un poco retro-moderna. Es memorable. Gratis (Fontshare).' },
+  { id: 'switzer', name: 'Switzer', title: 'Switzer', body: 'Switzer', tw: 600, tls: '-0.035em', note: 'Estilo suizo neutro, como Helvetica pero actual. Se ve seria, precisa y "de software". Gratis (Fontshare).' },
+  { id: 'familjen', name: 'Familjen Grotesk + Inter', title: "'Familjen Grotesk'", body: 'Inter', tw: 700, tls: '-0.03em', note: 'Grotesca con remates sutiles en las curvas. Tiene personalidad sin gritar.' },
+  { id: 'bricolage', name: 'Bricolage Grotesque + Inter', title: "'Bricolage Grotesque'", body: 'Inter', tw: 700, tls: '-0.04em', note: 'Con contraste y algo de "tinta", la más editorial de la ronda. Es expresiva y amigable.' },
+  { id: 'funnel', name: 'Funnel Display + Inter', title: "'Funnel Display'", body: 'Inter', tw: 700, tls: '-0.035em', note: 'Geométrica con cortes peculiares en las terminaciones, que riman con las puntas rectas del ΚΛΙΖΣΝ.' },
+  { id: 'mona', name: 'Mona Sans', title: "'Mona Sans'", body: "'Mona Sans'", tw: 800, tls: '-0.035em', note: 'La de GitHub. Es una grotesca robusta y moderna con mucho rango de pesos. Se siente "empresa tech" de primer nivel.' },
+  { id: 'instrument', name: 'Instrument Sans', title: "'Instrument Sans'", body: "'Instrument Sans'", tw: 600, tls: '-0.035em', note: 'Ligeramente condensada, precisa y refinada. Es discreta y elegante, sin perder lo técnico.' },
+  { id: 'sistema', name: 'SF Pro (la actual · ronda 1)', title: "-apple-system, 'SF Pro Display', sans-serif", body: "-apple-system, sans-serif", tw: 700, tls: '-0.035em', note: 'La de hoy. Limpia, pero es la letra del iPhone: no le da personalidad propia a la marca.' },
+  { id: 'unbounded', name: 'Unbounded + Manrope (ronda 1)', title: 'Unbounded', body: 'Manrope', tw: 600, tls: '-0.03em', note: 'Ancha, redonda y con mucha presencia; contrasta con las líneas rectas del logo en vez de repetirlas.' },
+  { id: 'chakra', name: 'Chakra Petch + IBM Plex (ronda 1)', title: "'Chakra Petch'", body: "'IBM Plex Sans'", tw: 700, tls: '-0.02em', note: 'Esquinas cortadas en diagonal: la que más rima con el trazo recto del ΚΛΙΖΣΝ. Puede verse algo gamer si se abusa.' },
+  { id: 'syne', name: 'Syne + Inter (ronda 1)', title: 'Syne', body: 'Inter', tw: 800, tls: '-0.03em', note: 'Letra de estudio de arte y diseño, la más cercana al estilo Lusion.' },
+  { id: 'geist', name: 'Geist (ronda 1)', title: 'Geist', body: 'Geist', tw: 700, tls: '-0.045em', note: 'La de Vercel: precisa, moderna y suiza. Se ve empresa de software seria.' },
+  { id: 'sora', name: 'Sora + Manrope (ronda 1)', title: 'Sora', body: 'Manrope', tw: 700, tls: '-0.04em', note: 'Geométrica y amable; equilibra lo recto del logo con algo cercano.' },
+];
+const state = { color: 'azul', font: 'satoshi', mode: 'dark' };
+
+const icon = (p, size) => `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><defs><linearGradient id="t${size}${p.a1.slice(1)}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${p.a1}"/><stop offset="1" stop-color="${p.a2}"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="url(#t${size}${p.a1.slice(1)})"/><path d="M33 27V73 M66 27 38 52 M48 44 68 73" fill="none" stroke="${p.on}" stroke-width="11" stroke-linejoin="miter"/></svg>`;
+const pal = (id, mode) => { const p = PALETTES.find(x => x.id === id); return mode === 'light' && p.light ? { ...p, ...p.light } : p; };
+
+function chips(el, list, key, extra) {
+  list.forEach(item => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.innerHTML = (extra ? extra(item) : '') + item.name;
+    b.onclick = () => { state[key] = item.id; render(); };
+    b.dataset.id = item.id; el.appendChild(b);
+  });
+}
+chips(document.getElementById('c-color'), PALETTES, 'color', p => `<span class="dot" style="background:linear-gradient(135deg,${p.a1},${p.a2})"></span>`);
+chips(document.getElementById('c-font'), FONTS, 'font', f => `<span style="font-family:${f.title};font-weight:700">Aa</span>`);
+chips(document.getElementById('c-mode'), [{ id: 'dark', name: 'Oscuro' }, { id: 'light', name: 'Claro' }], 'mode');
+
+const grid = document.getElementById('grid');
+PALETTES.forEach(p => {
+  const d = document.createElement('div');
+  d.className = 'mini';
+  d.innerHTML = `<div class="r">${icon(p, 44)}<svg height="16" width="66" viewBox="-8 -10 498 120" style="color:#f5f5f7"><use href="#wm"/></svg></div>
+    <div class="r"><span style="background:linear-gradient(135deg,${p.a1},${p.a2});color:${p.on};padding:8px 14px;border-radius:999px;font-weight:600;font-size:13px">Cotiza tu proyecto</span></div><span>${p.name}</span>`;
+  d.onclick = () => { state.color = p.id; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  grid.appendChild(d);
+});
+
+const cmp = document.getElementById('fontcmp');
+FONTS.forEach(f => {
+  const d = document.createElement('div');
+  d.style.cssText = 'padding:18px 4px;border-bottom:1px solid #222;cursor:pointer';
+  d.innerHTML = `<div style="font-size:12px;color:#a1a1a6;margin-bottom:6px">${f.name}</div><div style="font-family:${f.title},sans-serif;font-weight:${f.tw};letter-spacing:${f.tls};font-size:clamp(26px,4vw,44px);line-height:1.05">Evoluciona la forma en que haces negocio</div><div style="font-family:${f.body},sans-serif;color:#a1a1a6;font-size:15px;margin-top:8px">Diseñamos y construimos el software que tu negocio necesita: apps, sitios y sistemas reales.</div>`;
+  d.onclick = () => { state.font = f.id; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  cmp.appendChild(d);
+});
+function render() {
+  const p = pal(state.color, state.mode);
+  const f = FONTS.find(x => x.id === state.font);
+  const r = document.documentElement.style;
+  r.setProperty('--a1', p.a1); r.setProperty('--a2', p.a2); r.setProperty('--on', p.on);
+  r.setProperty('--title', f.title + ', sans-serif'); r.setProperty('--body', f.body + ', sans-serif');
+  r.setProperty('--tw', f.tw); r.setProperty('--tls', f.tls);
+  // Lima y oro pierden contraste como texto sobre blanco: en claro se usa su tono oscuro.
+  if (state.mode === 'light' && (p.id === 'lima' || p.id === 'olivo')) { r.setProperty('--a1', p.a2); r.setProperty('--on', '#fff'); }
+  document.getElementById('site').classList.toggle('light', state.mode === 'light');
+  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', [state.color, state.font, state.mode].includes(c.dataset.id)));
+  const pd = pal(state.color, 'dark'), pl = pal(state.color, 'light');
+  document.getElementById('fav16').innerHTML = icon(pd, 16);
+  document.getElementById('fav16l').innerHTML = icon(pl, 16);
+  document.getElementById('big').innerHTML = icon(pd, 64) + icon(pd, 32) + icon(pd, 16);
+  document.getElementById('note').innerHTML = `<b style="color:#f5f5f7">${p.name}:</b> ${p.note}<br><b style="color:#f5f5f7">${f.name}:</b> ${f.note}`;
+}
+render();
+</script>
+</body>
+</html>

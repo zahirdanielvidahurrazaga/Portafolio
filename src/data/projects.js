@@ -20,7 +20,7 @@ const allProjects = [
   {
     id: 'befit',
     category: 'Fitness & Wellness',
-    title: 'BE FIT LAB',
+    title: 'Be Fit Lab',
     tagline: 'El estudio de pilates, en el bolsillo de tus clientas.',
     description:
       'PWA y app nativa (iOS / Android) para un estudio de pilates premium: reserva de clases, membresías con acceso por QR, una cafetería con pago nativo estilo Uber Eats y un panel de administración en tiempo real.',

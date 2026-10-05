@@ -1,0 +1,151 @@
+/* Servicios = "Índice + nube" (Servicios.jsx). La pista es la distancia de
+   scroll: ~72vh por servicio + la pantalla fija. Más alto = más lento. */
+.servicios {
+  padding-top: var(--section-pad-y);
+}
+.servicios-head {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.srv-pista {
+  position: relative;
+  height: calc(100vh + 6 * 72vh);
+}
+.srv-escena {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px var(--spacing-4) 0; /* arriba: la barra */
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+/* ── Índice de revista ── */
+.srv-indice {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border-strong);
+}
+.srv-indice li {
+  border-bottom: 1px solid var(--border-color);
+}
+.srv-item {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-4);
+  padding: clamp(0.45rem, 1.4vh, 0.9rem) 0;
+  cursor: pointer;
+}
+.srv-item:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 4px;
+}
+.srv-num {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  min-width: 2.2em;
+  transition: color 0.4s ease;
+}
+.srv-nombre {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, min(3.6vw, 5.4vh), 3.2rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-color);
+  opacity: 0.22;
+  transform-origin: left center;
+  transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.srv-indice li.is-active .srv-nombre {
+  opacity: 1;
+  font-style: italic;
+  transform: translateX(0.35em);
+}
+.srv-indice li.is-active .srv-num {
+  color: var(--text-strong);
+}
+.srv-item:hover .srv-nombre {
+  opacity: 0.6;
+}
+.srv-indice li.is-active .srv-item:hover .srv-nombre {
+  opacity: 1;
+}
+
+/* La descripción se abre sin saltos (grid 0fr → 1fr) */
+.srv-desc {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.srv-desc > p {
+  overflow: hidden;
+  margin: 0;
+  padding-left: calc(2.2em * 0.78 / 1 + var(--spacing-4));
+  max-width: 46ch;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.srv-indice li.is-active .srv-desc {
+  grid-template-rows: 1fr;
+}
+.srv-indice li.is-active .srv-desc > p {
+  opacity: 1;
+  padding-bottom: clamp(0.5rem, 1.6vh, 1rem);
+  transition-delay: 0.12s;
+}
+
+/* Caja donde la nube dibuja la figura */
+.srv-forma {
+  justify-self: center;
+  width: min(100%, 62vh, 520px);
+  aspect-ratio: 1;
+}
+
+/* Sin animación: lista con todo abierto */
+.srv-indice--static {
+  margin-top: var(--spacing-8);
+  padding-bottom: var(--section-pad-y);
+}
+.srv-indice--static .srv-item {
+  cursor: default;
+}
+
+/* Celular: la figura arriba, el índice abajo, más compacto */
+@media (max-width: 900px) {
+  .srv-pista {
+    height: calc(100vh + 6 * 60vh);
+  }
+  .srv-escena {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: var(--spacing-4);
+    padding-top: 84px;
+  }
+  .srv-forma {
+    order: -1;
+    width: min(70vw, 30vh);
+  }
+  .srv-nombre {
+    font-size: clamp(1.25rem, 6.2vw, 2rem);
+  }
+  .srv-desc > p {
+    font-size: 0.92rem;
+  }
+}

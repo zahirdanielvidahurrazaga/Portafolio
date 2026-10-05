@@ -1,58 +1,148 @@
+/* Testimonios = "LECTURA" (Testimonios.jsx, 2026-10-05). Sin partículas, pero
+   con el mismo lenguaje: tipografía de revista y cosas que se transforman con
+   el scroll. */
 .testimonios-section {
   padding-top: var(--section-pad-y);
-  padding-bottom: var(--section-pad-y);
+}
+.testimonios-head {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.testimonios-header {
-  margin-bottom: var(--spacing-16);
+.tv-cuenta {
+  margin: 0 0 var(--spacing-4);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
 }
 
-.testimonios-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-8);
-  max-width: 980px;
+/* ════════ 01 · Testimonio en video: la tarjeta crece con el scroll ════════ */
+.tv {
+  max-width: 1280px;
   margin: 0 auto;
+  padding: var(--spacing-12) var(--spacing-4) var(--spacing-16);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--spacing-12);
+  border-top: 1px solid var(--border-strong);
+  margin-top: var(--spacing-12);
+}
+.tv-nombre {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: clamp(3rem, 8vw, 7.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--text-strong);
+}
+.tv-giro {
+  margin: var(--spacing-4) 0 var(--spacing-8);
+  max-width: 34ch;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.tv-cta {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+.tv-cta:hover {
+  opacity: 0.7;
+}
+.tv-cta:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 4px;
 }
 
-.testimonio-card {
+/* El video (9:16, grabado en celular) a su tamaño final; el scroll lo escala
+   desde ~0.55 (el tamaño de antes) hasta 1. */
+.tv-video {
   position: relative;
+  display: block;
+  /* Que quepa entera con la barra encima, aun en laptops bajas */
+  height: min(calc(100svh - 160px), 600px);
+  aspect-ratio: 9 / 16;
+  padding: 0;
+  border: none;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+  box-shadow: var(--shadow-xl);
+  transform-origin: center center;
+  will-change: transform;
+}
+.tv-video img,
+.tv-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tv-video:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 6px;
+}
+.tv-video:hover .testimonio-video-play::before {
+  background: rgba(255, 255, 255, 0.26);
+  transform: scale(1.08);
+}
+
+/* ════════ 02 · Cita que se lee con el scroll ════════ */
+.tc {
+  position: relative;
+  height: 230vh; /* pista: la escena se queda fija mientras se lee */
   margin: 0;
-  padding: var(--spacing-8);
-  border-radius: var(--radius-lg, 20px);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: var(--shadow-md);
+}
+.tc-escena {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px var(--spacing-4) 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
-  overflow: hidden;
+  justify-content: center;
+  border-top: 1px solid var(--border-strong);
 }
-
-.testimonio-quote-icon {
-  position: absolute;
-  top: var(--spacing-6);
-  right: var(--spacing-6);
-  color: var(--accent-color);
-  opacity: 0.25;
+.tc-cita {
+  margin: 0 0 var(--spacing-8);
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, min(5.2vw, 8vh), 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
 }
-
-.testimonio-stars {
-  display: flex;
-  gap: 2px;
-  color: var(--star-color);
+.tc-cita::before {
+  content: '“';
+  color: var(--text-muted);
 }
-
-/* `margin: auto 0` reparte arriba y abajo el espacio sobrante cuando la rejilla
-   estira esta tarjeta para igualar a la del video (si no, la cita se pega al
-   tope y queda un hueco enorme). En móvil no hay sobrante y no afecta. */
-.testimonio-quote {
-  margin: auto 0;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--text-color);
+.tc--static {
+  height: auto;
+}
+.tc--static .tc-escena {
+  position: relative;
+  height: auto;
+  padding: var(--spacing-12) var(--spacing-4) var(--section-pad-y);
 }
 
 .testimonio-author {
@@ -96,65 +186,6 @@
 .testimonio-business {
   font-size: 0.88rem;
   color: var(--text-muted);
-}
-
-/* ════════ Testimonio en video ════════ */
-
-/* Tarjeta que es SOLO video (sin cita escrita): todo centrado y el video
-   ocupando el espacio que tendría el texto. */
-/* OJO: la escala solo define 1,2,3,4,6,8,12,16,24,32 — usar un token que no
-   existe (sin valor de respaldo) deja el gap en `normal` = 0 y todo se encima. */
-.testimonio-card--video {
-  align-items: center;
-  text-align: center;
-  gap: var(--spacing-6);
-}
-.testimonio-card--video .testimonio-author {
-  justify-content: center;
-  text-align: left;
-}
-
-/* El video es el activo de conversión más fuerte: la miniatura manda en la
-   tarjeta. Se respeta el formato 9:16 del original (grabado en celular) en vez
-   de recortarlo a horizontal. */
-.testimonio-video-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-3);
-  width: 100%;
-  padding: 0;
-  border: none;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: center;
-  cursor: pointer;
-}
-.testimonio-video-btn:focus-visible {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 4px;
-  border-radius: 18px;
-}
-
-.testimonio-video-thumb {
-  position: relative;
-  width: min(200px, 62%);
-  aspect-ratio: 9 / 16;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #000;
-  box-shadow: var(--shadow-lg);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.testimonio-video-btn:hover .testimonio-video-thumb {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: var(--shadow-xl);
-}
-.testimonio-video-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 /* Velo suave para que el botón de play siempre contraste con la foto. */
@@ -202,23 +233,6 @@
   -webkit-backdrop-filter: blur(4px);
 }
 
-/* Título y subtítulo son UNA unidad: van juntos y se separan del video por el
-   gap del botón. */
-.testimonio-video-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.testimonio-video-title {
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--text-color);
-}
-.testimonio-video-sub {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
 /* ════════ Lightbox del video ════════ */
 .testimonio-lightbox {
   position: fixed;
@@ -264,17 +278,18 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .testimonio-video-btn:hover {
-    transform: none;
-  }
-}
 
 @media (max-width: 768px) {
-  .testimonios-header {
-    margin-bottom: var(--spacing-8);
+  .tv {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: var(--spacing-8);
   }
-  .testimonio-card {
-    padding: var(--spacing-6);
+  .tv-video {
+    justify-self: center;
+    height: min(68vh, 560px);
+  }
+  .tc {
+    height: 200vh;
   }
 }

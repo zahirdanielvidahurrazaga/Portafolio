@@ -1,16 +1,83 @@
+/* ESCENARIO (Hero.jsx): la sección es la pista de scroll y .hero-stage se
+   queda pegado mientras todo se transforma en su lugar. OJO: nada de
+   overflow:hidden en .hero-section, o el sticky deja de funcionar. */
 .hero-section {
-  min-height: 100vh;
+  position: relative;
+  height: 680vh;
+}
+.hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
   padding-top: 60px; /* navbar height */
+  overflow: hidden;
+}
+.hero-section--static {
+  height: auto;
+}
+.hero-section--static .hero-stage {
+  position: relative;
+  min-height: 100vh;
+  height: auto;
+}
+
+/* Capa ΚΛΙΖΣΝ: encima del hero, centrada; no captura el mouse */
+.hero-kaizen {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.2rem, 3.5vh, 2.6rem);
+  padding: 60px var(--spacing-4) 0;
+  text-align: center;
+  pointer-events: none;
+}
+.hero-kaizen .interludio-forma {
+  /* que la frase y "Desliza" quepan aun en pantallas bajas */
+  width: min(84vw, 980px, calc((100svh - 400px) * 4.15));
+}
+.hero-kaizen .interludio-frase {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.25em;
+}
+.hero-kaizen-w {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Palabra en su ranura: la máscara deja ver solo la palabra en su lugar.
+   El padding/margin negativo da aire a descendentes (g, q) y a la itálica. */
+.hw {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0 0.08em 0.24em;
+  margin: 0 -0.08em -0.24em;
+}
+.hw > span {
+  display: inline-block;
+  will-change: transform;
+}
+/* "haces negocio" lleva degradado con background-clip:text, que SOLO pinta
+   dentro de la caja del span: la cola de la g quedaba fuera y transparente.
+   Se agranda la caja hacia abajo sin mover nada (margen negativo). */
+.hw > .hero-em {
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
 }
 
 .hero-content {
-  text-align: center;
-  max-width: 900px;
+  text-align: left;
+  max-width: 1280px;
   width: 100%;
   min-width: 0; /* flex items won't shrink below content size without this */
   padding: 0 var(--spacing-4);
@@ -18,24 +85,62 @@
   position: relative;
 }
 
+/* ---- Portada de revista (2026-10-03) ----
+   Titular gigante, interlineado apretado y a ras de la izquierda; una
+   "cabecera" con filete arriba como el masthead de una revista. */
+.hero-masthead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  margin-bottom: var(--spacing-8);
+  position: relative;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hero-content h1 {
+  font-size: clamp(3.4rem, 10.5vw, 10.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  font-weight: 700;
+  margin-bottom: var(--spacing-12);
+}
+
+/* El filete de la cabecera se dibuja con el scroll (scaleX) */
+.hero-rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--border-strong);
+  transform-origin: left;
+}
+.hero-masthead--static {
+  border-bottom: 1px solid var(--border-strong);
+}
+
+/* La parte enfatizada va en itálica, como en un titular editorial */
+.hero-em {
+  font-style: italic;
+  font-weight: 600;
+  background: var(--text-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* la itálica se sale de su caja por la derecha y el clip la cortaba */
+  padding-right: 0.08em;
+}
+
 /* On desktop the first line of the h1 is its own block, creating a line break */
 .hero-line-break {
   display: block;
 }
 
-
-.hero-badge {
-  display: inline-block;
-  padding: 0.4rem 1.2rem;
-  border-radius: var(--radius-full);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  margin-bottom: var(--spacing-6);
-  backdrop-filter: blur(10px);
-}
 
 .text-gradient {
   background: var(--text-gradient);
@@ -54,32 +159,11 @@
   margin-right: auto;
 }
 
-.hero-proof {
-  list-style: none;
-  margin: var(--spacing-8) 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--spacing-2) var(--spacing-6);
-}
-.hero-proof li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: var(--text-muted);
-}
-.hero-proof svg {
-  color: var(--accent-color);
-  flex-shrink: 0;
-}
 
 .hero-actions {
   display: flex;
   gap: var(--spacing-4);
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .btn-large {
@@ -104,93 +188,28 @@
   background: var(--tint-4);
 }
 
-.hero-glow-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1; /* Below content */
-  pointer-events: none;
-}
-
-.hero-smoke {
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: var(--glow-opacity);
-  pointer-events: none;
-  will-change: transform;
-}
-
-/* Esfera AZUL */
-.smoke-left {
-  width: 620px;
-  height: 620px;
-  margin: -310px;
-  background: radial-gradient(circle, var(--glow-blue) 0%, var(--glow-indigo) 55%, transparent 72%);
-  animation: heroRoamA 26s ease-in-out infinite;
-}
-
-/* Esfera MORADA */
-.smoke-right {
-  width: 680px;
-  height: 680px;
-  margin: -340px;
-  background: radial-gradient(circle, var(--glow-purple) 0%, var(--glow-indigo) 55%, transparent 72%);
-  animation: heroRoamB 30s ease-in-out infinite;
-}
-
-@keyframes heroRoamA {
-  0%   { transform: translate(18vw, 28vh); }
-  25%  { transform: translate(72vw, 16vh); }
-  50%  { transform: translate(86vw, 72vh); }
-  75%  { transform: translate(34vw, 82vh); }
-  100% { transform: translate(18vw, 28vh); }
-}
-@keyframes heroRoamB {
-  0%   { transform: translate(82vw, 76vh); }
-  25%  { transform: translate(28vw, 84vh); }
-  50%  { transform: translate(16vw, 24vh); }
-  75%  { transform: translate(76vw, 30vh); }
-  100% { transform: translate(82vw, 76vh); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .smoke-left  { animation: none; transform: translate(25vw, 30vh); }
-  .smoke-right { animation: none; transform: translate(78vw, 70vh); }
-}
-
 @media (max-width: 768px) {
   /* Anclar el contenido más arriba (no flotando en el centro) y darle aire */
   .hero-section {
-    justify-content: flex-start;
-    padding-top: 19vh;
-    padding-bottom: var(--spacing-16);
+    height: 580vh;
   }
-  .hero-badge {
-    margin-bottom: var(--spacing-8);
+  .hero-stage {
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-top: 19vh;
   }
   .hero-content h1 {
-    margin-bottom: var(--spacing-4);
+    font-size: clamp(3rem, 15vw, 5.5rem);
+    margin-bottom: var(--spacing-10, 2.5rem);
   }
-  /* Franja de prueba en columna para que no se amontone */
-  .hero-proof {
+  .hero-masthead {
     flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-3);
-    margin: var(--spacing-10, 2.5rem) 0;
-  }
-  .hero-proof li {
-    font-size: 0.9rem;
+    gap: var(--spacing-1);
+    font-size: 0.7rem;
   }
   .hero-actions {
     flex-direction: column;
     gap: var(--spacing-3);
-    padding: 0 var(--spacing-4);
   }
   /* Que la primera línea fluya en línea para que el titular envuelva natural */
   .hero-line-break {

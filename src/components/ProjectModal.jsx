@@ -73,6 +73,7 @@ export default function ProjectModal({ project, onClose }) {
         {project && (
           <motion.div
             className="pm-backdrop"
+            data-lenis-prevent
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -175,7 +176,7 @@ export default function ProjectModal({ project, onClose }) {
                 <h3>¿Quieres algo así para tu negocio?</h3>
                 <div className="pm-foot-actions">
                   <a href="#contact" className="pm-cta" onClick={onClose}>
-                    Cuéntame tu proyecto
+                    Cuéntanos tu proyecto
                   </a>
                   {project.website && (
                     <a

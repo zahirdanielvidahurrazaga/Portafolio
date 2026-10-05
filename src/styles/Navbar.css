@@ -9,21 +9,25 @@
   pointer-events: none; /* Let clicks pass through the wrapper outside the pill */
 }
 
+/* ---- Barra editorial (2026-10-03) ----
+   ARRIBA (sin scroll): sin cápsula, transparente y alineada a la MISMA retícula
+   que el hero (max-width 1280 + padding --spacing-4, igual que .hero-content),
+   así el ΚΛΙΖΣΝ cae justo arriba de la cabecera de revista.
+   AL BAJAR (.scrolled): se compacta en la cápsula de liquid glass. */
 .apple-navbar {
   pointer-events: auto; /* Enable clicks inside the pill */
   height: 60px;
-  width: 90%;
-  max-width: 1000px;
-  background: var(--nav-bg);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
+  width: 100%;
+  max-width: 1280px;
+  padding: 0 var(--spacing-4);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 9999px; /* Pill shape */
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: var(--shadow-md);
+  transition: max-width 0.6s cubic-bezier(0.16, 1, 0.3, 1), padding 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
   position: relative;
   overflow: hidden; /* recorta el canvas de cristal al pill */
 }
@@ -31,8 +35,34 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 .apple-navbar .nav-container {
+  position: relative;
+  z-index: 1;
+  padding: 0;
+  transition: padding 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-navbar.scrolled {
+  max-width: 1000px;
+  width: 90%;
+  padding: 0;
+  background: var(--nav-bg-scrolled);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(24px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+.apple-navbar.scrolled .nav-glass {
+  opacity: 1;
+}
+.apple-navbar.scrolled .nav-container {
+  padding: 0 var(--spacing-4) 0 var(--spacing-6);
+}
+
+.nav-container {
   position: relative;
   z-index: 1;
 }
@@ -60,6 +90,8 @@
   /* Sin esto, en pantallas angostas el nombre se partía en
      "Zahir / Vidahurrázaga" y descuadraba el pill. */
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .logo-accent {
@@ -68,16 +100,36 @@
 
 .nav-links {
   display: flex;
-  gap: var(--spacing-6);
+  gap: var(--spacing-8);
 }
 
 .nav-links a {
+  position: relative;
   color: var(--text-color);
-  font-size: 0.85rem;
-  font-weight: 400;
-  opacity: 0.8;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.75;
   text-decoration: none;
   transition: opacity 0.2s ease, color 0.2s ease;
+}
+/* Filete que crece de izquierda a derecha al pasar el mouse (como el de la
+   cabecera de revista del hero) */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-links a:hover::after {
+  transform: scaleX(1);
 }
 
 .nav-links a:hover {
@@ -165,8 +217,8 @@
   margin-top: 0.5rem;
   padding: 0.85rem 1rem;
   /* `.mobile-menu a` (0,1,1) le gana a `.btn-metallic` (0,1,0) y le imponía
-     --text-color. Va sobre azul sólido: siempre blanco. */
-  color: #fff;
+     --text-color. Va sobre el acento sólido. */
+  color: var(--on-accent);
 }
 
 /* Teléfonos angostos (iPhone SE = 375 y para abajo): a 1.25rem el nombre ya no
@@ -177,10 +229,24 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Los links en versalitas espaciadas ocupan más: entre 960 y 1100 se juntan,
+   y debajo de 960 ya no caben en la cápsula → menú hamburguesa. */
+@media (max-width: 1100px) {
+  .nav-links {
+    gap: var(--spacing-4);
+  }
+}
+
+@media (max-width: 960px) {
   .nav-links {
     display: none;
   }
+  .hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
   .nav-desktop-cta {
     display: none;
   }

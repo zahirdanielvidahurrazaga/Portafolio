@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Play, Quote, Star, X } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { Play, X } from 'lucide-react';
+import SectionHead from './SectionHead';
 import '../styles/Testimonios.css';
 
 /**
@@ -36,6 +37,122 @@ const TESTIMONIOS = [
   },
 ];
 
+// Interpolación con tope (ver el gotcha de useTransform en ProyectosReel.jsx)
+const rango = (v, [a, b], [c, d]) => c + (d - c) * Math.min(1, Math.max(0, (v - a) / (b - a)));
+
+/**
+ * "LECTURA" (2026-10-05, modo presentación sin partículas):
+ *  - Testimonio con VIDEO: el video CRECE con el scroll hasta una tarjeta
+ *    vertical grande, con vista previa muda en loop SOLO mientras está en
+ *    pantalla (el MP4 no se pide antes). Tocarla abre el lightbox con sonido.
+ *  - Testimonio con CITA: escena fija corta; la cita se "lee" con el scroll,
+ *    cada palabra pasa de gris a tinta. Al final aparece quién la dijo.
+ * Respaldo de la versión anterior (dos columnas): scratchpad de la sesión del
+ * 5-oct; en git está la versión desplegada.
+ */
+function TestimonioVideo({ t, n, total, onAbrir }) {
+  const ref = useRef(null);
+  const reduced = useReducedMotion();
+  const enPantalla = useInView(ref, { margin: '0px 0px -10% 0px' });
+  // Se monta la PRIMERA vez que aparece (antes no se pide el MP4) y después
+  // solo se pausa/reanuda, para no recargarlo en cada pasada
+  const [visto, setVisto] = useState(false);
+  const videoRef = useRef(null);
+  useEffect(() => {
+    if (enPantalla) setVisto(true);
+    const v = videoRef.current;
+    if (!v) return;
+    if (enPantalla) v.play().catch(() => {});
+    else v.pause();
+  }, [enPantalla, visto]);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'center center'] });
+  const scale = useTransform(p, (v) => (reduced ? 1 : rango(v, [0.15, 1], [0.55, 1])));
+  const rotate = useTransform(p, (v) => (reduced ? 0 : rango(v, [0.15, 1], [-4, 0])));
+
+  return (
+    <figure ref={ref} className="tv">
+      <div className="tv-texto">
+        <p className="tv-cuenta">{n} / {total}</p>
+        <h3 className="tv-nombre">{t.name}</h3>
+        <p className="tv-giro">{t.business} · Testimonio grabado por las dueñas del estudio</p>
+        <button type="button" className="tv-cta" onClick={() => onAbrir(t)}>
+          <Play size={16} fill="currentColor" strokeWidth={0} />
+          Ver su experiencia · {t.videoDuracion}
+        </button>
+      </div>
+
+      <motion.button
+        type="button"
+        className="tv-video"
+        style={{ scale, rotate }}
+        onClick={() => onAbrir(t)}
+        aria-label={`Ver el testimonio en video de ${t.business}`}
+      >
+        <img src={t.poster} alt="" loading="lazy" aria-hidden="true" />
+        {/* Vista previa muda: solo se monta (y descarga) con la tarjeta en pantalla */}
+        {visto && !reduced && (
+          <video
+            ref={videoRef}
+            src={t.video}
+            poster={t.poster}
+            muted
+            loop
+            autoPlay
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+          />
+        )}
+        <span className="testimonio-video-play">
+          <Play size={26} fill="currentColor" strokeWidth={0} />
+        </span>
+        <span className="testimonio-video-dur">{t.videoDuracion}</span>
+      </motion.button>
+    </figure>
+  );
+}
+
+function Palabra({ p, i, total, children }) {
+  // Lectura de izquierda a derecha entre 0.08 y 0.72 del recorrido
+  const a = 0.08 + (i / total) * 0.64;
+  const opacity = useTransform(p, (v) => rango(v, [a, a + 0.06], [0.16, 1]));
+  return <motion.span style={{ opacity }}>{children} </motion.span>;
+}
+
+function TestimonioCita({ t, n, total }) {
+  const ref = useRef(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const autor = useTransform(p, (v) => (reduced ? 1 : rango(v, [0.72, 0.82], [0, 1])));
+  const palabras = t.quote.split(' ');
+
+  return (
+    <figure ref={ref} className={`tc${reduced ? ' tc--static' : ''}`}>
+      <div className="tc-escena">
+        <p className="tv-cuenta">{n} / {total}</p>
+        <blockquote className="tc-cita">
+          {reduced
+            ? t.quote
+            : palabras.map((w, i) => (
+                <Palabra key={i} p={p} i={i} total={palabras.length}>
+                  {w}
+                </Palabra>
+              ))}
+        </blockquote>
+        <motion.figcaption className="testimonio-author" style={{ opacity: autor }}>
+          <span className="testimonio-avatar">
+            <img src={t.logo} alt={t.business} loading="lazy" />
+          </span>
+          <span className="testimonio-author-meta">
+            <span className="testimonio-name">{t.name}</span>
+            <span className="testimonio-business">{t.business}</span>
+          </span>
+        </motion.figcaption>
+      </div>
+    </figure>
+  );
+}
+
 const Testimonios = () => {
   // Testimonio cuyo video está abierto en el lightbox (null = cerrado).
   const [videoAbierto, setVideoAbierto] = useState(null);
@@ -58,69 +175,28 @@ const Testimonios = () => {
     };
   }, [videoAbierto, cerrar]);
 
+  const total = String(TESTIMONIOS.length).padStart(2, '0');
+
   return (
-    <section id="testimonios" className="section-container testimonios-section">
-      <div className="testimonios-header text-center">
-        <h2>Lo que dicen mis clientes.</h2>
-        <p className="text-muted">Negocios reales que ya operan con lo que construí.</p>
+    <section id="testimonios" className="testimonios-section">
+      <div className="section-container testimonios-head">
+        <SectionHead
+          num="03"
+          label="Testimonios"
+          lede="Negocios reales que ya operan con lo que construimos."
+        >
+          Lo que dicen <em>nuestros clientes</em>
+        </SectionHead>
       </div>
 
-      <div className="testimonios-grid">
-        {TESTIMONIOS.map((t, i) => (
-          <motion.figure
-            key={t.name}
-            className={`testimonio-card${t.video && !t.quote ? ' testimonio-card--video' : ''}`}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {/* El ícono de comillas solo tiene sentido si hay una cita. */}
-            {t.quote && <Quote className="testimonio-quote-icon" size={28} aria-hidden="true" />}
-
-            <div className="testimonio-stars" aria-label="5 de 5 estrellas">
-              {Array.from({ length: 5 }).map((_, s) => (
-                <Star key={s} size={16} fill="currentColor" strokeWidth={0} />
-              ))}
-            </div>
-
-            {t.quote && <blockquote className="testimonio-quote">{t.quote}</blockquote>}
-
-            {t.video && (
-              <button
-                type="button"
-                className="testimonio-video-btn"
-                onClick={() => setVideoAbierto(t)}
-                aria-label={`Ver el testimonio en video de ${t.business}`}
-              >
-                <span className="testimonio-video-thumb">
-                  <img src={t.poster} alt="" loading="lazy" aria-hidden="true" />
-                  <span className="testimonio-video-play">
-                    <Play size={26} fill="currentColor" strokeWidth={0} />
-                  </span>
-                  <span className="testimonio-video-dur">{t.videoDuracion}</span>
-                </span>
-                <span className="testimonio-video-meta">
-                  <span className="testimonio-video-title">Ver su experiencia en video</span>
-                  <span className="testimonio-video-sub">
-                    Testimonio grabado por las dueñas del estudio
-                  </span>
-                </span>
-              </button>
-            )}
-
-            <figcaption className="testimonio-author">
-              <span className="testimonio-avatar">
-                <img src={t.logo} alt={t.business} loading="lazy" />
-              </span>
-              <span className="testimonio-author-meta">
-                <span className="testimonio-name">{t.name}</span>
-                <span className="testimonio-business">{t.business}</span>
-              </span>
-            </figcaption>
-          </motion.figure>
-        ))}
-      </div>
+      {TESTIMONIOS.map((t, i) => {
+        const n = String(i + 1).padStart(2, '0');
+        return t.video ? (
+          <TestimonioVideo key={t.name} t={t} n={n} total={total} onAbrir={setVideoAbierto} />
+        ) : (
+          <TestimonioCita key={t.name} t={t} n={n} total={total} />
+        );
+      })}
 
       <AnimatePresence>
         {videoAbierto && (

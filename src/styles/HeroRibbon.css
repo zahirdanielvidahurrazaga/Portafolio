@@ -1,0 +1,29 @@
+/* Cinta 3D (HeroRibbon). Dos canvas FIJOS a pantalla que recorren el hero y la
+   sección de servicios. No capturan el mouse.
+   - --back con z-index −1: debajo de todo el contenido pero encima del fondo
+     del body (el fondo del body se propaga al lienzo porque <html> no tiene
+     fondo propio; si algún día se le pone, esta capa quedaría tapada).
+   - --front encima del titular (.hero-content usa z-index 10). Solo pinta la
+     parte de la cinta que va "delante" (z > 0), que en servicios es nada. */
+.hero-ribbon {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.hero-ribbon.is-ready {
+  /* --born la escribe heroRibbon.js en cada cuadro: la cinta "se solidifica"
+     mientras las partículas de la apertura se apagan. Ligada al scroll, así
+     que sin transición (con ella iría 1 s atrasada). */
+  opacity: var(--born, 1);
+  transition: none;
+}
+.hero-ribbon--back {
+  z-index: -1;
+}
+.hero-ribbon--front {
+  z-index: 11;
+}

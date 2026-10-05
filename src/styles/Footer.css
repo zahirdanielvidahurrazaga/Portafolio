@@ -1,52 +1,56 @@
 .footer-section {
   background: var(--bg-color);
-  border-top: 1px solid var(--border-subtle);
 }
 
-/* ── CTA headline ── */
-.footer-cta {
-  text-align: center;
-  padding-bottom: 0;
+/* ── Contacto editorial (2026-10-05) ──
+   SectionHead a todo el ancho; abajo dos columnas: contacto directo | form. */
+.footer-contact {
+  padding-top: var(--section-pad-y);
+  padding-bottom: var(--section-pad-y);
 }
 
-.footer-eyebrow {
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--spacing-16);
+  align-items: start;
+}
+
+.footer-direct-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent-color);
-  margin-bottom: var(--spacing-4);
-}
-
-.footer-headline {
-  font-size: clamp(2.4rem, 6vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  color: var(--text-color);
-  margin-bottom: var(--spacing-4);
-}
-
-.footer-br { display: block; }
-
-.footer-subline {
-  font-size: 1.1rem;
   color: var(--text-muted);
+  margin-bottom: var(--spacing-3);
 }
 
-/* ── Form area ── */
-.footer-form-wrap {
-  padding-top: var(--spacing-12);
-  padding-bottom: var(--spacing-8);
-  max-width: 760px;
+.footer-mail {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 0.15em;
+  word-break: break-all;
+  transition: border-color 0.2s ease;
+}
+.footer-mail:hover {
+  border-color: var(--text-color);
 }
 
+.footer-direct-note {
+  margin-top: var(--spacing-4);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Sin caja: los campos llevan solo su línea inferior (editorial) */
 .footer-form-card {
-  background: var(--tint-1);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-8);
-  backdrop-filter: blur(20px);
+  padding: 0;
 }
 
 /* ── Form fields ── */
@@ -69,19 +73,21 @@
 }
 
 .form-field label {
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--text-muted);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .form-field input,
 .form-field textarea {
   width: 100%;
-  padding: 0.85rem 1rem;
-  background: var(--tint-2);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  padding: 0.75rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-strong);
+  border-radius: 0;
   color: var(--text-color);
   font-family: var(--font-family);
   font-size: 0.95rem;
@@ -98,8 +104,7 @@
 .form-field input:focus,
 .form-field textarea:focus {
   outline: none;
-  border-color: var(--accent-color);
-  background: var(--accent-soft);
+  border-color: var(--text-color);
 }
 
 /* Custom select */
@@ -109,10 +114,11 @@
 
 .form-select-wrap select {
   width: 100%;
-  padding: 0.85rem 2.5rem 0.85rem 1rem;
-  background: var(--tint-2);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  padding: 0.75rem 2rem 0.75rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-strong);
+  border-radius: 0;
   color: var(--text-color);
   font-family: var(--font-family);
   font-size: 0.95rem;
@@ -124,8 +130,7 @@
 
 .form-select-wrap select:focus {
   outline: none;
-  border-color: var(--accent-color);
-  background: var(--accent-soft);
+  border-color: var(--text-color);
 }
 
 .form-select-wrap select option {
@@ -135,7 +140,7 @@
 
 .select-arrow {
   position: absolute;
-  right: 1rem;
+  right: 0.25rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
@@ -149,7 +154,7 @@
   margin-top: var(--spacing-6);
   padding: 1rem;
   background: var(--accent-color);
-  color: #fff;
+  color: var(--on-accent);
   border: none;
   border-radius: var(--radius-full);
   font-family: var(--font-family);
@@ -223,59 +228,36 @@
   color: var(--text-muted);
 }
 
-/* Direct email link */
-.footer-direct-links {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--spacing-6);
-}
-
-.direct-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 1.2rem;
-  background: var(--tint-2);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-full);
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.direct-pill:hover {
-  border-color: var(--border-strong);
-  color: var(--text-color);
-}
-
-.pill-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--success-color);
-  flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(var(--success-rgb), 0.6);
-}
-
 /* ── Bottom bar ── */
 .footer-bottom {
-  text-align: center;
-  padding: var(--spacing-6);
-  border-top: 1px solid var(--border-subtle);
+  /* mismo ancho que el contenido de la retícula, para que el filete arranque
+     donde arrancan los textos */
+  width: calc(100% - 2 * var(--spacing-4));
+  max-width: calc(1280px - 2 * var(--spacing-4));
+  margin: 0 auto;
+  padding: var(--spacing-6) 0;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border-strong);
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* ── Responsive ── */
-@media (max-width: 768px) {
-  .footer-br { display: inline; }
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-10, 2.5rem);
+  }
+}
 
+@media (max-width: 768px) {
   .form-row {
     grid-template-columns: 1fr;
-  }
-
-  .footer-form-card {
-    padding: var(--spacing-6);
   }
 }

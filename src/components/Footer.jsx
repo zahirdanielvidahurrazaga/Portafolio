@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import SectionHead from './SectionHead';
 import '../styles/Footer.css';
 
 const WHATSAPP = '522221622676';
-// Las opciones siguen a las tarjetas de "Qué puedo construir": si alguien tocó
+// Las opciones siguen a las tarjetas de "Lo que construimos": si alguien tocó
 // un servicio en el carrusel, espera encontrarlo aquí con el mismo nombre.
 // (Faltaba "Sitio web", que es de los servicios principales; y "Biometría"
 // prometía algo que no se hace.)
@@ -28,7 +29,7 @@ const Footer = () => {
     e.preventDefault();
     const { nombre, email, tipo, descripcion } = formData;
     const msg =
-      `Hola Zahir, soy ${nombre}.\n` +
+      `Hola, equipo KaiZen. Soy ${nombre}.\n` +
       `Tipo de proyecto: ${TIPO_LABEL[tipo] || tipo}\n` +
       `Correo: ${email}\n\n` +
       `${descripcion}`;
@@ -46,96 +47,98 @@ const Footer = () => {
   return (
     <footer id="contact" className="footer-section">
 
-      {/* ── CTA headline ── */}
-      <div className="footer-cta section-container">
-        <p className="footer-eyebrow">Trabajemos juntos</p>
-        <h2 className="footer-headline">
-          ¿Tienes un proyecto<br className="footer-br"/> en mente?
-        </h2>
-        <p className="footer-subline">
-          Cuéntame tu idea y te respondo en menos de 24 horas.
-        </p>
-      </div>
+      <div className="section-container footer-contact">
+        <SectionHead
+          num="08"
+          label="Contacto"
+          lede="Cuéntanos tu idea y te respondemos en menos de 24 horas."
+        >
+          ¿Tienes un proyecto <em>en mente?</em>
+        </SectionHead>
 
-      {/* ── Form card ── */}
-      <div className="footer-form-wrap section-container">
-        <div className="footer-form-card">
+        <div className="footer-grid">
+          {/* Columna izquierda: contacto directo */}
+          <div className="footer-direct">
+            <p className="footer-direct-label">Escríbenos directo</p>
+            <a href="mailto:zahirdaniel@hotmail.com" className="footer-mail">
+              zahirdaniel@hotmail.com
+            </a>
+            <p className="footer-direct-note">
+              ¿Prefieres WhatsApp? Toca el botón de la esquina.
+            </p>
+          </div>
 
-          {status === 'success' ? (
-            <div className="footer-success">
-              <div className="success-icon">✓</div>
-              <h3>¡Mensaje listo en WhatsApp!</h3>
-              <p>Solo dale enviar en el chat y te respondo en menos de 24 horas.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="form-row">
+          <div className="footer-form-card">
+
+            {status === 'success' ? (
+              <div className="footer-success">
+                <div className="success-icon">✓</div>
+                <h3>¡Mensaje listo en WhatsApp!</h3>
+                <p>Solo dale enviar en el chat y te respondemos en menos de 24 horas.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div className="form-row">
+                  <div className="form-field">
+                    <label>Nombre completo</label>
+                    <input
+                      type="text"
+                      placeholder="Tu nombre"
+                      required
+                      value={formData.nombre}
+                      onChange={set('nombre')}
+                    />
+                  </div>
+                  <div className="form-field">
+                    <label>Correo electrónico</label>
+                    <input
+                      type="email"
+                      placeholder="tu@email.com"
+                      required
+                      value={formData.email}
+                      onChange={set('email')}
+                    />
+                  </div>
+                </div>
+
                 <div className="form-field">
-                  <label>Nombre completo</label>
-                  <input
-                    type="text"
-                    placeholder="Tu nombre"
+                  <label>¿Qué tipo de proyecto tienes?</label>
+                  <div className="form-select-wrap">
+                    <select required value={formData.tipo} onChange={set('tipo')}>
+                      <option value="" disabled>Selecciona una opción</option>
+                      {Object.entries(TIPO_LABEL).map(([valor, texto]) => (
+                        <option key={valor} value={valor}>{texto}</option>
+                      ))}
+                    </select>
+                    <span className="select-arrow">↓</span>
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <label>Cuéntanos sobre tu proyecto</label>
+                  <textarea
+                    placeholder="Describe brevemente qué quieres construir, para cuándo lo necesitas y cualquier detalle relevante..."
+                    rows="5"
                     required
-                    value={formData.nombre}
-                    onChange={set('nombre')}
+                    value={formData.descripcion}
+                    onChange={set('descripcion')}
                   />
                 </div>
-                <div className="form-field">
-                  <label>Correo electrónico</label>
-                  <input
-                    type="email"
-                    placeholder="tu@email.com"
-                    required
-                    value={formData.email}
-                    onChange={set('email')}
-                  />
-                </div>
-              </div>
 
-              <div className="form-field">
-                <label>¿Qué tipo de proyecto tienes?</label>
-                <div className="form-select-wrap">
-                  <select required value={formData.tipo} onChange={set('tipo')}>
-                    <option value="" disabled>Selecciona una opción</option>
-                    {Object.entries(TIPO_LABEL).map(([valor, texto]) => (
-                      <option key={valor} value={valor}>{texto}</option>
-                    ))}
-                  </select>
-                  <span className="select-arrow">↓</span>
-                </div>
-              </div>
-
-              <div className="form-field">
-                <label>Cuéntame sobre tu proyecto</label>
-                <textarea
-                  placeholder="Describe brevemente qué quieres construir, para cuándo lo necesitas y cualquier detalle relevante..."
-                  rows="5"
-                  required
-                  value={formData.descripcion}
-                  onChange={set('descripcion')}
-                />
-              </div>
-
-              <button type="submit" className="form-submit">
-                <span>Enviar por WhatsApp</span>
-                <span className="submit-arrow">→</span>
-              </button>
-            </form>
-          )}
-        </div>
-
-        {/* Direct links */}
-        <div className="footer-direct-links">
-          <a href="mailto:zahirdaniel@hotmail.com" className="direct-pill">
-            <span className="pill-dot" />
-            zahirdaniel@hotmail.com
-          </a>
+                <button type="submit" className="form-submit">
+                  <span>Enviar por WhatsApp</span>
+                  <span className="submit-arrow">→</span>
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ── Bottom bar ── */}
+      {/* ── Pie: firma de la revista ── */}
       <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} Zahir Daniel Vidahurrazaga Marin</p>
+        <span>© {new Date().getFullYear()} KaiZen</span>
+        <span>Evoluciona la forma en que haces negocio</span>
       </div>
     </footer>
   );

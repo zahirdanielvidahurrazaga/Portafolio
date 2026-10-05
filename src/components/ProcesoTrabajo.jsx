@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SectionHead from './SectionHead';
 import '../styles/ProcesoTrabajo.css';
 
 const ProcesoTrabajo = () => {
@@ -22,12 +23,12 @@ const ProcesoTrabajo = () => {
     {
       num: "02",
       title: "Propuesta y Acuerdo",
-      desc: "Te presento una propuesta tecnológica detallada y la cerramos por escrito: alcance, tiempos y costo claros antes de escribir una línea de código."
+      desc: "Te presentamos una propuesta tecnológica detallada y la cerramos por escrito: alcance, tiempos y costo claros antes de escribir una línea de código."
     },
     {
       num: "03",
       title: "Ingeniería y Desarrollo",
-      desc: "Construyo tu sistema y te muestro avances cada semana, en persona o en línea, para que nunca te enteres del resultado hasta el final."
+      desc: "Construimos tu sistema y te mostramos avances cada semana, en persona o en línea, para que nunca te enteres del resultado hasta el final."
     },
     {
       num: "04",
@@ -37,41 +38,44 @@ const ProcesoTrabajo = () => {
     {
       num: "05",
       title: "Lanzamiento y Entrega",
-      desc: "Despliego tu proyecto listo para operar, con tu equipo capacitado y todo funcionando en producción."
+      desc: "Lanzamos tu proyecto listo para operar, con tu equipo capacitado y todo funcionando en producción."
     }
   ];
 
+  // Editorial (2026-10-05): sin línea de tiempo con circulitos ni tarjetas
+  // grises. Cada paso es una fila con filete y número grande, como el índice
+  // de una revista.
   return (
     <section id="process" className="section-container process-section">
-      {/* Luz viajera detrás de las tarjetas */}
-      <div className="process-glow" aria-hidden="true" />
+      <SectionHead
+        num="06"
+        label="Proceso"
+        lede={
+          <>
+            Cinco pasos para transformar tu negocio. De la firma del contrato a
+            producción: alrededor de <strong>2 meses</strong>.
+          </>
+        }
+      >
+        Cómo <em>trabajamos</em>
+      </SectionHead>
 
-      <div className="process-header text-center">
-        <h2>Ingeniería de Precisión.</h2>
-        <p className="text-muted">
-          Cinco pasos para transformar tu negocio. De la firma del contrato a
-          producción: alrededor de <strong>2 meses</strong>.
-        </p>
-      </div>
-
-      <div className="timeline">
+      <ol className="process-list rule-list">
         {steps.map((step, idx) => (
-          <motion.div
-            key={idx}
-            className="timeline-item"
-            initial={{ opacity: 0, y: 40 }}
+          <motion.li
+            key={step.num}
+            className="process-row"
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="timeline-num">{step.num}</div>
-            <div className="timeline-content">
-              <h3>{step.title}</h3>
-              <p>{step.desc}</p>
-            </div>
-          </motion.div>
+            <span className="process-num">{step.num}</span>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </motion.li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 };

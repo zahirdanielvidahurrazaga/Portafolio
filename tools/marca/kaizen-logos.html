@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KaiZen · logos preliminares</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root { --blue: #0a84ff; --blue2: #0052cc; }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: Manrope, -apple-system, sans-serif; background: #0b0b0c; color: #f5f5f7; padding: 40px 24px 80px; }
+  h1 { font-size: 28px; margin-bottom: 6px; }
+  .intro { color: #a1a1a6; max-width: 760px; line-height: 1.5; margin-bottom: 36px; }
+  .concept { margin-bottom: 56px; }
+  .concept h2 { font-size: 20px; margin-bottom: 4px; }
+  .concept p { color: #a1a1a6; max-width: 760px; line-height: 1.5; margin-bottom: 16px; font-size: 15px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) { .row { grid-template-columns: 1fr; } }
+  .panel { border-radius: 20px; padding: 36px 28px; display: flex; flex-direction: column; align-items: center; gap: 28px; }
+  .dark { background: #000; color: #f5f5f7; border: 1px solid #222; }
+  .light { background: #fff; color: #1d1d1f; }
+  .hero-mark { height: 84px; display: flex; align-items: center; gap: 18px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 420px; padding: 12px 22px; border-radius: 999px; font-size: 13px; }
+  .dark .nav { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); }
+  .light .nav { background: rgba(0,0,0,.04); border: 1px solid rgba(0,0,0,.08); }
+  .nav span.links { opacity: .6; }
+  .favs { display: flex; align-items: end; gap: 18px; font-size: 11px; opacity: .8; }
+  .favs div { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  svg { display: block; }
+  .ink { stroke: currentColor; fill: none; }
+  .didot { font-family: 'GFS Didot', serif; }
+</style>
+</head>
+<body>
+<h1>KaiZen · logos preliminares</h1>
+<p class="intro">Cuatro direcciones con letras griegas. Cada una se ve en oscuro y en claro, en la barra del sitio y como ícono de pestaña (32 y 16 px, que es donde la mayoría de los logos fallan). Son bocetos para elegir rumbo, no el logo final.</p>
+
+<!-- Símbolos reutilizables -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A84FF" /><stop offset="1" stop-color="#0052CC" />
+    </linearGradient>
+    <!-- KΛIZΣN: todo son trazos rectos, así que se dibuja sin depender de ninguna fuente -->
+    <symbol id="wm" viewBox="-8 -10 498 120">
+      <g class="ink" stroke-width="13" stroke-linejoin="miter" stroke-linecap="butt">
+        <path d="M7 0V100 M66 0 12 54 M30 37 70 100" />
+        <path d="M92 100 132 6 172 100" />
+        <path d="M201 0V100" />
+        <path d="M230 7H300L230 93H300" />
+        <path d="M388 7H322L360 50 322 93H388" />
+        <path d="M417 100V7L473 93V0" />
+      </g>
+    </symbol>
+    <!-- Δ: tres deltas que crecen = mejora continua -->
+    <symbol id="delta" viewBox="0 0 100 100">
+      <g fill="none" stroke-linejoin="round">
+        <path d="M50 14 90 86H10Z" stroke="currentColor" stroke-width="8" />
+        <path d="M50 38 72 76H28Z" stroke="currentColor" stroke-width="7" opacity=".55" />
+        <path d="M50 57 59 72H41Z" fill="currentColor" stroke="currentColor" stroke-width="4" opacity=".3" />
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- 1 -->
+<section class="concept">
+  <h2>1 · ΚΛΙΖΣΝ — wordmark griego</h2>
+  <p>"KAIZEN" escrito con letras griegas que se leen como latinas: Λ (lambda) en lugar de A y Σ (sigma) en lugar de E. Todo son líneas rectas, así que es geométrico y moderno. Además se dibuja sin depender de ninguna fuente. Es el más "tech" de los cuatro. El riesgo es que alguien lo lea como "KLIZSN".</p>
+  <div class="row">
+    <div class="panel dark">
+      <div class="hero-mark"><svg width="300" height="72"><use href="#wm" /></svg></div>
+      <div class="nav"><svg width="96" height="23"><use href="#wm" /></svg><span class="links">Servicios · Proyectos · Contacto</span></div>
+      <div class="favs">
+        <div><svg width="32" height="32" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#tile)"/><path d="M50 22 74 80M50 22 26 80" stroke="#fff" stroke-width="13" fill="none" stroke-linejoin="miter"/></svg>32 px</div>
+        <div><svg width="16" height="16" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#tile)"/><path d="M50 22 74 80M50 22 26 80" stroke="#fff" stroke-width="13" fill="none"/></svg>16 px</div>
+      </div>
+    </div>
+    <div class="panel light">
+      <div class="hero-mark"><svg width="300" height="72"><use href="#wm" /></svg></div>
+      <div class="nav"><svg width="96" height="23"><use href="#wm" /></svg><span class="links">Servicios · Proyectos · Contacto</span></div>
+      <div class="favs"><div style="color:#666">El ícono sería la Λ sola en el tile azul</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="concept">
+  <h2>2 · Δ Delta — el símbolo del cambio</h2>
+  <p>En matemáticas, Δ (delta) significa "cambio". Une las letras griegas con el mensaje "Evoluciona la forma en que haces negocio" y con lo que significa kaizen: mejora continua. Las tres deltas anidadas son pasos pequeños que crecen. De los cuatro, es el que tiene una historia más fácil de contar.</p>
+  <div class="row">
+    <div class="panel dark" style="color:#0a84ff">
+      <div class="hero-mark"><svg width="76" height="76"><use href="#delta" /></svg><span style="color:#f5f5f7;font-size:56px;font-weight:800;letter-spacing:-.03em">KaiZen</span></div>
+      <div class="nav"><span style="display:flex;align-items:center;gap:8px"><svg width="22" height="22"><use href="#delta"/></svg><b style="color:#f5f5f7;font-size:17px;letter-spacing:-.02em">KaiZen</b></span><span class="links" style="color:#f5f5f7">Servicios · Proyectos · Contacto</span></div>
+      <div class="favs" style="color:#f5f5f7">
+        <div><svg width="32" height="32" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#tile)"/><path d="M50 22 80 78H20Z" fill="none" stroke="#fff" stroke-width="11" stroke-linejoin="round"/></svg>32 px</div>
+        <div><svg width="16" height="16" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#tile)"/><path d="M50 22 80 78H20Z" fill="none" stroke="#fff" stroke-width="13" stroke-linejoin="round"/></svg>16 px</div>
+      </div>
+    </div>
+    <div class="panel light" style="color:#0071e3">
+      <div class="hero-mark"><svg width="76" height="76"><use href="#delta" /></svg><span style="color:#1d1d1f;font-size:56px;font-weight:800;letter-spacing:-.03em">KaiZen</span></div>
+      <div class="nav"><span style="display:flex;align-items:center;gap:8px"><svg width="22" height="22"><use href="#delta"/></svg><b style="color:#1d1d1f;font-size:17px;letter-spacing:-.02em">KaiZen</b></span><span class="links" style="color:#1d1d1f">Servicios · Proyectos · Contacto</span></div>
+      <div class="favs" style="color:#666"><div>En el ícono pequeño las deltas internas se pierden; queda la Δ sola</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="concept">
+  <h2>3 · καιζεν — griego minúsculo, serif</h2>
+  <p>Kaizen escrito de verdad con letras griegas minúsculas (κ α ι ζ ε ν), en Didot griega. Se lee casi como "kaizen" y se ve elegante, como de estudio de diseño. Es el más distinto a una empresa de software típica. Ojo: la ν (ni) se parece a una "v", así que hay quien lo leería "kaizev".</p>
+  <div class="row">
+    <div class="panel dark">
+      <div class="hero-mark didot" style="font-size:80px;line-height:1">καιζεν</div>
+      <div class="nav"><span class="didot" style="font-size:24px;line-height:1">καιζεν</span><span class="links">Servicios · Proyectos · Contacto</span></div>
+      <div class="favs">
+        <div><svg width="32" height="32" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#tile)"/><text x="50" y="72" text-anchor="middle" class="didot" font-size="74" fill="#fff">κ</text></svg>32 px</div>
+        <div><svg width="16" height="16" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#tile)"/><text x="50" y="72" text-anchor="middle" class="didot" font-size="74" fill="#fff">κ</text></svg>16 px</div>
+      </div>
+    </div>
+    <div class="panel light">
+      <div class="hero-mark didot" style="font-size:80px;line-height:1">καιζεν</div>
+      <div class="nav"><span class="didot" style="font-size:24px;line-height:1">καιζεν</span><span class="links">Servicios · Proyectos · Contacto</span></div>
+      <div class="favs" style="color:#666"><div>Ícono: κ (kappa) en el tile</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="concept">
+  <h2>4 · ζ Zeta — continuidad con el logo actual</h2>
+  <p>El favicon de hoy es una Z blanca en un tile azul. Esta versión cambia la Z por ζ (zeta, la "z" griega minúscula). Quien ya conoce la marca ve una evolución y no un cambio total, y la Z de Zahir sigue ahí. El nombre va en texto limpio.</p>
+  <div class="row">
+    <div class="panel dark">
+      <div class="hero-mark"><svg width="76" height="76" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#tile)"/><text x="50" y="70" text-anchor="middle" class="didot" font-size="78" fill="#fff">ζ</text></svg><span style="font-size:56px;font-weight:800;letter-spacing:-.03em">KaiZen</span></div>
+      <div class="nav"><span style="display:flex;align-items:center;gap:8px"><svg width="22" height="22" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#tile)"/><text x="50" y="70" text-anchor="middle" class="didot" font-size="78" fill="#fff">ζ</text></svg><b style="font-size:17px;letter-spacing:-.02em">KaiZen</b></span><span class="links">Servicios · Proyectos · Contacto</span></div>
+      <div class="favs">
+        <div><svg width="32" height="32" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#tile)"/><text x="50" y="70" text-anchor="middle" class="didot" font-size="78" fill="#fff">ζ</text></svg>32 px</div>
+        <div><svg width="16" height="16" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#tile)"/><text x="50" y="70" text-anchor="middle" class="didot" font-size="78" fill="#fff">ζ</text></svg>16 px</div>
+      </div>
+    </div>
+    <div class="panel light">
+      <div class="hero-mark"><svg width="76" height="76" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#tile)"/><text x="50" y="70" text-anchor="middle" class="didot" font-size="78" fill="#fff">ζ</text></svg><span style="font-size:56px;font-weight:800;letter-spacing:-.03em">KaiZen</span></div>
+      <div class="nav"><span style="display:flex;align-items:center;gap:8px"><svg width="22" height="22" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="url(#tile)"/><text x="50" y="70" text-anchor="middle" class="didot" font-size="78" fill="#fff">ζ</text></svg><b style="font-size:17px;letter-spacing:-.02em">KaiZen</b></span><span class="links">Servicios · Proyectos · Contacto</span></div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

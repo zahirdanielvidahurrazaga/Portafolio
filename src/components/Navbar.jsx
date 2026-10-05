@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from './LiquidGlass';
 import ThemeToggle from './ThemeToggle';
+import KaizenWordmark from './KaizenWordmark';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
@@ -31,13 +32,13 @@ const Navbar = () => {
           <LiquidGlass shape="rounded" radius={0.5} intensity={0.45} className="nav-glass" />
           <div className="nav-container">
             <a href="#" className="nav-logo">
-              Zahir Vidahurrázaga
+              <KaizenWordmark />
             </a>
             <div className="nav-links">
               <a href="#about">Servicios</a>
               <a href="#testimonios">Testimonios</a>
               <a href="#portfolio">Soluciones</a>
-              <a href="#sobre-mi">Sobre mí</a>
+              <a href="#sobre-mi">Nosotros</a>
               <a href="#process">Proceso</a>
               <a href="#faq">FAQ</a>
             </div>
@@ -70,7 +71,7 @@ const Navbar = () => {
             <a href="#about" onClick={closeMenu}>Servicios</a>
             <a href="#testimonios" onClick={closeMenu}>Testimonios</a>
             <a href="#portfolio" onClick={closeMenu}>Soluciones</a>
-            <a href="#sobre-mi" onClick={closeMenu}>Sobre mí</a>
+            <a href="#sobre-mi" onClick={closeMenu}>Nosotros</a>
             <a href="#process" onClick={closeMenu}>Proceso</a>
             <a href="#faq" onClick={closeMenu}>FAQ</a>
             <a href="#contact" className="btn-metallic mobile-cta" onClick={closeMenu}>Cotizar proyecto</a>

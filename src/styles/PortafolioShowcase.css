@@ -1,20 +1,11 @@
 .showcase-section {
-  padding-bottom: var(--section-pad-y);
-}
-
-.showcase-header {
-  text-align: center;
+  /* Sin padding inferior: el último proyecto ya trae el suyo, y sumados
+     dejaban casi media pantalla vacía antes de Nosotros. */
   padding-bottom: 0;
 }
 
-.showcase-eyebrow {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent-color);
-  margin-bottom: var(--spacing-2);
+.showcase-header {
+  padding-bottom: 0;
 }
 
 /* ── Each project row ── */
@@ -29,19 +20,20 @@
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: var(--spacing-16);
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: var(--spacing-24) var(--spacing-4);
+  padding: var(--spacing-16) var(--spacing-4);
   overflow: hidden;
 }
 
-/* Separator between items */
+/* Filete entre proyectos, a todo el ancho de la retícula (como el de las
+   cabeceras de sección) */
 .showcase-item + .showcase-item::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 5%;
-  width: 90%;
+  left: var(--spacing-4);
+  right: var(--spacing-4);
   height: 1px;
   background: var(--border-color);
 }
@@ -54,15 +46,6 @@
 .showcase-item--reversed .showcase-text  { order: 2; }
 .showcase-item--reversed .showcase-device { order: 1; }
 
-/* ── Background glow ── */
-.showcase-glow {
-  position: absolute;
-  inset: 0;
-  opacity: var(--glow-opacity);
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* ── Text block ── */
 .showcase-text {
   position: relative;
@@ -73,18 +56,18 @@
 }
 
 .showcase-category {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent-color);
+  color: var(--text-muted);
 }
 
 .showcase-title {
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
   color: var(--text-color);
   margin: 0;
 }
@@ -97,19 +80,11 @@
 }
 
 .showcase-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-2);
   margin-top: var(--spacing-2);
-}
-
-.showcase-tag {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  padding: 0.3rem 0.85rem;
-  border-radius: var(--radius-full);
-  background: var(--tint-3);
-  border: 1px solid var(--border-color);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 
@@ -132,7 +107,7 @@
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--on-accent);
   background: var(--accent-color);
   box-shadow: 0 8px 26px rgba(var(--accent-rgb), 0.28);
   transition: transform 0.2s ease, filter 0.2s ease;

@@ -7,6 +7,137 @@ Zahir = Ingeniero en Mecatrónica que vende soluciones **software + hardware** a
 > ⚠️ Vive FUERA de iCloud a propósito: `/Users/karimeperez/Developer/Portafolio`
 > (Desktop/Documents sincronizan y rompen `node_modules`/`.git`).
 
+## 🔄 Cambio de identidad: Zahir → KaiZen (en curso desde 2026-10-03)
+Por la unión del estudio (Zahir + su novia), el sitio pasará de la marca personal "Zahir
+Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → no renombrar a ciegas.
+- [x] Titular del Hero: "Evoluciona la forma en que haces negocio" (también en og:title/twitter:title).
+- [x] Wordmark **ΚΛΙΖΣΝ** (Λ=A, Σ=E, puros trazos rectos) ELEGIDO → `src/components/KaizenWordmark.jsx`, ya en la navbar (sin ícono al lado: logo+nombre juntos se siente repetitivo).
+- [x] Ícono ELEGIDO: **Κ** (pasó por Λ → recuerda a BBVA, y por Σ). Favicon SVG/PNG/ICO/apple-touch regenerados con PIL
+      (`?v=3`). OJO: `tools/marca/iconos.mjs` todavía genera la Z azul vieja — no correrlo sin actualizarlo.
+- [x] **Color: paleta MÁRMOL** (sin color: hueso #ece8df en oscuro, tinta #1d1d1f en claro). Token nuevo `--on-accent`
+      para el texto sobre botones de acento (antes era #fff a mano en 5 lugares).
+- [x] **Tipografía: Familjen Grotesk (titulares, `--font-display`) + Inter (texto)**, Google Fonts en index.html.
+      Elegidas en `tools/marca/kaizen-laboratorio.html` (comparador de 17 fuentes × 8 paletas).
+- [x] **Hero estilo portada de revista**: cabecera con filete ("Apps móviles · …" / "Nº 01 — 2026"), titular gigante
+      a la izquierda con "haces negocio" en itálica, sin la franja de 3 insignias (la pidió quitar), botones al pie.
+- [x] **Scroll suave** (Lenis, `src/lib/useSmoothScroll.js`): solo rueda/trackpad, se detiene con `body.pm-open`,
+      el modal lleva `data-lenis-prevent`, se apaga con reduced-motion.
+- [x] **Cinta 3D del hero** (`src/lib/heroRibbon.js` + `HeroRibbon.jsx` + `styles/HeroRibbon.css`, three.js por
+      import() diferido): cromo-hueso (oscuro) / grafito (claro). Reemplazó a las esferas CSS.
+      **Ligada al scroll (2026-10-05):** forma DETERMINISTA f(tiempo, progreso) — sin física ni memoria — para que al
+      subir regrese exactamente en reversa (como Lusion). Estado A = serpiente que vaga (punto i = Lissajous(t − i·LAG));
+      estado B = **SALIDA**: arco fuera de pantalla por la derecha; termina de salir al 75% del recorrido hacia
+      `#about .factor-header`. Se probaron ola, órbita y ∞ anclados a Servicios y se DESCARTARON: la cinta brillante
+      detrás del título blanco lo volvía ilegible. Ya NO sigue al mouse (lo pidió él). Vive en App, canvas
+      FIJOS (back z −1 / front z 11); se apaga y oculta en cuanto sale (p = 1).
+      **Cruza las letras:** 2 canvas (detrás z1 / delante z11 del titular) con la misma cámara y un plano de recorte
+      en z=0; el recorrido en z va cargado hacia atrás (−0.75) para que pase delante solo ~30% del tiempo.
+- [x] **Barra editorial**: arriba sin cápsula, transparente y en la retícula del hero (1280 + --spacing-4), links en
+      versalitas espaciadas con filete al hover; al bajar se compacta en la cápsula liquid glass. Hamburguesa < 960px.
+- [x] **Reel de Proyectos** (`ProyectosReel.jsx`, efectos 1+2 de Lusion): pista sticky de 320vh (240 en móvil);
+      la laptop de Be Fit Lab crece hasta que su PANTALLA cubre el viewport (escala desde el centro de la pantalla,
+      medida en px sobre `befit-mac.webp` → constante PANTALLA; si cambia el render, re-medir), se cambia a la
+      captura a sangre y la frase "Proyectos reales, no demos." se abre palabra por palabra. Todo con useScroll.
+- [x] **Animación de marca en el reel** (`KaizenReel.jsx` + `styles/KaizenReel.css`, 2026-10-05): ~16 s en loop,
+      SVG + keyframes CSS (sin video: nítida a cualquier escala, sin ffmpeg). Guion: Idea ("Tu negocio") → Diseño
+      (plano punteado del teléfono) → Construcción (Reservar, pase QR, ticket, gráfica) → Lanzamiento (Κ cae en la
+      pantalla de inicio · App Store · Google Play) → Mejora continua (escalones + ΚΛΙΖΣΝ). B/N sobre hueso, NO sigue
+      al tema. Va encima de la pantalla del render (`.reel-screen`, medido con PANTALLA) y a sangre en lugar de
+      `befit-web.jpg`. **El video AVANZA CON EL SCROLL** (pidió que se viera completo antes de la frase; se
+      prefirió a bloquear el scroll): ProyectosReel escribe `--sync` (segundo negativo) directo en los `svg.kr`
+      con useMotionValueEvent, ambos KaizenReel en pausa permanente; tiempos en la constante `T` y la pista mide
+      820vh (640 móvil). Termina en 15.3 s (ΚΛΙΖΣΝ completo) y recién ahí entra la frase. La laptop arranca 44px
+      más abajo (`BAJA_PX`, no choca con la barra) y llega a 0 al llenar la pantalla.
+      El tamaño base de la laptop también se limita por el ALTO (`(vh − 220)·1747/1068`): en laptops bajas pegaba
+      con la barra y se cortaba abajo.
+      Textos ajustados para que NO se encimen (revisado cuadro por cuadro): caja chica "Ventas · +24%" (antes
+      "$1,250" no cabía), pase "Pilates 7:00" a 24px, ticket "Nº 0142" con TOTAL y monto en dos renglones, y la
+      escalera final va DEBAJO de ΚΛΙΖΣΝ (antes lo cruzaba). Para revisar cuadros: clonar `svg.kr` en un overlay
+      con tamaño fijo y `--sync: -Ns`.
+      A sangre el lienzo va en slice (para empatar 1:1 con la laptop) y en pantallas anchas metía el teléfono bajo
+      la barra → justo después del cambio (`ACOMODA`) se encoge/baja hasta caber completo en el área libre
+      (`LIBRE`: 84px arriba por la barra, 28 abajo). En móvil la de
+      sangre va en 'meet' (si no, el recorte vertical se come el pase y el ticket). Se pausa fuera de pantalla;
+      con reduced-motion queda congelada en la escena de construcción. Tiempos en % de 16 s (1 s = 6.25%).
+- [ ] **MODO PRESENTACIÓN + LA NUBE (2026-10-05, en construcción, sin probar en navegador)** — pedido tras su 2ª
+      grabación de Lusion (/about: nube de partículas → haz de luz → cara de partículas → palabras gigantes).
+      Se eligió D (estructura de diapositivas) + A (una nube que hila todo) + guiño de B (Kaizen = el sitio se mejora).
+      - `src/lib/nube.js` + `Nube.jsx`: UN sistema de puntos three.js (7000 / 3200 en móvil), canvas fijo z −1, cámara
+        ORTOGRÁFICA en px CSS, posiciones en CPU = f(tiempo, scroll) DETERMINISTA (igual que la cinta). Polvo tenue con
+        parallax entre secciones; apagado en el hero (manda la cinta) y aparece mientras la cinta sale.
+      - `Interludio.jsx` (`data-nube="forma"`, sticky 260vh / 210 móvil): la nube se ARMA (en curva) en la forma, se lee
+        la frase, y EXPLOTA hacia afuera de vuelta a polvo. Fases en `estado()`: q = progreso de la sección
+        (0 se fija, 1 se suelta); armado q −0.3→0.12, explosión 0.66→1.02. El texto usa el mismo progreso.
+      - La forma se muestrea dibujándola en un canvas 2D del tamaño de `.interludio-forma` (el CSS decide tamaño y
+        lugar); `FORMAS` en nube.js: `kaizen` (ΚΛΙΖΣΝ), `telefono` (geometría de KaizenReel), `k` (favicon).
+      - ⚠️ La nube RELEE las escenas (`[data-nube]`) con un MutationObserver: antes las leía una sola vez y, tras
+        una recarga en caliente, seguía buscando escenas viejas (el teléfono de Nosotros "no salía"). Editar
+        `nube.js` en sí NO recrea la nube: recargar la página.
+      - **Sin polvo de fondo (pedido de Zahir):** las partículas SOLO se ven cuando forman algo; entre estaciones la
+        nube ni calcula ni dibuja (`renderer.clear()` una vez). Llegan apareciendo desde toda la pantalla y al
+        explotar se desvanecen. NO reponer el polvo ambiental.
+      - **Pantalla de carga** (`html.intro`, la pone el script síncrono de index.html; sin #ancla ni reduced-motion;
+        `scrollRestoration = 'manual'` → siempre arranca arriba): partículas SUELTAS por toda la pantalla, en
+        movimiento (NO la nube circular: la descartó) → se arma ΚΛΙΖΣΝ →
+        nube.js quita `intro` a los 2.9 s (`INTRO` en nube.js) y aparecen barra, WhatsApp y textos (CSS en
+        index.css). El scroll se bloquea con listeners de rueda/touch/teclas en CAPTURA (index.html).
+        ⚠️ **NUNCA bloquearlo con overflow:hidden en html/body ni con lenis.stop()** (que pone overflow:clip en
+        <html>): en SAFARI alternar el overflow de la raíz rompe los position:sticky — el escenario del hero se iba
+        hacia arriba y el titular nunca aparecía (grabación de Zahir, 5-oct). En Chrome no se nota. Durante la carga también se esconde el ΚΛΙΖΣΝ de respaldo
+        (se veía "la marca sin partículas" mientras cargaba three.js). ⚠️ La transición de entrada va en la CAPA
+        `.hero-kaizen`, nunca en el kicker/frase: su opacidad va ligada al scroll y una transición la atrasaba. Respaldos: index.html la quita a los 6 s; Nube.jsx la
+        quita si no hay WebGL o hay reduced-motion.
+      - Teléfono: "De una idea a *tu bolsillo.*" — SIN "~2 meses" (lo pidió quitar). Kicker "Del boceto a producción".
+      - **APERTURA + HERO = UN SOLO ESCENARIO FIJO** (`Hero.jsx`, 680vh / 580 móvil; el viaje partículas→cinta dura
+        ~2 pantallas porque Zahir lo pidió más largo; `.hero-stage` sticky). Primera
+        versión era Interludio-apertura + hero aparte y Zahir la rechazó: "solo sube el texto". Visto en Chrome:
+        **en Lusion NADA sube** — la pantalla se queda y el contenido se transforma EN SU LUGAR, ~4–6 golpes de
+        rueda por cambio. Fases (P del escenario): ΚΛΙΖΣΝ quieto → frase se tuerce y se va palabra por palabra →
+        las letras viajan a la cinta EN OLA de izquierda a derecha → la cinta se solidifica (`--born`) → el titular
+        se arma palabra por palabra desde su ranura (`.hw` = máscara; filete con scaleX; botones al final) → pausa
+        → el titular se va hacia arriba en su lugar → se suelta y entra Servicios.
+        Puente entre canvas: `src/lib/cintaPuente.js` (la cinta publica su recorrido PROYECTADO a pantalla; `RELEVO`
+        = tiempos compartidos por nube, cinta y textos). heroRibbon: p cuenta desde que el escenario SE SUELTA,
+        anchorA = centro de pantalla. Reduced-motion: hero estático de siempre, sin escenario.
+        ⚠️ **Gotcha:** `vector.project(camera)` usa la matriz de la cámara que SOLO se actualiza al renderizar; como
+        la cinta no se dibuja antes de nacer, mandaba las partículas a 80 000 px → `camera.updateMatrixWorld()` antes.
+        ⚠️ **Probar en Chrome con la extensión:** la pestaña de automatización va en segundo plano (`document.hidden`
+        = true) y la nube se pausa → se ve en blanco. Para probar: `Object.defineProperty(document,'hidden',{get:()=>false})`
+        y mover con `scrollTo` a P concretos. El tema se cambia con `localStorage.tema` + reload (no tocando data-theme).
+        ⚠️ Nada de `overflow:hidden` en `.hero-section`: rompe el sticky.
+      - **NOSOTROS = "DOS MITADES → UNA APP"** (`SobreMi.jsx`, 2026-10-05): arriba "Somos KaiZen" + bio; abajo escena
+        fija (`.nos-pista`, 100vh + 2×95vh) con la nube en secuencia `mitades,telefono`: lápiz trazando un boceto
+        (I · Estrategia y diseño) y `</>` (II · Ingeniería) lado a lado → se FUNDEN en el teléfono con
+        "Del boceto a producción · De una idea a tu bolsillo." → explota y entra Proceso. Absorbió al Interludio
+        del teléfono (ya no existe aparte). PENDIENTE con fotos: lápiz y </> → sus CARAS (ella diseño, él ingeniería).
+      - Interludio que queda: antes del Footer
+        (Κ · "¿Empezamos?" + botón a #contact).
+      - Sin WebGL / reduced-motion: no hay nube; cada interludio muestra su `fallback` SVG (se esconde con body.nube-on).
+      - SIGUIENTE: caras en Nosotros (falta sampler de imagen + las 2 fotos), guiño B en Proceso (arranca en boceto y se
+        "mejora"), transiciones entre secciones (palabras gigantes que cruzan, cambio de color total tinta/hueso).
+- [x] **SISTEMA EDITORIAL en todo el sitio (2026-10-05)** — diagnóstico visual en Chrome: el hero hablaba "revista" y
+      el resto "plantilla Apple". Ahora: `SectionHead.jsx` (filete + etiqueta + "Nº 0X" + titular grande a la izquierda
+      con `<em>` en itálica, estilos `.sh` en index.css) abre TODAS las secciones (02 Servicios … 08 Contacto).
+      Sin cajas grises: `.rule-list` (filetes) en Proceso (índice con números grandes), FAQ (+ que gira a ×),
+      Testimonios (cita grande sin estrellas) y Nosotros. Contacto: campos con solo línea inferior. Sin glows de
+      color en Proyectos (tags como línea de créditos). `.section-container` 1200→1280 (misma retícula del hero);
+      `--section-pad-y` 8→6.5rem.
+- [x] **Voz "nosotros"** en todo el sitio + `<title>`/metas a KaiZen. "Sobre mí" → **Nosotros** (#sobre-mi se
+      conserva): sin foto individual, ahí van las caras de partículas. Se quitó "Ingeniero en Mecatrónica".
+      PENDIENTE: el correo de contacto sigue siendo zahirdaniel@hotmail.com.
+- [x] **Imagen al compartir = `og-image-v3.jpg` (2026-10-05)**: oscura, cabecera de revista, titular del hero con
+      "haces negocio" en itálica con degradado, ΚΛΙΖΣΝ HECHO DE PARTÍCULAS y "Proyectos reales, no demos.". Sin foto.
+      Se genera con `tools/marca/og.py` (PIL + Familjen Grotesk/Inter; fuentes en `tools/marca/.fuentes/`, no van
+      en git — URLs en el script). og.mjs/og.html (playwright) se borraron. Revisada a tamaño WhatsApp (336px).
+- ⚠️ **Gotcha Framer Motion:** con `useScroll({ target, offset })`, `useTransform(p, [rango], [valores])` en
+      opacity/scale se delega al ScrollTimeline NATIVO, que calcula OTRO progreso (en el reel se veían laptop y
+      captura a la vez). Usar `useTransform(p, (v) => …)` (helper `rango` en ProyectosReel.jsx).
+- [x] **Transición diagonal** (`DiagonalReveal.jsx`): la sección se descubre con un corte diagonal ligado al scroll.
+      Solo en Sobre mí y Proceso (en todas se volvería tic).
+- [ ] Siguiente efecto (de la grabación de Lusion analizada cuadro por cuadro, 2026-10-03): **caras de Zahir y su novia hechas de partículas** en Nosotros (hacen falta 2 fotos).
+      Descartados: túnel de colores y stickers 3D (no van con mármol / pesan mucho).
+- [x] ~~Nombre en `<title>`, metas, Sobre mí, footer, favicon/logo e imagen OG~~ — hecho (OG v3, 2026-10-05).
+
 ## Stack y despliegue
 - **React 19 + Vite 8**, Framer Motion, lucide-react.
 - **Despliegue:** Cloudflare Pages. **`git push` a `main` auto-despliega.** Repo `github.com/zahirdanielvidahurrazaga/Portafolio`.
@@ -16,7 +147,7 @@ Zahir = Ingeniero en Mecatrónica que vende soluciones **software + hardware** a
 
 ## Arquitectura
 - **`src/data/projects.js`** = catálogo central. Exporta `projects` = curaduría `VISIBLES` (hoy `['befit','pos','boda']`) mapeada desde `allProjects`. Para mostrar otro (carperfit/dental/santuario archivados), agregar su id a `VISIBLES`. Cada proyecto: `slides`, `website`, `platforms`, `heroImage`, `result` (outcome de negocio), `tagline`, `walkthrough` = funciones `{ role?, device?('phone'|'desktop'), icon, title, desc, image }`.
-- **Orden de la página (`App.jsx`) — REORDENADO 2026-08-04 para conversión:** Hero → FactorMecatronico (Servicios) → **Testimonios** → PortafolioShowcase (Proyectos) → **SobreMi** → ProcesoTrabajo → Faq → Footer. Sigue las preguntas del cliente en el orden en que se las hace: ¿qué hace? → **¿le creo?** → ¿ya lo hizo? → ¿quién es? → ¿cómo trabajamos? → dudas → contacto.
+- **Orden de la página (`App.jsx`) — REORDENADO 2026-08-04 para conversión:** Hero → Servicios → **Testimonios** → PortafolioShowcase (Proyectos) → **SobreMi** → ProcesoTrabajo → Faq → Footer. Sigue las preguntas del cliente en el orden en que se las hace: ¿qué hace? → **¿le creo?** → ¿ya lo hizo? → ¿quién es? → ¿cómo trabajamos? → dudas → contacto.
   - **Por qué:** medido con playwright, el video de cliente empezaba en la **pantalla 6.5 de móvil (51% del scroll)** y casi nadie llegaba. Ahora empieza en la **pantalla 1.9 (15%)**. `SobreMi` bajó al 54%: la bio contesta una pregunta que el visitante frío todavía no se hace, y ocupaba la pantalla más cara del sitio. (Revierte la decisión vieja de "primero quién soy"; el usuario aprobó el cambio con los números enfrente.)
   - **El orden del navbar (`Navbar.jsx`, escritorio Y menú móvil) debe seguir al de la página** — se actualizaron los dos.
   - En `Testimonios.jsx`, **el testimonio con video va PRIMERO en el arreglo**: en móvil las tarjetas se apilan y el orden del arreglo decide qué se ve antes.
@@ -24,19 +155,19 @@ Zahir = Ingeniero en Mecatrónica que vende soluciones **software + hardware** a
 ## Componentes clave
 - **`Hero.jsx`** — titular estrella "Software a tu medida: que se adapte a ti, **no tú a él.**" + franja de prueba (`.hero-proof`: App Store/Play · en producción · proyectos reales) + 2 CTAs. Glows azul/morado viajeros por CSS. En móvil: anclado arriba (no centrado) con más aire.
 - **`SobreMi.jsx`** — "Quién soy": foto (4:5) + bio corta + CTA "Trabajemos juntos". Foto en `public/sobre-mi.jpg`.
-- **`FactorMecatronico.jsx`** (id `#about`, "Servicios") — "Qué puedo construir": **carrusel/marquee controlado por JS** (rAF + transform, NO animación CSS) de 6 chips de servicio.
-  - **APERTURA AUTOMÁTICA AL CENTRO (2026-08-13):** frena sobre cada tarjeta, la abre, la deja leer 3.2 s y sigue. Antes la descripción solo se veía si el visitante tocaba, y casi nadie toca. Por eso se quitó el "Toca cada uno para saber más" del subtítulo.
-  - ⚠️ **REGLA QUE SOSTIENE TODO: abrir NO debe cambiar el layout.** La primera versión se sintió trabadísima porque la tarjeta abierta pasaba de ~200px a 360px de ancho. Eso (a) empujaba a las siguientes a la derecha, (b) cambiaba el `scrollWidth` del carril → la medida del wrap quedaba mal → tirón al reanudar, y (c) al crecer hacia abajo **empujaba la página entera** cada 3 s.
-    → **Todas las tarjetas miden lo mismo** (`.service-chip { width: 290px }`, 268 en móvil) y la activa NO cambia de ancho: solo crece hacia abajo, y en una fila flex con `align-items:flex-start` eso no mueve a nadie en horizontal.
-    → **`.service-marquee` reserva el alto** de la tarjeta abierta (`min-height`), por eso la página no se mueve. Como esa reserva ya separa de la sección siguiente, `.factor-section` lleva `padding-bottom` chico: sumarle el padding normal dejaba un hueco enorme con todo cerrado.
-  - ⚠️ **El bucle rAF es el ÚNICO que escribe `transform`.** Antes también lo hacía una transición de CSS y se peleaban. Frenar y arrancar son interpolaciones DENTRO del bucle. Nada de `style.transition` en el carril.
-  - ⚠️ **La duración del frenado se CALCULA, no es fija.** Con una curva de duración fija el frenado arrancaba a ~300 px/s (4× la marcha de 70): daba un acelerón y luego un alto en seco — el usuario lo describió como "parón de golpe". La velocidad debe decaer en línea recta de la actual a 0, y entonces la distancia es v·T/2 → **T = 2·d/v** con **easeOutQuad** (`p*(2-p)`). Así el frenado ENTRA exactamente a la velocidad que ya llevaba. Se usa `vActual` (la real de ese momento, que puede ir a media aceleración), no la constante.
-  - ⚠️ **El periodo del carrusel NO es `scrollWidth / 2`.** Son 12 tarjetas y 11 huecos, así que la mitad se queda corta por medio hueco (8px) y pegaba un brinco cada vuelta. Se mide como `children[6].offsetLeft - children[0].offsetLeft`.
-  - **Cuidado al medir esto con playwright:** una sonda en `requestAnimationFrame` se cruza con el bucle de la animación y a veces cuenta dos avances como uno → reporta picos falsos de ~1.8×. Medir en ventanas de ~50 ms (`vel2.mjs` en el scratchpad) o mirar el desplazamiento por fotograma en px, no la velocidad.
-  - La detección corre **cada 100 ms, no en cada fotograma**: medir 12 elementos con `getBoundingClientRect` fuerza recálculo de layout y a 60fps se nota. Engancha ~52px ANTES del centro para tener con qué frenar.
-  - `frenarRef` / `reanudarRef` / `cerrarRef` son refs que llena el bucle o el render, porque el efecto tiene deps `[]` y si no se llamaría a versiones viejas.
-  - El clic **manda sobre el reloj** y reusa el mismo frenado (la tarjeta se acomoda al centro en vez de abrirse a medio salir). Antes de frenar hacia otra hay que **soltar `openRef`**, si no el bucle sigue detenido. El hover cancela el cierre para no cerrarle encima a quien lee. Sin apertura automática con `prefers-reduced-motion`.
-  - Verificado con playwright: **0 tirones** (>8px en un fotograma) en 18 s, las tarjetas aterrizan a **0px del centro** y la sección mantiene **una sola altura**.
+- **`Servicios.jsx`** (id `#about`, "Servicios") — **"ÍNDICE + NUBE" (2026-10-05)**. Reemplazó al carrusel de cápsulas
+  (`FactorMecatronico.jsx`, borrado; su historia y las lecciones del marquee están en git) porque se veía "plantilla"
+  junto al hero. Escena fija (`.srv-pista` = 100vh + 6×72vh; 6×60 en móvil): a la izquierda un ÍNDICE de revista
+  (Nº + nombre grande; el activo se enciende en itálica y abre su descripción con grid 0fr→1fr); a la derecha la
+  nube en modo **`secuencia`** (`data-nube="telefono,navegador,carrito,ticket,ia,qr"`): se arma al entrar, se
+  TRANSFORMA de figura en figura SIN explotar (morph en el último 38% de cada tramo) y explota al soltarse.
+  El texto cambia a la mitad del morph (`u + 0.19`). Clic en un servicio = scroll a su tramo. Reduced-motion:
+  lista estática. Las figuras se dibujan en `FORMAS` de nube.js (canvas 2D).
+  - ⚠️ `muestrear()` ordena los puntos por ÁNGULO alrededor del centro y la partícula i usa la fracción i/N
+    (`floor(i*M/N)`): así al morfear cada partícula va a la parte equivalente de la siguiente figura. Con puntos
+    barajados a la mitad del morph todo se volvía una bola.
+  - Entrada/salida sin "polvo regado": alfa del armado ∝ a², y al explotar se apaga con (1−e)².
+  - El `<SectionHead>` conserva la clase `factor-header`: la cinta del hero sale rumbo a `#about .factor-header`.
 - **`Mockup.jsx`** — la imagen de cualquier dispositivo. Intenta `src` (el render de
   Rotato/Shots.so en `/public/mockups/`) y si ese archivo no existe cae a `fallback` (la captura
   plana). Así la página funciona antes de que lleguen los renders y al soltarlos no se toca código.
@@ -50,7 +181,15 @@ Zahir = Ingeniero en Mecatrónica que vende soluciones **software + hardware** a
   - Los datos salen de `project.mockups`; `walkthrough` sigue en `projects.js` pero **ya no se
     renderiza** (son capturas y textos reales, no los borres sin avisar).
   - **Nada de `rotateY` por CSS sobre un mockup**: el render ya trae su ángulo y se deformaría.
-- **`Testimonios.jsx`** — tarjetas con cita + **logo del cliente como avatar** (círculo blanco; `public/logos/tito.png`, `befit-mark.png`). ⚠️ Las CITAS son BORRADOR, faltan las reales.
+- **`Testimonios.jsx` = "LECTURA" (2026-10-05, a prueba: si no le convence, regresar a las dos columnas — respaldo en
+  el scratchpad de esa sesión o en git)**. Sin partículas (Zahir sintió que ya era mucho), mismo lenguaje: el video
+  CRECE con el scroll (0.55→1) hasta una tarjeta 9:16 grande con vista previa MUDA en loop (se monta la 1ª vez que
+  aparece y luego solo pausa/reanuda); la cita es una escena fija corta (`.tc`, 230vh) que se "lee": cada palabra
+  pasa de gris a tinta; al final aparece el autor. Contador "01 / 02".
+  ⚠️ En la pestaña de prueba de Chrome (oculta) IntersectionObserver NO dispara → useInView nunca es true; la vista
+  previa del video hay que verificarla en un navegador real.
+  (Lo de abajo describe la versión ANTERIOR de tarjetas; el lightbox del video sigue igual.)
+- **`Testimonios.jsx` (versión anterior)** — tarjetas con cita + **logo del cliente como avatar** (círculo blanco; `public/logos/tito.png`, `befit-mark.png`). ⚠️ Las CITAS son BORRADOR, faltan las reales.
   - **VIDEO DE CLIENTE (2026-08-04):** si el testimonio trae `video` + `poster` + `videoDuracion`, la tarjeta muestra una **miniatura vertical 9:16 GRANDE** (`min(200px, 62%)`, botón de play glass de 62px, píldora con la duración) que abre un **lightbox** (`.testimonio-lightbox`) con el video a pantalla completa, `controls` + `autoPlay` **con sonido** (permitido porque lo dispara un clic del usuario). Cierra con Escape, clic en el fondo o la ✕; reusa el patrón de `ProjectModal` (bloqueo de scroll + clase `pm-open` que esconde el botón flotante de WhatsApp). El `<video>` **solo se monta al abrir** → el MP4 no se descarga en la carga inicial (verificado).
   - **Tarjeta solo-video:** si hay `video` y `quote: null`, la tarjeta lleva `.testimonio-card--video` (todo centrado, sin ícono de comillas ni blockquote) y **el video ES el testimonio**. Decisión deliberada: no inventarle palabras al cliente. Las tarjetas de solo texto llevan `.testimonio-quote { margin: auto 0 }` para que la cita se centre cuando la rejilla las estira a la altura de la tarjeta con video (si no, queda un hueco enorme abajo).
   - Primer video: **Be Fit Lab** (`public/testimonios/befit-testimonio.mp4`, 5.9 MB, 576×1024, 52.8 s, 937 kbps, **ya trae `faststart`** — el átomo `moov` va antes del `mdat`, así que NO hay que recodificarlo). Póster `befit-poster.jpg` sacado del segundo 3.
@@ -70,8 +209,6 @@ tu lector de códigos" sí. Cambiados: insignia del hero, subtítulo de Servicio
   cosas que NO se hacen → ahora es **"Acceso QR y tickets"**: pases de Apple/Google Wallet, lector QR
   e impresión de tickets. Lo de Wallet entró aquí en vez de sumar una séptima tarjeta al carrusel
   ("menos es más", regla del usuario).
-- ⚠️ El componente sigue llamándose `FactorMecatronico.jsx` (y sus clases `.factor-*`) por historia;
-  no se ve en el sitio. Renombrarlo es cosmético y toca varios archivos.
 
 ## Tema claro / oscuro (2026-08-13)
 Motivo: al mostrar el sitio, a varias personas **no les gustó que fuera solo oscuro**.
@@ -249,14 +386,17 @@ Cómo se midió: `medir.mjs` en el scratchpad (playwright + Chrome del sistema) 
   caracteres en Be Fit Lab) hacía que las 3 tarjetas ocuparan 3 pantallas. El gancho va en la
   tarjeta, el detalle en el modal. `description` quedó SIN USARSE en projects.js.
 - Reparto actual en móvil: Proyectos 25%, Proceso 22%, Testimonios 12%, Footer 11%, Sobre mí 10%.
-- **Lo que falta requiere decisión del usuario** (es SU contenido, no cortar sin preguntar):
+- **En pausa (2026-10-03), no proponer.** Lo que falta requiere decisión del usuario (es SU contenido, no cortar sin preguntar):
   FAQ de 6 → 4 (~0.2), bio de Sobre mí más corta, tags de 5 → 3 por proyecto.
 - [x] **Proceso 7 → 5 pasos** (aprobado 2026-08-13): se fusionó "Formalización" dentro de
   "Propuesta y Acuerdo" y "Sincronización Continua" dentro de "Ingeniería y Desarrollo".
 - Ojo: "atascado de información" era **densidad**, no largo. Lo que más pesaba era el modal de 24
   pantallas y los párrafos en las tarjetas; las dos cosas ya están resueltas.
 
-### Pendientes
+### Pendientes — EN PAUSA (decidido 2026-10-03)
+> Zahir pidió quitar todos estos pendientes "por el momento". NO proponerlos al retomar;
+> quedan aquí solo como registro, por si él decide reabrir alguno.
+
 - [ ] **Citas reales** de testimonios (Carlos de Plásticos Tito, dueña de Be Fit Lab) — hoy son borrador.
 - [ ] **Dominio** + conectarlo en Cloudflare. Recomendados: `zahir.dev` o `zahirdaniel.com` (evitar el apellido completo). Comprar en Cloudflare Registrar.
 - [x] ~~og:image a URL absoluta~~ — **HECHO 2026-08-14**, apuntando a `zahirportafolio.pages.dev`.

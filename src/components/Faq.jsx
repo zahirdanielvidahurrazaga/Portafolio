@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import SectionHead from './SectionHead';
 import '../styles/Faq.css';
 
 const FAQS = [
@@ -10,23 +11,23 @@ const FAQS = [
   },
   {
     q: '¿El código y la información son míos?',
-    a: 'Sí. Al finalizar, el proyecto, su código y todos los datos son 100% tuyos, sin ataduras ni dependencias hacia mí.',
+    a: 'Sí. Al finalizar, el proyecto, su código y todos los datos son 100% tuyos, sin ataduras ni dependencias hacia nosotros.',
   },
   {
-    q: '¿Das soporte y mantenimiento después del lanzamiento?',
-    a: 'Sí. Ofrezco planes de soporte y mantenimiento para mantener tu sistema actualizado, seguro y funcionando sin interrupciones.',
+    q: '¿Dan soporte y mantenimiento después del lanzamiento?',
+    a: 'Sí. Ofrecemos planes de soporte y mantenimiento para mantener tu sistema actualizado, seguro y funcionando sin interrupciones.',
   },
   {
-    q: '¿Trabajas con mi presupuesto?',
+    q: '¿Trabajan con mi presupuesto?',
     a: 'Cada proyecto se cotiza a la medida según lo que necesitas. Podemos arrancar con lo esencial y crecer por fases, a tu ritmo.',
   },
   {
-    q: '¿Subes mi app a la App Store y Google Play?',
-    a: 'Sí. Me encargo de todo el proceso de publicación en las tiendas, así como del despliegue de tu sitio o sistema web.',
+    q: '¿Suben mi app a la App Store y Google Play?',
+    a: 'Sí. Nos encargamos de todo el proceso de publicación en las tiendas, así como del despliegue de tu sitio o sistema web.',
   },
   {
     q: '¿La solución es escalable a futuro?',
-    a: 'Construyo con tecnología moderna y robusta, pensada para crecer contigo: agregar funciones o usuarios después no implica rehacer todo.',
+    a: 'Construimos con tecnología moderna y robusta, pensada para crecer contigo: agregar funciones o usuarios después no implica rehacer todo.',
   },
 ];
 
@@ -35,12 +36,15 @@ const Faq = () => {
 
   return (
     <section id="faq" className="section-container faq-section">
-      <div className="faq-header text-center">
-        <h2>Preguntas frecuentes.</h2>
-        <p className="text-muted">Lo que la mayoría quiere saber antes de empezar.</p>
-      </div>
+      <SectionHead
+        num="07"
+        label="Preguntas frecuentes"
+        lede="Lo que la mayoría quiere saber antes de empezar."
+      >
+        Antes de <em>empezar</em>
+      </SectionHead>
 
-      <div className="faq-list">
+      <div className="faq-list rule-list">
         {FAQS.map((f, i) => {
           const isOpen = open === i;
           return (
@@ -51,7 +55,7 @@ const Faq = () => {
                 aria-expanded={isOpen}
               >
                 <span>{f.q}</span>
-                <ChevronDown className="faq-chevron" size={20} aria-hidden="true" />
+                <Plus className="faq-chevron" size={22} aria-hidden="true" />
               </button>
 
               <AnimatePresence initial={false}>

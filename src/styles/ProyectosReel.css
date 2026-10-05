@@ -1,0 +1,126 @@
+/* Entrada a Proyectos (ProyectosReel.jsx). El alto del contenedor es la
+   "pista" de scroll: mientras se recorre, .reel-sticky se queda fijo y la
+   animación avanza. Más alto = animación más lenta. */
+.reel {
+  position: relative;
+  /* Largo porque aquí se "ve" el video con el scroll (~4.5 pantallas) */
+  height: 820vh;
+}
+@media (max-width: 768px) {
+  .reel {
+    height: 640vh;
+  }
+}
+
+.reel-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reel-intro {
+  position: absolute;
+  top: 14vh;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.reel-mac {
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+}
+.reel-mac img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.reel-full {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #ece8df; /* el fondo de KaizenReel, por si va en 'meet' */
+}
+
+.reel-full-lienzo {
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+/* La animación encima de la pantalla del render (posición en % desde PANTALLA) */
+.reel-screen {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 0.6% / 0.9%;
+}
+
+/* Velo oscuro para que la frase se lea sobre la foto (en los dos temas:
+   va sobre una imagen, no sobre el fondo de la página) */
+.reel-veil {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 3;
+}
+
+.reel-phrase {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* Sin esto, en celular las 2 líneas se repartían a lo alto de la pantalla
+     ("demos." quedaba hasta abajo) */
+  align-content: center;
+  gap: 0 0.28em;
+  padding: 0 var(--spacing-4);
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 8vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #f5f5f7; /* siempre claro: va sobre la foto con velo */
+  pointer-events: none;
+}
+.reel-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Sin animación (prefers-reduced-motion) */
+.reel--static {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--section-pad-y) var(--spacing-4) 0;
+}
+.reel-mac-static {
+  position: relative;
+  width: min(92vw, 900px);
+}
+.reel-mac-static img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.reel-phrase--static {
+  position: static;
+  color: var(--text-color);
+}
