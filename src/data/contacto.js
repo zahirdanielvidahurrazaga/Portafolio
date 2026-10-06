@@ -6,7 +6,8 @@
 export const WHATSAPP = '528138833422';
 export const WHATSAPP_VISIBLE = '+52 81 3883 3422';
 
-export const CORREO = 'kaizenstudioinfo@gmail.com';
+// Reenvía a kaizenstudioinfo@gmail.com (Cloudflare Email Routing, solo recibe)
+export const CORREO = 'info@kaizenstudiomx.com';
 
 // Responsables del tratamiento de datos (personas físicas, corresponsables)
 export const RESPONSABLES = ['Karime Pérez Cruz', 'Zahir Daniel Vidahurrázaga Marín'];

@@ -130,7 +130,10 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
       `--section-pad-y` 8→6.5rem.
 - [x] **Voz "nosotros"** en todo el sitio + `<title>`/metas a KaiZen. "Sobre mí" → **Nosotros** (#sobre-mi se
       conserva): sin foto individual, ahí van las caras de partículas. Se quitó "Ingeniero en Mecatrónica".
-      Correo de contacto: kaizenstudioinfo@gmail.com (5-oct).
+      Correo de contacto: **info@kaizenstudiomx.com** → reenvía a kaizenstudioinfo@gmail.com con Cloudflare Email
+      Routing (solo RECIBE; para responder como info@ hay que configurar "Enviar como" en Gmail). Regla creada por API
+      con la sesión de wrangler (ojo: el login nuevo quedó en `~/.wrangler/config/default.toml`, no en
+      `~/Library/Preferences/.wrangler`).
 - [x] **Imagen al compartir = `og-image-v3.jpg` (2026-10-05)**: oscura, cabecera de revista, titular del hero con
       "haces negocio" en itálica con degradado, ΚΛΙΖΣΝ HECHO DE PARTÍCULAS y "Proyectos reales, no demos.". Sin foto.
       Se genera con `tools/marca/og.py` (PIL + Familjen Grotesk/Inter; fuentes en `tools/marca/.fuentes/`, no van
@@ -178,7 +181,7 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
 - **Páginas legales** `/aviso-de-privacidad` y `/terminos` (`Legal.jsx`, main.jsx elige por la ruta; Pages sirve
   index.html en cualquier ruta). Redactadas DESDE CERO (pidió no copiar los puntos de su PDF) para cómo funciona el
   sitio: formulario → WhatsApp, sin base de datos ni cookies de rastreo. Responsables: Karime Pérez Cruz y Zahir
-  Daniel Vidahurrázaga Marín (personas físicas). Datos en `src/data/contacto.js`: correo kaizenstudioinfo@gmail.com,
+  Daniel Vidahurrázaga Marín (personas físicas). Datos en `src/data/contacto.js`: correo info@kaizenstudiomx.com,
   domicilio Segundo Andador de los Padres No. 1, Col. La Hacienda, C.P. 72570, Puebla, Puebla. La pantalla de carga solo corre en la portada (index.html).
   Recomendado: que un abogado las revise.
 - **`Servicios.jsx`** (id `#about`, "Servicios") — **"ÍNDICE + NUBE" (2026-10-05)**. Reemplazó al carrusel de cápsulas
@@ -222,7 +225,7 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
   - **Cómo agregar otro video:** poner el MP4 y su póster en `public/testimonios/` y llenar los 3 campos en el arreglo `TESTIMONIOS`. Sin video, la tarjeta se ve igual que antes.
 - **`ProcesoTrabajo.jsx`** (id `#process`) — **5 pasos** (eran 7; ver el comentario del archivo), **sin tiempos por paso**: los había estimado yo y nunca se validaron. El usuario confirmó UNO —**~2 meses de la firma del contrato a producción**— y ese va en el encabezado (y en el FAQ). Cinco estimaciones inventadas junto a un dato real restaban. **Luz viajera** detrás (`.process-glow`, loop) + tarjetas **glass sutiles** para que se vea pasar la luz.
 - **`Faq.jsx`** (id `#faq`) — acordeón anti-objeciones (6 preguntas: cuánto tarda [**~2 meses desde el contrato**], código es mío, soporte, presupuesto/fases, sube a tiendas, escalable).
-- **`Footer.jsx`** (id `#contact`) — los tipos de proyecto del `<select>` salen de `TIPO_LABEL` y **deben seguir a las tarjetas de Servicios** (faltaba "Sitio web", que es servicio principal). Form que **arma un mensaje y abre WhatsApp** (`wa.me/528138833422?text=...`), sin backend. Correo: **kaizenstudioinfo@gmail.com** (desde `src/data/contacto.js`).
+- **`Footer.jsx`** (id `#contact`) — los tipos de proyecto del `<select>` salen de `TIPO_LABEL` y **deben seguir a las tarjetas de Servicios** (faltaba "Sitio web", que es servicio principal). Form que **arma un mensaje y abre WhatsApp** (`wa.me/528138833422?text=...`), sin backend. Correo: **info@kaizenstudiomx.com** (desde `src/data/contacto.js`).
 - **`FloatingWhatsApp.jsx`** — botón flotante, WhatsApp con mensaje prellenado.
 - **`Navbar.jsx`** — links: Sobre mí · Servicios · Soluciones · Testimonios · Proceso · FAQ. Menú móvil centrado con `left/right` (NO `transform`: framer-motion lo pisa).
 
