@@ -466,6 +466,15 @@ Cómo se midió: `medir.mjs` en el scratchpad (playwright + Chrome del sistema) 
 `src/App.css` (sobras de la plantilla de Vite, referenciaba variables inexistentes) y
 `PortafolioBento.jsx` + `.css` (no lo importaba nadie). Están en el historial de git si hicieran falta.
 
+## Video para redes (Historias / Reels / TikTok) — `tools/video/`
+`capturar.mjs` filma el sitio CUADRO POR CUADRO en un Chrome invisible 405×720 @3.333 (→1350×2400): reloj de la página
+controlado con `page.clock` y scroll fijado por cuadro → video perfectamente fluido (las animaciones dependen del
+scroll y del reloj, no del tiempo real). Tomas en `TOMAS` (selector de la pista + progreso de/a). `editar.py` (PIL)
+hace acercamientos por toma, disolvencias de 5 cuadros y la tarjeta final (kaizenstudiomx.com / @kaizen.studio.mx),
+salida 1080×1920; luego ffmpeg (`-crf 17 -pix_fmt yuv420p -movflags +faststart`). Herramientas (playwright-core +
+ffmpeg-static) se instalaron en el scratchpad CON PERMISO de Zahir (6-oct); necesita el dev server corriendo.
+Primer video: `~/Desktop/KaiZen-historia.mp4` (15 s, español, sin música: la música se pone en IG/TikTok).
+
 ## Cómo verificar sin desplegar
 Patrón usado en este repo (no hay `chromium-cli` en esta Mac): **`playwright-core` + Chrome del sistema**
 (`executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'`), scripts sueltos en el
