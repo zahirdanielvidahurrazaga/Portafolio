@@ -12,7 +12,8 @@ import '../styles/SobreMi.css';
  *     por LA NUBE: un lápiz trazando un boceto (I · Estrategia y diseño) y
  *     `</>` (II · Ingeniería) — forma "mitades" en lib/nube.js;
  *  2. los textos se van y las dos figuras se FUNDEN en el teléfono (secuencia
- *     "mitades,telefono"): "De una idea a tu bolsillo.";
+ *     "mitades,telefono"): "De una idea a las manos de tus clientes." (antes
+ *     "a tu bolsillo": hablaba solo de apps, y ya también hacen marca y redes);
  *  3. explota y entra Proceso.
  * Idea pendiente: cuando haya fotos, el lápiz y el </> se vuelven las CARAS de
  * los dos (ella diseño, él ingeniería) y son ellas las que se funden.
@@ -28,9 +29,32 @@ const MITADES = [
   },
   {
     num: 'II',
-    titulo: 'Ingeniería',
+    titulo: 'Tecnología',
     texto:
-      'Construimos el software de punta a punta: apps en App Store y Google Play, sistemas web y la conexión con el lector y la impresora de tu mostrador.',
+      'Construimos sitios web, tiendas en línea, apps en App Store y Google Play y sistemas a la medida, conectados con lo que ya usa tu negocio.',
+  },
+];
+
+// Borrador de KaiZen (5-oct): que Karime y Zahir lo ajusten a su voz.
+const MVV = [
+  {
+    titulo: 'Misión',
+    texto:
+      'Ayudar a los negocios a crecer con una marca clara, una presencia constante en redes y tecnología hecha a su medida, mejorándolos un paso a la vez.',
+  },
+  {
+    titulo: 'Visión',
+    texto:
+      'Ser el estudio de confianza de los negocios que quieren evolucionar: el aliado que entiende su operación de punta a punta, de la marca al software.',
+  },
+  {
+    titulo: 'Valores',
+    lista: [
+      ['Mejora continua', 'cada entrega es mejor que la anterior'],
+      ['A la medida', 'nada de plantillas, todo parte de tu negocio'],
+      ['Claridad', 'alcance, tiempos y costos por escrito, sin sorpresas'],
+      ['Resultados reales', 'lo medimos en tu operación, no en promesas'],
+    ],
   },
 ];
 
@@ -65,9 +89,9 @@ function Escena() {
           </motion.div>
 
           <motion.div className="nos-final" style={{ opacity: final, y: finalY, pointerEvents: eventosFinal }}>
-            <p className="interludio-kicker">Del boceto a producción</p>
+            <p className="interludio-kicker">Marca + tecnología, un solo equipo</p>
             <h2 className="interludio-frase">
-              De una idea a <em>tu bolsillo.</em>
+              De una idea a <em>las manos de tus clientes.</em>
             </h2>
           </motion.div>
         </div>
@@ -92,11 +116,38 @@ const SobreMi = () => {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          Kaizen es la filosofía de la <em>mejora continua</em>: pasos pequeños, todos los
-          días. Así trabajamos cada proyecto. No entregamos plantillas: construimos
-          software a la medida que ya opera en negocios reales, y lo seguimos
-          mejorando contigo.
+          Kaizen es la filosofía japonesa de la <em>mejora continua</em>: pasos pequeños,
+          todos los días. Así acompañamos a cada negocio: cuidamos su marca, le damos voz
+          en redes y construimos la tecnología que lo hace crecer. Sin plantillas, y
+          mejorándolo contigo después del lanzamiento.
         </motion.p>
+
+        {/* Misión · Visión · Valores (5-oct): cortas y en el mismo tono editorial */}
+        <div className="sobre-mvv">
+          {MVV.map((b, i) => (
+            <motion.div
+              key={b.titulo}
+              className="sobre-mvv-col"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <h3>{b.titulo}</h3>
+              {b.texto && <p>{b.texto}</p>}
+              {b.lista && (
+                <ul>
+                  {b.lista.map(([t, d]) => (
+                    <li key={t}>
+                      <strong>{t}.</strong> {d}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </motion.div>
+          ))}
+        </div>
+
         <a href="#contact" className="sobre-cta">Trabajemos juntos →</a>
       </div>
 
@@ -113,7 +164,7 @@ const SobreMi = () => {
             ))}
           </div>
           <h2 className="interludio-frase nos-static-frase">
-            De una idea a <em>tu bolsillo.</em>
+            De una idea a <em>las manos de tus clientes.</em>
           </h2>
         </div>
       ) : (

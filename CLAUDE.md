@@ -116,6 +116,9 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
         (I · Estrategia y diseño) y `</>` (II · Ingeniería) lado a lado → se FUNDEN en el teléfono con
         "Del boceto a producción · De una idea a tu bolsillo." → explota y entra Proceso. Absorbió al Interludio
         del teléfono (ya no existe aparte). PENDIENTE con fotos: lápiz y </> → sus CARAS (ella diseño, él ingeniería).
+      - Nosotros también lleva **Misión · Visión · Valores** (`MVV` en SobreMi.jsx, borrador 5-oct para que lo ajusten)
+        y la bio/mitades ya cubren marca + redes + tecnología; frase del teléfono: "De una idea a las manos de tus
+        clientes." (kicker "Marca + tecnología, un solo equipo").
       - Interludio que queda: antes del Footer
         (Κ · "¿Empezamos?" + botón a #contact).
       - Sin WebGL / reduced-motion: no hay nube; cada interludio muestra su `fallback` SVG (se esconde con body.nube-on).
@@ -227,7 +230,7 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
 - **`Faq.jsx`** (id `#faq`) — acordeón anti-objeciones (6 preguntas: cuánto tarda [**~2 meses desde el contrato**], código es mío, soporte, presupuesto/fases, sube a tiendas, escalable).
 - **`Footer.jsx`** (id `#contact`) — los tipos de proyecto del `<select>` salen de `TIPO_LABEL` y **deben seguir a las tarjetas de Servicios** (faltaba "Sitio web", que es servicio principal). Form que **arma un mensaje y abre WhatsApp** (`wa.me/528138833422?text=...`), sin backend. Correo: **info@kaizenstudiomx.com** (desde `src/data/contacto.js`).
 - **`FloatingWhatsApp.jsx`** — botón flotante, WhatsApp con mensaje prellenado.
-- **`Navbar.jsx`** — links: Sobre mí · Servicios · Soluciones · Testimonios · Proceso · FAQ. Menú móvil centrado con `left/right` (NO `transform`: framer-motion lo pisa).
+- **`Navbar.jsx`** — `LINKS` = Servicios · Testimonios · Proyectos · Nosotros · Proceso · FAQ (orden y nombres = los de cada SectionHead; "Soluciones" → "Proyectos" el 5-oct) + botón Cotizar (#contact). Resalta la sección en pantalla (`activa`). Menú móvil centrado con `left/right` (NO `transform`: framer-motion lo pisa).
 
 ## Posicionamiento: SIN "mecatrónica" (2026-08-13)
 El usuario pidió sacar la mecatrónica de la identidad de la empresa; **solo se conserva en la bio de

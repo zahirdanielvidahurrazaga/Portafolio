@@ -128,8 +128,14 @@
   transform-origin: left;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.nav-links a:hover::after {
+.nav-links a:hover::after,
+.nav-links a.is-active::after {
   transform: scaleX(1);
+}
+/* Sección en pantalla (Navbar.jsx → activa) */
+.nav-links a.is-active {
+  opacity: 1;
+  color: var(--text-strong);
 }
 
 .nav-links a:hover {

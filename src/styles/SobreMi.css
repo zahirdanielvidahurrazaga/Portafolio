@@ -23,9 +23,51 @@
   color: var(--text-muted);
 }
 
+/* Misión · Visión · Valores: tres columnas con filete, como un índice */
+.sobre-mvv {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-12);
+}
+.sobre-mvv-col {
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border-strong);
+}
+.sobre-mvv-col h3 {
+  margin: 0 0 var(--spacing-3);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+.sobre-mvv-col p,
+.sobre-mvv-col li {
+  color: var(--text-muted);
+  line-height: 1.55;
+  font-size: 0.98rem;
+}
+.sobre-mvv-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-2);
+}
+.sobre-mvv-col strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+@media (max-width: 900px) {
+  .sobre-mvv {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+  }
+}
+
 .sobre-cta {
   display: inline-block;
-  margin-top: var(--spacing-6);
+  margin-top: var(--spacing-8);
   padding-bottom: 4px;
   border-bottom: 1px solid currentColor;
   font-size: 0.78rem;

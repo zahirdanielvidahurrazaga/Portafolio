@@ -5,9 +5,49 @@ import ThemeToggle from './ThemeToggle';
 import KaizenWordmark from './KaizenWordmark';
 import '../styles/Navbar.css';
 
+// En el ORDEN de la página (App.jsx) y con el MISMO nombre que la etiqueta de
+// cada sección (SectionHead). Antes decía "Soluciones" y la sección se llama
+// "Proyectos". Contacto no va aquí: lo cubre el botón Cotizar.
+const LINKS = [
+  ['about', 'Servicios'],
+  ['testimonios', 'Testimonios'],
+  ['portfolio', 'Proyectos'],
+  ['sobre-mi', 'Nosotros'],
+  ['process', 'Proceso'],
+  ['faq', 'FAQ'],
+];
+
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Sección en pantalla: se resalta en la barra (orienta igual que BarraScroll)
+  const [activa, setActiva] = useState(null);
+
+  useEffect(() => {
+    let raf = 0;
+    const medir = () => {
+      raf = 0;
+      const linea = window.innerHeight * 0.4;
+      let actual = null;
+      for (const [id] of LINKS) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= linea) actual = id;
+      }
+      // Ya en Contacto (el pie) no se resalta nada: ahí manda el botón Cotizar
+      const contacto = document.getElementById('contact');
+      if (contacto && contacto.getBoundingClientRect().top <= linea) actual = null;
+      setActiva(actual);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(medir);
+    };
+    medir();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,12 +75,11 @@ const Navbar = () => {
               <KaizenWordmark />
             </a>
             <div className="nav-links">
-              <a href="#about">Servicios</a>
-              <a href="#testimonios">Testimonios</a>
-              <a href="#portfolio">Soluciones</a>
-              <a href="#sobre-mi">Nosotros</a>
-              <a href="#process">Proceso</a>
-              <a href="#faq">FAQ</a>
+              {LINKS.map(([id, texto]) => (
+                <a key={id} href={`#${id}`} className={activa === id ? 'is-active' : undefined}>
+                  {texto}
+                </a>
+              ))}
             </div>
             <div className="nav-actions">
               <ThemeToggle />
@@ -68,12 +107,11 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
           >
-            <a href="#about" onClick={closeMenu}>Servicios</a>
-            <a href="#testimonios" onClick={closeMenu}>Testimonios</a>
-            <a href="#portfolio" onClick={closeMenu}>Soluciones</a>
-            <a href="#sobre-mi" onClick={closeMenu}>Nosotros</a>
-            <a href="#process" onClick={closeMenu}>Proceso</a>
-            <a href="#faq" onClick={closeMenu}>FAQ</a>
+            {LINKS.map(([id, texto]) => (
+              <a key={id} href={`#${id}`} onClick={closeMenu}>
+                {texto}
+              </a>
+            ))}
             <a href="#contact" className="btn-metallic mobile-cta" onClick={closeMenu}>Cotizar proyecto</a>
           </motion.div>
         )}
