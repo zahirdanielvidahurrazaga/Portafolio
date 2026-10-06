@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion';
 import SectionHead from './SectionHead';
+import { useLang } from '../lib/LangContext';
 import '../styles/Servicios.css';
 
 // Las 7 líneas de KaiZen (catálogo "KaiZen Servicios", 2026-10-05). SIN precios
@@ -11,45 +12,66 @@ const SERVICIOS = [
   {
     forma: 'pluma',
     linea: 'Brand',
-    title: 'Identidad de marca',
-    desc: 'Logo, paleta, tipografías y manual de marca: una identidad coherente en todo lo que tu negocio muestra, de la papelería a las redes.',
+    title: { es: 'Identidad de marca', en: 'Brand identity' },
+    desc: {
+      es: 'Logo, paleta, tipografías y manual de marca: una identidad coherente en todo lo que tu negocio muestra, de la papelería a las redes.',
+      en: 'Logo, palette, typography and brand guidelines: one consistent identity across everything your business shows, from stationery to social media.',
+    },
   },
   {
     forma: 'social',
     linea: 'Social',
-    title: 'Redes sociales',
-    desc: 'Estrategia, diseño, copy, reels y community management cada mes, con calendario de contenido y reportes de resultados.',
+    title: { es: 'Redes sociales', en: 'Social media' },
+    desc: {
+      es: 'Estrategia, diseño, copy, reels y community management cada mes, con calendario de contenido y reportes de resultados.',
+      en: 'Strategy, design, copywriting, reels and community management every month, with a content calendar and results reports.',
+    },
   },
   {
     forma: 'cohete',
     linea: 'Launch',
-    title: 'Lanzamiento',
-    desc: 'Tu negocio listo para salir: marca básica, redes configuradas, landing page con formularios y estrategia inicial de contenido.',
+    title: { es: 'Lanzamiento', en: 'Launch' },
+    desc: {
+      es: 'Tu negocio listo para salir: marca básica, redes configuradas, landing page con formularios y estrategia inicial de contenido.',
+      en: 'Your business ready to go: core branding, social accounts set up, a landing page with forms and an initial content strategy.',
+    },
   },
   {
     forma: 'navegador',
     linea: 'Web',
-    title: 'Sitios web',
-    desc: 'Landing pages y sitios empresariales a la medida: rápidos, adaptados a celular y con SEO para que te encuentren en Google.',
+    title: { es: 'Sitios web', en: 'Websites' },
+    desc: {
+      es: 'Landing pages y sitios empresariales a la medida: rápidos, adaptados a celular y con SEO para que te encuentren en Google.',
+      en: 'Custom landing pages and business websites: fast, mobile-ready and SEO-optimized so people find you on Google.',
+    },
   },
   {
     forma: 'carrito',
     linea: 'Commerce',
-    title: 'Tiendas y punto de venta',
-    desc: 'Tiendas en línea con carrito y pagos, y punto de venta multisucursal con inventario y cortes de caja, en web, iOS y Android.',
+    title: { es: 'Tiendas y punto de venta', en: 'Stores & point of sale' },
+    desc: {
+      es: 'Tiendas en línea con carrito y pagos, y punto de venta multisucursal con inventario y cortes de caja, en web, iOS y Android.',
+      en: 'Online stores with cart and payments, and multi-branch point of sale with inventory and cash closing, on web, iOS and Android.',
+    },
   },
   {
     forma: 'ia',
     linea: 'Automate',
-    title: 'Automatización e IA',
-    desc: 'Procesos que se hacen solos y asistentes con IA que le ahorran horas de trabajo manual a tu equipo.',
+    title: { es: 'Automatización e IA', en: 'Automation & AI' },
+    desc: {
+      es: 'Procesos que se hacen solos y asistentes con IA que le ahorran horas de trabajo manual a tu equipo.',
+      en: 'Processes that run themselves and AI assistants that save your team hours of manual work.',
+    },
   },
   // Aquí viven las apps (Be Fit Lab): reservaciones, lista de espera, pagos, Wallet
   {
     forma: 'telefono',
     linea: 'Experience',
-    title: 'Apps y experiencias',
-    desc: 'Apps de reservaciones con lista de espera y pagos, pases QR para Apple y Google Wallet, álbumes compartidos, invitaciones y catálogos digitales.',
+    title: { es: 'Apps y experiencias', en: 'Apps & experiences' },
+    desc: {
+      es: 'Apps de reservaciones con lista de espera y pagos, pases QR para Apple y Google Wallet, álbumes compartidos, invitaciones y catálogos digitales.',
+      en: 'Booking apps with waitlists and payments, QR passes for Apple and Google Wallet, shared albums, invitations and digital catalogs.',
+    },
   },
 ];
 const N = SERVICIOS.length;
@@ -67,6 +89,7 @@ const N = SERVICIOS.length;
  * Clic en un servicio = scroll a su tramo. Con reduced-motion: lista estática.
  */
 export default function Servicios() {
+  const { t } = useLang();
   const pista = useRef(null);
   const reduced = useReducedMotion();
   const [activo, setActivo] = useState(0);
@@ -90,24 +113,27 @@ export default function Servicios() {
       <div className="section-container servicios-head">
         <SectionHead
           num="02"
-          label="Servicios"
           className="factor-header"
-          lede="De la marca y las redes al software a la medida: todo lo que tu negocio necesita para crecer, en un solo estudio."
+          label={t({ es: 'Servicios', en: 'Services' })}
+          lede={t({
+            es: 'De la marca y las redes al software a la medida: todo lo que tu negocio necesita para crecer, en un solo estudio.',
+            en: 'From branding and social media to custom software: everything your business needs to grow, in one studio.',
+          })}
         >
-          Lo que <em>hacemos</em>
+          {t({ es: <>Lo que <em>hacemos</em></>, en: <>What we <em>do</em></> })}
         </SectionHead>
       </div>
 
       {reduced ? (
         <ol className="srv-indice srv-indice--static section-container">
           {SERVICIOS.map((s, i) => (
-            <li key={s.title} className="is-active">
+            <li key={s.forma} className="is-active">
               <div className="srv-item">
                 <span className="srv-num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="srv-nombre">{s.title}</span>
+                <span className="srv-nombre">{t(s.title)}</span>
               </div>
               <div className="srv-desc">
-                <p>{s.desc}</p>
+                <p>{t(s.desc)}</p>
               </div>
             </li>
           ))}
@@ -122,14 +148,14 @@ export default function Servicios() {
           <div className="srv-escena">
             <ol className="srv-indice">
               {SERVICIOS.map((s, i) => (
-                <li key={s.title} className={i === activo ? 'is-active' : ''}>
+                <li key={s.forma} className={i === activo ? 'is-active' : ''}>
                   <button className="srv-item" onClick={() => irA(i)} aria-expanded={i === activo}>
                     <span className="srv-num">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="srv-nombre">{s.title}</span>
+                    <span className="srv-nombre">{t(s.title)}</span>
                     <span className="srv-linea">{s.linea}</span>
                   </button>
                   <div className="srv-desc">
-                    <p>{s.desc}</p>
+                    <p>{t(s.desc)}</p>
                   </div>
                 </li>
               ))}

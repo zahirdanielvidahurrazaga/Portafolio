@@ -104,27 +104,33 @@ const FORMAS = {
   // que en SobreMi.css tiene la misma proporción 1000×480.
   mitades: {
     box: [0, 0, 1000, 480],
-    draw(ctx) {
+    // Con fotos, la mitad I es la CARA de Karime (partículas por densidad, ver
+    // muestrearFoto) en lugar del lápiz. DESACTIVADO hasta tener fotos buenas
+    // de los dos (6-oct); para probar: [{ src: '/caras/karime.png', box: [20, -10, 460, 500] }]
+    fotos: [],
+    draw(ctx, { conFotos } = {}) {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      // Boceto: una pantalla a mano alzada y el trazo que va dejando el lápiz
-      ctx.lineWidth = 7;
-      ctx.beginPath();
-      ctx.roundRect(90, 70, 230, 160, 18);
-      ctx.stroke();
-      ctx.lineWidth = 6;
-      ctx.stroke(new Path2D('M120 120H250 M120 152H220 M120 184H270'));
-      ctx.lineWidth = 7;
-      ctx.stroke(new Path2D('M90 330C140 290 170 370 220 330S300 300 330 320'));
-      // Lápiz: cuerpo a 45°, la punta toca el final del trazo (330, 320)
-      ctx.save();
-      ctx.translate(330, 320);
-      ctx.rotate(-Math.PI / 4);
-      ctx.lineWidth = 7;
-      ctx.stroke(new Path2D('M0 0L34 -18H190V18H34Z'));
-      ctx.fill(new Path2D('M0 0L14 -7V7Z'));
-      ctx.stroke(new Path2D('M160 -18V18'));
-      ctx.restore();
+      if (!conFotos) {
+        // Boceto: una pantalla a mano alzada y el trazo que va dejando el lápiz
+        ctx.lineWidth = 7;
+        ctx.beginPath();
+        ctx.roundRect(90, 70, 230, 160, 18);
+        ctx.stroke();
+        ctx.lineWidth = 6;
+        ctx.stroke(new Path2D('M120 120H250 M120 152H220 M120 184H270'));
+        ctx.lineWidth = 7;
+        ctx.stroke(new Path2D('M90 330C140 290 170 370 220 330S300 300 330 320'));
+        // Lápiz: cuerpo a 45°, la punta toca el final del trazo (330, 320)
+        ctx.save();
+        ctx.translate(330, 320);
+        ctx.rotate(-Math.PI / 4);
+        ctx.lineWidth = 7;
+        ctx.stroke(new Path2D('M0 0L34 -18H190V18H34Z'));
+        ctx.fill(new Path2D('M0 0L14 -7V7Z'));
+        ctx.stroke(new Path2D('M160 -18V18'));
+        ctx.restore();
+      }
       // </>
       ctx.lineWidth = 26;
       ctx.stroke(new Path2D('M700 130L610 240L700 350 M860 130L950 240L860 350 M805 100L755 380'));
@@ -267,7 +273,52 @@ const FORMAS = {
 };
 
 /** Puntos (x, y relativos al centro, px CSS) que llenan la forma en una caja w×h */
-function muestrear(nombre, w, h) {
+/* ── Fotos (caras) ────────────────────────────────────────────────────────
+   Una foto se vuelve partículas por DENSIDAD: más puntos donde corresponde
+   según el tema (oscuro: donde hay luz; claro: donde hay sombra, como un
+   grabado). El PNG trae el fondo ya quitado (alfa) y va en escala de grises. */
+const FOTOS = {};
+let versionFotos = 0; // sube cuando carga una foto → las muestras se rehacen
+function foto(src) {
+  if (!FOTOS[src]) {
+    const img = new Image();
+    FOTOS[src] = { img, lista: false };
+    img.onload = () => {
+      FOTOS[src].lista = true;
+      versionFotos++;
+    };
+    img.src = src;
+  }
+  return FOTOS[src];
+}
+
+function muestrearFoto(img, caja, transformar, cw, ch, tema, pts) {
+  const cv = document.createElement('canvas');
+  cv.width = cw;
+  cv.height = ch;
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  transformar(ctx);
+  // object-fit: contain dentro de su caja
+  const [x, y, w, h] = caja;
+  const k = Math.min(w / img.width, h / img.height);
+  const dw = img.width * k;
+  const dh = img.height * k;
+  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  const data = ctx.getImageData(0, 0, cw, ch).data;
+  const rand = mulberry32(99);
+  for (let py = 0; py < ch; py += 2) {
+    for (let px = 0; px < cw; px += 2) {
+      const i = (py * cw + px) * 4;
+      const a = data[i + 3] / 255;
+      if (a < 0.1) continue;
+      const lum = (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]) / 255;
+      const d = 0.05 + 0.95 * Math.pow(tema === 'light' ? 1 - lum : lum, 1.35);
+      if (rand() < d * a * 0.9) pts.push(px - cw / 2, py - ch / 2);
+    }
+  }
+}
+
+function muestrear(nombre, w, h, tema = 'dark') {
   const f = FORMAS[nombre];
   if (!f || w < 4 || h < 4) return new Float32Array(0);
   const cw = Math.ceil(w);
@@ -283,7 +334,9 @@ function muestrear(nombre, w, h) {
   ctx.translate(-bx, -by);
   ctx.strokeStyle = '#000';
   ctx.fillStyle = '#000';
-  f.draw(ctx);
+  const fotos = (f.fotos || []).map((fo) => ({ ...fo, ...foto(fo.src) }));
+  const conFotos = fotos.length > 0 && fotos.every((fo) => fo.lista);
+  f.draw(ctx, { conFotos });
   const data = ctx.getImageData(0, 0, cw, ch).data;
   const pts = [];
   const paso = 2;
@@ -291,6 +344,14 @@ function muestrear(nombre, w, h) {
     for (let x = 0; x < cw; x += paso) {
       if (data[(y * cw + x) * 4 + 3] > 110) pts.push(x - cw / 2, y - ch / 2);
     }
+  }
+  if (conFotos) {
+    const transformar = (c) => {
+      c.translate((cw - bw * s) / 2, (ch - bh * s) / 2);
+      c.scale(s, s);
+      c.translate(-bx, -by);
+    };
+    for (const fo of fotos) muestrearFoto(fo.img, fo.box, transformar, cw, ch, tema, pts);
   }
   // Ordenados por ÁNGULO alrededor del centro (no al azar): la partícula i va
   // a la fracción i/N de cada forma, así que al pasar de una forma a otra
@@ -405,7 +466,9 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   scene.add(points);
   const camera = new THREE.OrthographicCamera(-vw / 2, vw / 2, vh / 2, -vh / 2, -10, 10);
 
+  let temaActual = theme;
   const setTheme = (t) => {
+    temaActual = t === 'light' ? 'light' : 'dark';
     const tono = TONOS[t] || TONOS.dark;
     material.uniforms.uColor.value.set(tono.color);
     material.blending = tono.blending;
@@ -445,6 +508,8 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
       cache: {},
     }));
   let estaciones = leerEstaciones();
+  // Las fotos (caras) se piden desde el arranque: así ya están cuando se llega a Nosotros
+  for (const f of Object.values(FORMAS)) for (const fo of f.fotos || []) foto(fo.src);
   // Si React cambia las escenas (recarga en caliente al editar, o una sección
   // que se monta después), se vuelven a leer. Sin esto la nube seguía buscando
   // escenas que ya no existían y la nueva no se dibujaba.
@@ -460,9 +525,17 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   mo.observe(document.body, { childList: true, subtree: true });
   const muestra = (st, nombre, c) => {
     const m = st.cache[nombre];
-    if (m && Math.abs(c.width - m.w) <= 2 && Math.abs(c.height - m.h) <= 2) return m.pts;
-    const pts = muestrear(nombre, c.width, c.height);
-    st.cache[nombre] = { pts, w: c.width, h: c.height };
+    // Se rehace si cambia el tamaño, el tema (las caras se invierten) o cargó una foto
+    if (
+      m &&
+      Math.abs(c.width - m.w) <= 2 &&
+      Math.abs(c.height - m.h) <= 2 &&
+      m.tema === temaActual &&
+      m.v === versionFotos
+    )
+      return m.pts;
+    const pts = muestrear(nombre, c.width, c.height, temaActual);
+    st.cache[nombre] = { pts, w: c.width, h: c.height, tema: temaActual, v: versionFotos };
     return pts;
   };
 

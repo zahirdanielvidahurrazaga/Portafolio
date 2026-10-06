@@ -28,3 +28,6 @@ dist-ssr
 .env.local
 .env.production
 tools/marca/.fuentes/
+
+# Fotos de las caras: NO se publican hasta que Karime y Zahir aprueben las definitivas
+public/caras/

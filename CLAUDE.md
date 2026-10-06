@@ -115,7 +115,13 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
         fija (`.nos-pista`, 100vh + 2×95vh) con la nube en secuencia `mitades,telefono`: lápiz trazando un boceto
         (I · Estrategia y diseño) y `</>` (II · Ingeniería) lado a lado → se FUNDEN en el teléfono con
         "Del boceto a producción · De una idea a tu bolsillo." → explota y entra Proceso. Absorbió al Interludio
-        del teléfono (ya no existe aparte). PENDIENTE con fotos: lápiz y </> → sus CARAS (ella diseño, él ingeniería).
+        del teléfono (ya no existe aparte).
+        **CARAS (PROBADO 5-oct, DESACTIVADO hasta tener fotos buenas — `fotos: []` en `mitades`):** la mitad I puede ser la cara de Karime (`public/caras/karime.png`: escala de grises
+        + alfa, fondo quitado). En nube.js una forma puede traer `fotos: [{src, box}]` → `muestrearFoto` las vuelve
+        partículas por DENSIDAD (oscuro: más puntos donde hay luz; claro: donde hay sombra) y la caché se rehace al
+        cambiar de tema o al cargar la foto (`versionFotos`). Sin foto cargada cae al lápiz. Falta la de Zahir (→ `</>`).
+        Cómo se hizo el PNG: enderezar/recortar con PIL, fondo blanco quitado por flood-fill desde los bordes (Vision
+        de macOS se colgó), contraste por percentiles dentro de la máscara.
       - Nosotros también lleva **Misión · Visión · Valores** (`MVV` en SobreMi.jsx, borrador 5-oct para que lo ajusten)
         y la bio/mitades ya cubren marca + redes + tecnología; frase del teléfono: "De una idea a las manos de tus
         clientes." (kicker "Marca + tecnología, un solo equipo").
@@ -173,6 +179,14 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
 ## Componentes clave
 - **`Hero.jsx`** — titular estrella "Software a tu medida: que se adapte a ti, **no tú a él.**" + franja de prueba (`.hero-proof`: App Store/Play · en producción · proyectos reales) + 2 CTAs. Glows azul/morado viajeros por CSS. En móvil: anclado arriba (no centrado) con más aire.
 - **`SobreMi.jsx`** — "Quién soy": foto (4:5) + bio corta + CTA "Trabajemos juntos". Foto en `public/sobre-mi.jpg`.
+- **BILINGÜE ES / EN (2026-10-05):** botón `LangToggle` junto al sol/luna (barra y páginas legales). `src/lib/LangContext.jsx`
+  (`useLang()` → `{ lang, setLang, t }`): elección guardada en localStorage `idioma`; sin elección, inglés si el
+  navegador está en inglés. Los textos van como `{ es, en }` JUNTO a donde se usan (no en diccionario aparte) y se
+  leen con `t(...)` (acepta texto o JSX). Proyectos: capa `EN` + `localizar(p, lang)` al final de projects.js (solo
+  los VISIBLES). Testimonios: el traductor se llama `tr` (ahí `t` es el testimonio); la cita de Carlos en inglés dice
+  "Translated from Spanish". Legales en inglés = traducción de cortesía (lo dice: rige el español). El mensaje de
+  WhatsApp sale en el idioma del sitio. NO se usó el widget de Google Translate (rompe las animaciones por palabra).
+  ⚠️ Al agregar texto nuevo visible: SIEMPRE `{ es, en }`. Metas/OG siguen en español (un solo URL).
 - **OFERTA NUEVA = 7 LÍNEAS (catálogo "KaiZen Servicios", 2026-10-05, su PDF en Downloads):** Brand, Social
   (community management, NUEVO), Launch, Web, Commerce (tienda + POS), Automate, Experience (apps: reservaciones
   con lista de espera y pagos, Wallet, álbum, invitaciones). **SIN PRECIOS en el sitio** (decisión suya; se cotiza

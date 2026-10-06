@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -16,6 +16,7 @@ import DiagonalReveal from './components/DiagonalReveal';
 import Nube from './components/Nube';
 import Interludio from './components/Interludio';
 import { useSmoothScroll } from './lib/useSmoothScroll';
+import { useLang } from './lib/LangContext';
 
 // Respaldo del interludio final (sin WebGL o con reduced-motion): la misma forma en trazo
 const FallbackK = () => (
@@ -27,6 +28,14 @@ const FallbackK = () => (
 
 function App() {
   useSmoothScroll();
+  const { t } = useLang();
+  const titulo = t({
+    es: 'KaiZen · Marca, redes, web y software a la medida',
+    en: 'KaiZen · Branding, social media, websites & custom software',
+  });
+  useEffect(() => {
+    document.title = titulo;
+  }, [titulo]);
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
@@ -73,15 +82,15 @@ function App() {
         <Faq />
         <Interludio
           forma="k"
-          kicker="Tu turno"
+          kicker={t({ es: 'Tu turno', en: 'Your turn' })}
           fallback={<FallbackK />}
           extra={
             <a href="#contact" className="btn-metallic btn-large">
-              Cuéntanos tu proyecto
+              {t({ es: 'Cuéntanos tu proyecto', en: 'Tell us about your project' })}
             </a>
           }
         >
-          ¿<em>Empezamos</em>?
+          {t({ es: <>¿<em>Empezamos</em>?</>, en: <>Shall we <em>start</em>?</> })}
         </Interludio>
       </main>
 

@@ -2,11 +2,18 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import LiquidGlass from './LiquidGlass';
 import { WHATSAPP } from '../data/contacto';
+import { useLang } from '../lib/LangContext';
+
+const MENSAJE = {
+  es: 'Hola, equipo KaiZen. Vi su sitio y me gustaría platicar sobre un proyecto para mi negocio.',
+  en: 'Hi, KaiZen team. I saw your website and I’d like to talk about a project for my business.',
+};
 
 const FloatingWhatsApp = () => {
+  const { t } = useLang();
   return (
     <motion.a
-      href={`https://wa.me/${WHATSAPP}?text=Hola%2C%20equipo%20KaiZen.%20Vi%20su%20sitio%20y%20me%20gustar%C3%ADa%20platicar%20sobre%20un%20proyecto%20para%20mi%20negocio.`}
+      href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t(MENSAJE))}`}
       target="_blank"
       rel="noopener noreferrer"
       className="floating-whatsapp"

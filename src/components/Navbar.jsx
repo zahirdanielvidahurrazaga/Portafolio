@@ -3,21 +3,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import LiquidGlass from './LiquidGlass';
 import ThemeToggle from './ThemeToggle';
 import KaizenWordmark from './KaizenWordmark';
+import LangToggle from './LangToggle';
+import { useLang } from '../lib/LangContext';
 import '../styles/Navbar.css';
 
 // En el ORDEN de la página (App.jsx) y con el MISMO nombre que la etiqueta de
 // cada sección (SectionHead). Antes decía "Soluciones" y la sección se llama
 // "Proyectos". Contacto no va aquí: lo cubre el botón Cotizar.
 const LINKS = [
-  ['about', 'Servicios'],
-  ['testimonios', 'Testimonios'],
-  ['portfolio', 'Proyectos'],
-  ['sobre-mi', 'Nosotros'],
-  ['process', 'Proceso'],
-  ['faq', 'FAQ'],
+  ['about', { es: 'Servicios', en: 'Services' }],
+  ['testimonios', { es: 'Testimonios', en: 'Testimonials' }],
+  ['portfolio', { es: 'Proyectos', en: 'Work' }],
+  ['sobre-mi', { es: 'Nosotros', en: 'About' }],
+  ['process', { es: 'Proceso', en: 'Process' }],
+  ['faq', { es: 'FAQ', en: 'FAQ' }],
 ];
 
 const Navbar = () => {
+  const { t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   // Sección en pantalla: se resalta en la barra (orienta igual que BarraScroll)
@@ -77,17 +80,20 @@ const Navbar = () => {
             <div className="nav-links">
               {LINKS.map(([id, texto]) => (
                 <a key={id} href={`#${id}`} className={activa === id ? 'is-active' : undefined}>
-                  {texto}
+                  {t(texto)}
                 </a>
               ))}
             </div>
             <div className="nav-actions">
+              <LangToggle />
               <ThemeToggle />
-              <a href="#contact" className="btn-metallic nav-btn nav-desktop-cta">Cotizar</a>
+              <a href="#contact" className="btn-metallic nav-btn nav-desktop-cta">
+                {t({ es: 'Cotizar', en: 'Get a quote' })}
+              </a>
               <button
                 className={`hamburger ${menuOpen ? 'open' : ''}`}
                 onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="Abrir menú"
+                aria-label={t({ es: 'Abrir menú', en: 'Open menu' })}
               >
                 <span></span>
                 <span></span>
@@ -109,10 +115,12 @@ const Navbar = () => {
           >
             {LINKS.map(([id, texto]) => (
               <a key={id} href={`#${id}`} onClick={closeMenu}>
-                {texto}
+                {t(texto)}
               </a>
             ))}
-            <a href="#contact" className="btn-metallic mobile-cta" onClick={closeMenu}>Cotizar proyecto</a>
+            <a href="#contact" className="btn-metallic mobile-cta" onClick={closeMenu}>
+              {t({ es: 'Cotizar proyecto', en: 'Get a quote' })}
+            </a>
           </motion.div>
         )}
       </AnimatePresence>

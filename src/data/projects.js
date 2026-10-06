@@ -543,3 +543,55 @@ export const projects = VISIBLES
 
 // Catálogo completo por si se necesita (no se renderiza).
 export const allProjectsCatalog = allProjects;
+
+/* ── Inglés ──────────────────────────────────────────────────────────────
+   Solo los textos que se ven (de los proyectos VISIBLES). Lo que no esté aquí
+   se queda en español (nombres propios, tecnologías). `walkthrough` no se
+   renderiza, por eso no se traduce. */
+const EN = {
+  befit: {
+    tagline: 'The pilates studio, in your clients’ pockets.',
+    description:
+      'PWA and native app (iOS / Android) for a premium pilates studio: class booking, memberships with QR access, an Uber Eats–style café with native payments and a real-time admin dashboard.',
+    result:
+      'Replaced WhatsApp bookings and manual membership tracking: bookings, an access pass in Apple and Google Wallet, a café with native payments and a real-time dashboard in a single app, live on the App Store and Google Play.',
+    captions: {
+      web: 'The public site at befitlab.app: classes, schedules, pricing and café.',
+      app: 'Branded welcome and access to each client’s personal portal.',
+    },
+  },
+  pos: {
+    tagline: 'Multi-branch point of sale, in real time.',
+    description:
+      'Web and mobile point of sale with a financial dashboard, checkout terminal, inventory control and real-time sync for retail businesses.',
+    result:
+      'Plásticos y Jarciería Tito digitized its operation: 215 products per branch, terminal checkout, cash closing and real-time inventory, running on web, iOS and Android.',
+    captions: {
+      web: 'Sales history and financial metrics, in real time.',
+      app: 'The owner carries the store in their pocket.',
+    },
+  },
+  boda: {
+    category: 'Events & Real Time',
+    title: 'Wedding Gallery',
+    tagline: 'The event album, built by the guests.',
+    description:
+      'Interactive platform for events. Guests join with a unique code, upload photos from their camera and see the shared album in real time.',
+    result:
+      'Guests build the event album live: they join with a code and upload photos in real time, without downloading an app or collecting memories afterward.',
+    captions: {
+      app: 'Guests join by scanning a QR code on their table.',
+    },
+  },
+};
+
+/** El proyecto en el idioma activo (lang = 'es' | 'en'). */
+export function localizar(project, lang) {
+  const en = lang === 'en' ? EN[project.id] : null;
+  if (!en) return project;
+  const { captions, ...resto } = en;
+  const mockups = Object.fromEntries(
+    Object.entries(project.mockups || {}).map(([k, m]) => [k, { ...m, caption: captions?.[k] ?? m.caption }])
+  );
+  return { ...project, ...resto, mockups };
+}

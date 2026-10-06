@@ -24,3 +24,4 @@ export const DOMICILIO = 'Segundo Andador de los Padres No. 1, Col. La Hacienda,
 export const SITIO = 'kaizenstudiomx.com';
 // Fecha de la última actualización de los textos legales
 export const LEGAL_ACTUALIZADO = '5 de octubre de 2026';
+export const LEGAL_ACTUALIZADO_EN = 'October 5, 2026';

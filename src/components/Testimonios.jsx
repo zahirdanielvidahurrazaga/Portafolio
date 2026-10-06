@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Play, X } from 'lucide-react';
 import SectionHead from './SectionHead';
+import { useLang } from '../lib/LangContext';
 import '../styles/Testimonios.css';
 
 /**
@@ -21,17 +22,19 @@ const TESTIMONIOS = [
     // frase redactada por nosotros. Si algún día dan una frase textual, se pone aquí.
     quote: null,
     name: 'Be Fit Lab',
-    business: 'Estudio de Pilates',
+    business: { es: 'Estudio de Pilates', en: 'Pilates studio' },
     logo: '/logos/befit-mark.png',
     video: '/testimonios/befit-testimonio.mp4',
     poster: '/testimonios/befit-poster.jpg',
     videoDuracion: '0:52',
   },
   {
-    quote:
-      'Digitalizamos toda la tienda con su sistema de punto de venta. Ahora controlamos el inventario y vendemos desde el celular sin complicaciones. Quedó justo como lo necesitábamos.',
+    quote: {
+      es: 'Digitalizamos toda la tienda con su sistema de punto de venta. Ahora controlamos el inventario y vendemos desde el celular sin complicaciones. Quedó justo como lo necesitábamos.',
+      en: 'We digitized the whole store with their point of sale system. Now we control inventory and sell from our phones with no hassle. It turned out exactly how we needed it.',
+    },
     name: 'Carlos Carbajal',
-    business: 'Plásticos y Jarciería Tito',
+    business: { es: 'Plásticos y Jarciería Tito', en: 'Plásticos y Jarciería Tito' },
     logo: '/logos/tito.png',
     video: null,
   },
@@ -50,7 +53,9 @@ const rango = (v, [a, b], [c, d]) => c + (d - c) * Math.min(1, Math.max(0, (v - 
  * Respaldo de la versión anterior (dos columnas): scratchpad de la sesión del
  * 5-oct; en git está la versión desplegada.
  */
+// En los testimonios `t` es el testimonio; el traductor se llama `tr`.
 function TestimonioVideo({ t, n, total, onAbrir }) {
+  const { t: tr } = useLang();
   const ref = useRef(null);
   const reduced = useReducedMotion();
   const enPantalla = useInView(ref, { margin: '0px 0px -10% 0px' });
@@ -74,10 +79,13 @@ function TestimonioVideo({ t, n, total, onAbrir }) {
       <div className="tv-texto">
         <p className="tv-cuenta">{n} / {total}</p>
         <h3 className="tv-nombre">{t.name}</h3>
-        <p className="tv-giro">{t.business} · Testimonio grabado por las dueñas del estudio</p>
+        <p className="tv-giro">
+          {tr(t.business)} ·{' '}
+          {tr({ es: 'Testimonio grabado por las dueñas del estudio', en: 'Video testimonial recorded by the studio owners' })}
+        </p>
         <button type="button" className="tv-cta" onClick={() => onAbrir(t)}>
           <Play size={16} fill="currentColor" strokeWidth={0} />
-          Ver su experiencia · {t.videoDuracion}
+          {tr({ es: 'Ver su experiencia', en: 'Watch their story' })} · {t.videoDuracion}
         </button>
       </div>
 
@@ -86,7 +94,7 @@ function TestimonioVideo({ t, n, total, onAbrir }) {
         className="tv-video"
         style={{ scale, rotate }}
         onClick={() => onAbrir(t)}
-        aria-label={`Ver el testimonio en video de ${t.business}`}
+        aria-label={tr({ es: `Ver el testimonio en video de ${tr(t.business)}`, en: `Watch ${t.name}'s video testimonial` })}
       >
         <img src={t.poster} alt="" loading="lazy" aria-hidden="true" />
         {/* Vista previa muda: solo se monta (y descarga) con la tarjeta en pantalla */}
@@ -120,11 +128,13 @@ function Palabra({ p, i, total, children }) {
 }
 
 function TestimonioCita({ t, n, total }) {
+  const { lang, t: tr } = useLang();
   const ref = useRef(null);
   const reduced = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const autor = useTransform(p, (v) => (reduced ? 1 : rango(v, [0.72, 0.82], [0, 1])));
-  const palabras = t.quote.split(' ');
+  const cita = tr(t.quote);
+  const palabras = cita.split(' ');
 
   return (
     <figure ref={ref} className={`tc${reduced ? ' tc--static' : ''}`}>
@@ -132,20 +142,24 @@ function TestimonioCita({ t, n, total }) {
         <p className="tv-cuenta">{n} / {total}</p>
         <blockquote className="tc-cita">
           {reduced
-            ? t.quote
+            ? cita
             : palabras.map((w, i) => (
-                <Palabra key={i} p={p} i={i} total={palabras.length}>
+                <Palabra key={`${lang}-${i}`} p={p} i={i} total={palabras.length}>
                   {w}
                 </Palabra>
               ))}
         </blockquote>
         <motion.figcaption className="testimonio-author" style={{ opacity: autor }}>
           <span className="testimonio-avatar">
-            <img src={t.logo} alt={t.business} loading="lazy" />
+            <img src={t.logo} alt={tr(t.business)} loading="lazy" />
           </span>
           <span className="testimonio-author-meta">
             <span className="testimonio-name">{t.name}</span>
-            <span className="testimonio-business">{t.business}</span>
+            <span className="testimonio-business">
+              {tr(t.business)}
+              {/* La cita original es en español: en inglés se avisa que es traducción */}
+              {lang === 'en' && ' · Translated from Spanish'}
+            </span>
           </span>
         </motion.figcaption>
       </div>
@@ -154,6 +168,7 @@ function TestimonioCita({ t, n, total }) {
 }
 
 const Testimonios = () => {
+  const { t: tr } = useLang();
   // Testimonio cuyo video está abierto en el lightbox (null = cerrado).
   const [videoAbierto, setVideoAbierto] = useState(null);
   const cerrar = useCallback(() => setVideoAbierto(null), []);
@@ -182,10 +197,13 @@ const Testimonios = () => {
       <div className="section-container testimonios-head">
         <SectionHead
           num="03"
-          label="Testimonios"
-          lede="Negocios reales que ya operan con lo que construimos."
+          label={tr({ es: 'Testimonios', en: 'Testimonials' })}
+          lede={tr({
+            es: 'Negocios reales que ya operan con lo que construimos.',
+            en: 'Real businesses already running on what we built.',
+          })}
         >
-          Lo que dicen <em>nuestros clientes</em>
+          {tr({ es: <>Lo que dicen <em>nuestros clientes</em></>, en: <>What our <em>clients say</em></> })}
         </SectionHead>
       </div>
 
@@ -209,13 +227,13 @@ const Testimonios = () => {
             transition={{ duration: 0.2 }}
             role="dialog"
             aria-modal="true"
-            aria-label={`Testimonio en video de ${videoAbierto.business}`}
+            aria-label={`${tr({ es: 'Testimonio en video de', en: 'Video testimonial from' })} ${videoAbierto.name}`}
           >
             <button
               type="button"
               className="testimonio-lightbox-close"
               onClick={cerrar}
-              aria-label="Cerrar video"
+              aria-label={tr({ es: 'Cerrar video', en: 'Close video' })}
             >
               <X size={20} />
             </button>
@@ -238,7 +256,7 @@ const Testimonios = () => {
             />
 
             <p className="testimonio-lightbox-caption">
-              {videoAbierto.name} · {videoAbierto.business}
+              {videoAbierto.name} · {tr(videoAbierto.business)}
             </p>
           </motion.div>
         )}

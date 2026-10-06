@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import SectionHead from './SectionHead';
+import { useLang } from '../lib/LangContext';
 import '../styles/SobreMi.css';
 
 /**
@@ -23,44 +24,79 @@ import '../styles/SobreMi.css';
 const MITADES = [
   {
     num: 'I',
-    titulo: 'Estrategia, marca y redes',
-    texto:
-      'Escuchamos tu negocio, diseñamos su identidad y su experiencia, y cuidamos cómo se comunica en redes, de la primera charla a cada publicación.',
+    titulo: { es: 'Estrategia, marca y redes', en: 'Strategy, brand & social' },
+    texto: {
+      es: 'Escuchamos tu negocio, diseñamos su identidad y su experiencia, y cuidamos cómo se comunica en redes, de la primera charla a cada publicación.',
+      en: 'We listen to your business, design its identity and experience, and take care of how it speaks on social media, from the first call to every post.',
+    },
   },
   {
     num: 'II',
-    titulo: 'Tecnología',
-    texto:
-      'Construimos sitios web, tiendas en línea, apps en App Store y Google Play y sistemas a la medida, conectados con lo que ya usa tu negocio.',
+    titulo: { es: 'Tecnología', en: 'Technology' },
+    texto: {
+      es: 'Construimos sitios web, tiendas en línea, apps en App Store y Google Play y sistemas a la medida, conectados con lo que ya usa tu negocio.',
+      en: 'We build websites, online stores, apps on the App Store and Google Play, and custom systems, connected to what your business already uses.',
+    },
   },
 ];
 
 // Borrador de KaiZen (5-oct): que Karime y Zahir lo ajusten a su voz.
 const MVV = [
   {
-    titulo: 'Misión',
-    texto:
-      'Ayudar a los negocios a crecer con una marca clara, una presencia constante en redes y tecnología hecha a su medida, mejorándolos un paso a la vez.',
+    titulo: { es: 'Misión', en: 'Mission' },
+    texto: {
+      es: 'Ayudar a los negocios a crecer con una marca clara, una presencia constante en redes y tecnología hecha a su medida, mejorándolos un paso a la vez.',
+      en: 'To help businesses grow with a clear brand, a consistent presence on social media and technology built for them, improving them one step at a time.',
+    },
   },
   {
-    titulo: 'Visión',
-    texto:
-      'Ser el estudio de confianza de los negocios que quieren evolucionar: el aliado que entiende su operación de punta a punta, de la marca al software.',
+    titulo: { es: 'Visión', en: 'Vision' },
+    texto: {
+      es: 'Ser el estudio de confianza de los negocios que quieren evolucionar: el aliado que entiende su operación de punta a punta, de la marca al software.',
+      en: 'To be the trusted studio for businesses that want to evolve: the partner that understands their operation end to end, from brand to software.',
+    },
   },
   {
-    titulo: 'Valores',
-    lista: [
-      ['Mejora continua', 'cada entrega es mejor que la anterior'],
-      ['A la medida', 'nada de plantillas, todo parte de tu negocio'],
-      ['Claridad', 'alcance, tiempos y costos por escrito, sin sorpresas'],
-      ['Resultados reales', 'lo medimos en tu operación, no en promesas'],
-    ],
+    titulo: { es: 'Valores', en: 'Values' },
+    lista: {
+      es: [
+        ['Mejora continua', 'cada entrega es mejor que la anterior'],
+        ['A la medida', 'nada de plantillas, todo parte de tu negocio'],
+        ['Claridad', 'alcance, tiempos y costos por escrito, sin sorpresas'],
+        ['Resultados reales', 'lo medimos en tu operación, no en promesas'],
+      ],
+      en: [
+        ['Continuous improvement', 'every delivery is better than the last'],
+        ['Tailor-made', 'no templates, everything starts from your business'],
+        ['Clarity', 'scope, timelines and costs in writing, no surprises'],
+        ['Real results', 'measured in your operation, not in promises'],
+      ],
+    },
   },
 ];
 
+const FINAL = {
+  kicker: { es: 'Marca + tecnología, un solo equipo', en: 'Brand + technology, one team' },
+  frase: {
+    es: <>De una idea a <em>las manos de tus clientes.</em></>,
+    en: <>From an idea to <em>your customers’ hands.</em></>,
+  },
+};
+
 const rango = (v, [a, b], [c, d]) => c + (d - c) * Math.min(1, Math.max(0, (v - a) / (b - a)));
 
+function Mitades({ t }) {
+  return MITADES.map((m) => (
+    <div key={m.num} className="nos-mitad">
+      <span className="nos-mitad-num">{m.num}</span>
+      <h3>{t(m.titulo)}</h3>
+      <p>{t(m.texto)}</p>
+    </div>
+  ));
+}
+
 function Escena() {
+  const { t } = useLang();
   const ref = useRef(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   // Mitades: entran al fijarse la escena y se van antes de que las figuras se unan
@@ -79,20 +115,12 @@ function Escena() {
 
         <div className="nos-textos">
           <motion.div className="nos-mitades" style={{ opacity: mitades, y: mitadesY }}>
-            {MITADES.map((m) => (
-              <div key={m.titulo} className="nos-mitad">
-                <span className="nos-mitad-num">{m.num}</span>
-                <h3>{m.titulo}</h3>
-                <p>{m.texto}</p>
-              </div>
-            ))}
+            <Mitades t={t} />
           </motion.div>
 
           <motion.div className="nos-final" style={{ opacity: final, y: finalY, pointerEvents: eventosFinal }}>
-            <p className="interludio-kicker">Marca + tecnología, un solo equipo</p>
-            <h2 className="interludio-frase">
-              De una idea a <em>las manos de tus clientes.</em>
-            </h2>
+            <p className="interludio-kicker">{t(FINAL.kicker)}</p>
+            <h2 className="interludio-frase">{t(FINAL.frase)}</h2>
           </motion.div>
         </div>
       </div>
@@ -101,12 +129,13 @@ function Escena() {
 }
 
 const SobreMi = () => {
+  const { t } = useLang();
   const reduced = useReducedMotion();
   return (
     <section id="sobre-mi" className="sobre-section">
       <div className="section-container sobre-head">
-        <SectionHead num="05" label="Nosotros">
-          Somos <em>KaiZen</em>
+        <SectionHead num="05" label={t({ es: 'Nosotros', en: 'About' })}>
+          {t({ es: <>Somos <em>KaiZen</em></>, en: <>We are <em>KaiZen</em></> })}
         </SectionHead>
 
         <motion.p
@@ -116,30 +145,44 @@ const SobreMi = () => {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          Kaizen es la filosofía japonesa de la <em>mejora continua</em>: pasos pequeños,
-          todos los días. Así acompañamos a cada negocio: cuidamos su marca, le damos voz
-          en redes y construimos la tecnología que lo hace crecer. Sin plantillas, y
-          mejorándolo contigo después del lanzamiento.
+          {t({
+            es: (
+              <>
+                Kaizen es la filosofía japonesa de la <em>mejora continua</em>: pasos pequeños,
+                todos los días. Así acompañamos a cada negocio: cuidamos su marca, le damos voz
+                en redes y construimos la tecnología que lo hace crecer. Sin plantillas, y
+                mejorándolo contigo después del lanzamiento.
+              </>
+            ),
+            en: (
+              <>
+                Kaizen is the Japanese philosophy of <em>continuous improvement</em>: small steps,
+                every day. That’s how we work with every business: we care for its brand, give it a
+                voice on social media and build the technology that helps it grow. No templates, and
+                we keep improving it with you after launch.
+              </>
+            ),
+          })}
         </motion.p>
 
         {/* Misión · Visión · Valores (5-oct): cortas y en el mismo tono editorial */}
         <div className="sobre-mvv">
           {MVV.map((b, i) => (
             <motion.div
-              key={b.titulo}
+              key={b.titulo.es}
               className="sobre-mvv-col"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
-              <h3>{b.titulo}</h3>
-              {b.texto && <p>{b.texto}</p>}
+              <h3>{t(b.titulo)}</h3>
+              {b.texto && <p>{t(b.texto)}</p>}
               {b.lista && (
                 <ul>
-                  {b.lista.map(([t, d]) => (
-                    <li key={t}>
-                      <strong>{t}.</strong> {d}
+                  {t(b.lista).map(([nombre, d]) => (
+                    <li key={nombre}>
+                      <strong>{nombre}.</strong> {d}
                     </li>
                   ))}
                 </ul>
@@ -148,24 +191,18 @@ const SobreMi = () => {
           ))}
         </div>
 
-        <a href="#contact" className="sobre-cta">Trabajemos juntos →</a>
+        <a href="#contact" className="sobre-cta">
+          {t({ es: 'Trabajemos juntos →', en: 'Let’s work together →' })}
+        </a>
       </div>
 
       {reduced ? (
         // Sin animación: las dos mitades y la frase, estáticas
         <div className="section-container nos-static">
           <div className="nos-mitades">
-            {MITADES.map((m) => (
-              <div key={m.titulo} className="nos-mitad">
-                <span className="nos-mitad-num">{m.num}</span>
-                <h3>{m.titulo}</h3>
-                <p>{m.texto}</p>
-              </div>
-            ))}
+            <Mitades t={t} />
           </div>
-          <h2 className="interludio-frase nos-static-frase">
-            De una idea a <em>las manos de tus clientes.</em>
-          </h2>
+          <h2 className="interludio-frase nos-static-frase">{t(FINAL.frase)}</h2>
         </div>
       ) : (
         <Escena />

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../lib/ThemeContext';
+import { useLang } from '../lib/LangContext';
 import '../styles/ThemeToggle.css';
 
 /**
@@ -10,14 +11,19 @@ import '../styles/ThemeToggle.css';
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
   const esOscuro = theme === 'dark';
+  const { t } = useLang();
 
   return (
     <button
       type="button"
       className="theme-toggle"
       onClick={toggleTheme}
-      aria-label={esOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-      title={esOscuro ? 'Modo claro' : 'Modo oscuro'}
+      aria-label={
+        esOscuro
+          ? t({ es: 'Cambiar a modo claro', en: 'Switch to light mode' })
+          : t({ es: 'Cambiar a modo oscuro', en: 'Switch to dark mode' })
+      }
+      title={esOscuro ? t({ es: 'Modo claro', en: 'Light mode' }) : t({ es: 'Modo oscuro', en: 'Dark mode' })}
     >
       {/* mode="wait" evita que el sol y la luna se encimen durante el cruce */}
       <AnimatePresence mode="wait" initial={false}>

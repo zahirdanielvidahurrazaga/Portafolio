@@ -5,7 +5,8 @@ import Mockup from './Mockup';
 import ProjectModal from './ProjectModal';
 import ProyectosReel from './ProyectosReel';
 import SectionHead from './SectionHead';
-import { projects } from '../data/projects';
+import { projects, localizar } from '../data/projects';
+import { useLang } from '../lib/LangContext';
 import '../styles/PortafolioShowcase.css';
 
 /* Portada de la tarjeta: el mockup del sitio web si el proyecto tiene, y si no
@@ -18,6 +19,7 @@ function portadaDe(project) {
 }
 
 const ShowcaseItem = ({ project, index, total, onOpen }) => {
+  const { t } = useLang();
   const isEven = index % 2 === 0;
   const portada = portadaDe(project);
 
@@ -53,7 +55,7 @@ const ShowcaseItem = ({ project, index, total, onOpen }) => {
 
         <div className="showcase-cta-row">
           <button className="showcase-cta" onClick={() => onOpen(project)}>
-            Ver el proyecto <ArrowRight size={16} />
+            {t({ es: 'Ver el proyecto', en: 'View project' })} <ArrowRight size={16} />
           </button>
           {project.website && (
             <a
@@ -62,7 +64,7 @@ const ShowcaseItem = ({ project, index, total, onOpen }) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Sitio web <ExternalLink size={14} />
+              {t({ es: 'Sitio web', en: 'Website' })} <ExternalLink size={14} />
             </a>
           )}
         </div>
@@ -80,7 +82,7 @@ const ShowcaseItem = ({ project, index, total, onOpen }) => {
           <button
             className={`showcase-device-trigger showcase-device-trigger--${portada.kind}`}
             onClick={() => onOpen(project)}
-            aria-label={`Ver el proyecto ${project.title}`}
+            aria-label={`${t({ es: 'Ver el proyecto', en: 'View project' })} ${project.title}`}
           >
             {/* Sin inclinación por CSS: el ángulo ya viene en el render. Si se
                 le sumara un rotateY encima, el aparato saldría doblemente
@@ -99,7 +101,9 @@ const ShowcaseItem = ({ project, index, total, onOpen }) => {
 };
 
 const PortafolioShowcase = () => {
+  const { lang, t } = useLang();
   const [active, setActive] = useState(null);
+  const lista = projects.map((p) => localizar(p, lang));
 
   return (
     <section id="portfolio" className="showcase-section">
@@ -108,26 +112,27 @@ const PortafolioShowcase = () => {
       <div className="showcase-header section-container">
         <SectionHead
           num="04"
-          label="Proyectos"
-          lede="Entra a cada uno para ver el sitio y la app."
+          label={t({ es: 'Proyectos', en: 'Work' })}
+          lede={t({ es: 'Entra a cada uno para ver el sitio y la app.', en: 'Open each one to see the website and the app.' })}
         >
-          Soluciones <em>en producción</em>
+          {t({ es: <>Soluciones <em>en producción</em></>, en: <>Solutions <em>in production</em></> })}
         </SectionHead>
       </div>
 
       <div className="showcase-list">
-        {projects.map((project, i) => (
+        {lista.map((project, i) => (
           <ShowcaseItem
             key={project.id}
             project={project}
             index={i}
-            total={projects.length}
-            onOpen={setActive}
+            total={lista.length}
+            onOpen={(pr) => setActive(pr.id)}
           />
         ))}
       </div>
 
-      <ProjectModal project={active} onClose={() => setActive(null)} />
+      {/* Se guarda el id (no el objeto) para que el modal siga al idioma si se cambia con él abierto */}
+      <ProjectModal project={lista.find((pr) => pr.id === active) || null} onClose={() => setActive(null)} />
     </section>
   );
 };

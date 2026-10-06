@@ -6,12 +6,15 @@
  * Todas las secciones abren con esto: es lo que hace que el sitio se lea como
  * una sola revista y no como bloques sueltos.
  */
+import { useLang } from '../lib/LangContext';
+
 export default function SectionHead({ num, label, lede, children, className = '' }) {
+  const { lang } = useLang();
   return (
     <header className={`sh ${className}`.trim()}>
       <div className="sh-rule">
         <span>{label}</span>
-        <span>Nº {num}</span>
+        <span>{lang === 'en' ? 'No.' : 'Nº'} {num}</span>
       </div>
       <h2 className="sh-title">{children}</h2>
       {lede && <p className="sh-lede">{lede}</p>}

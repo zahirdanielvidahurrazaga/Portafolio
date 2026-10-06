@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, TrendingUp, X } from 'lucide-react';
 import Mockup from './Mockup';
+import { useLang } from '../lib/LangContext';
 import '../styles/ProjectModal.css';
 
 /**
@@ -66,6 +67,7 @@ export default function ProjectModal({ project, onClose }) {
   useEffect(() => setZoom(null), [project?.id]);
 
   const mockups = project?.mockups;
+  const { t } = useLang();
 
   return (
     <>
@@ -89,7 +91,7 @@ export default function ProjectModal({ project, onClose }) {
               transition={{ type: 'spring', stiffness: 240, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="pm-close" onClick={onClose} aria-label="Cerrar">
+              <button className="pm-close" onClick={onClose} aria-label={t({ es: 'Cerrar', en: 'Close' })}>
                 <X size={20} />
               </button>
 
@@ -132,18 +134,18 @@ export default function ProjectModal({ project, onClose }) {
 
               {/* ════ EL SITIO WEB ════ */}
               {mockups?.web && (
-                <Bloque titulo="El sitio web" subtitulo={mockups.web.caption}>
+                <Bloque titulo={t({ es: 'El sitio web', en: 'The website' })} subtitulo={mockups.web.caption}>
                   <button
                     type="button"
                     className="pm-zoomable pm-zoomable--web"
-                    onClick={() => setZoom({ ...mockups.web, label: `${project.title} — sitio web` })}
-                    aria-label="Ampliar el sitio web"
+                    onClick={() => setZoom({ ...mockups.web, kind: 'mac', label: `${project.title} — ${t({ es: 'sitio web', en: 'website' })}` })}
+                    aria-label={t({ es: 'Ampliar el sitio web', en: 'Enlarge the website' })}
                   >
                     <Mockup
                       kind="mac"
                       src={mockups.web.src}
                       fallback={mockups.web.fallback}
-                      alt={`Sitio web de ${project.title}`}
+                      alt={t({ es: `Sitio web de ${project.title}`, en: `${project.title} website` })}
                     />
                   </button>
                 </Bloque>
@@ -154,18 +156,18 @@ export default function ProjectModal({ project, onClose }) {
                   sola imagen desde shots.so, con el mismo ángulo y su relación
                   espacial resuelta. Por eso es un solo <Mockup> y no dos. */}
               {mockups?.app && (
-                <Bloque titulo="Así se entra a la app" subtitulo={mockups.app.caption}>
+                <Bloque titulo={t({ es: 'Así se entra a la app', en: 'How you get into the app' })} subtitulo={mockups.app.caption}>
                   <button
                     type="button"
                     className="pm-zoomable pm-zoomable--app"
-                    onClick={() => setZoom({ ...mockups.app, label: `${project.title} — la app` })}
-                    aria-label="Ampliar las pantallas de la app"
+                    onClick={() => setZoom({ ...mockups.app, kind: 'phone', label: `${project.title} — ${t({ es: 'la app', en: 'the app' })}` })}
+                    aria-label={t({ es: 'Ampliar las pantallas de la app', en: 'Enlarge the app screens' })}
                   >
                     <Mockup
                       kind="phone"
                       src={mockups.app.src}
                       fallback={mockups.app.fallback}
-                      alt={`Pantallas de entrada de la app de ${project.title}`}
+                      alt={t({ es: `Pantallas de entrada de la app de ${project.title}`, en: `${project.title} app welcome screens` })}
                     />
                   </button>
                 </Bloque>
@@ -173,10 +175,10 @@ export default function ProjectModal({ project, onClose }) {
 
               {/* ════ CIERRE ════ */}
               <footer className="pm-foot">
-                <h3>¿Quieres algo así para tu negocio?</h3>
+                <h3>{t({ es: '¿Quieres algo así para tu negocio?', en: 'Want something like this for your business?' })}</h3>
                 <div className="pm-foot-actions">
                   <a href="#contact" className="pm-cta" onClick={onClose}>
-                    Cuéntanos tu proyecto
+                    {t({ es: 'Cuéntanos tu proyecto', en: 'Tell us about your project' })}
                   </a>
                   {project.website && (
                     <a
@@ -185,7 +187,7 @@ export default function ProjectModal({ project, onClose }) {
                       rel="noopener noreferrer"
                       className="pm-cta pm-cta--ghost"
                     >
-                      Verlo en vivo <ExternalLink size={16} />
+                      {t({ es: 'Verlo en vivo', en: 'See it live' })} <ExternalLink size={16} />
                     </a>
                   )}
                 </div>
@@ -206,11 +208,11 @@ export default function ProjectModal({ project, onClose }) {
             transition={{ duration: 0.2 }}
             onClick={() => setZoom(null)}
           >
-            <button className="pm-lightbox-close" onClick={() => setZoom(null)} aria-label="Cerrar">
+            <button className="pm-lightbox-close" onClick={() => setZoom(null)} aria-label={t({ es: 'Cerrar', en: 'Close' })}>
               <X size={20} />
             </button>
             <Mockup
-              kind={zoom.src?.includes('mac') || zoom.label?.includes('sitio') ? 'mac' : 'phone'}
+              kind={zoom.kind}
               src={zoom.src}
               fallback={zoom.fallback}
               alt={zoom.label}

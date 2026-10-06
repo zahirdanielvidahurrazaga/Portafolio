@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, useMotionValueEvent } from 'framer-motion';
 import KaizenReel from './KaizenReel';
+import { useLang } from '../lib/LangContext';
 import '../styles/ProyectosReel.css';
 
 /**
@@ -20,7 +21,7 @@ import '../styles/ProyectosReel.css';
 // Dónde está la pantalla dentro de befit-mac.webp (1747×1068), medido sobre el
 // render. Si se cambia el render, volver a medir.
 const PANTALLA = { x: 158 / 1747, y: 24 / 1068, w: 1430 / 1747, h: 924 / 1068 };
-const FRASE = ['Proyectos', 'reales,', 'no', 'demos.'];
+const FRASES = { es: ['Proyectos', 'reales,', 'no', 'demos.'], en: ['Real', 'projects,', 'not', 'demos.'] };
 
 /* Tiempos (progreso de la pista, 0…1). La animación de marca (KaizenReel) NO
    corre sola: AVANZA CON EL SCROLL (`video`), así nadie se pierde una escena y
@@ -78,6 +79,8 @@ function Palabra({ texto, i, total, progress, abre }) {
 }
 
 export default function ProyectosReel() {
+  const { lang, t } = useLang();
+  const FRASE = FRASES[lang];
   const ref = useRef(null);
   const reduced = useReducedMotion();
   const { w: vw, h: vh } = useViewport();
@@ -155,7 +158,7 @@ export default function ProyectosReel() {
       <div className="reel-sticky">
         {/* Distinto al "Proyectos recientes" del encabezado que viene después */}
         <motion.p className="reel-intro" style={{ opacity: introOpacity }}>
-          Idea · Diseño · Construcción · Lanzamiento
+          {t({ es: 'Idea · Diseño · Construcción · Lanzamiento', en: 'Idea · Design · Build · Launch' })}
         </motion.p>
 
         {/* La pantalla de la laptop se centra en el viewport y la escala se
@@ -189,7 +192,7 @@ export default function ProyectosReel() {
         <p className="reel-phrase" aria-label={FRASE.join(' ')}>
           {FRASE.map((p, i) => (
             <Palabra
-              key={p}
+              key={`${lang}-${p}`}
               texto={p}
               i={i}
               total={FRASE.length}

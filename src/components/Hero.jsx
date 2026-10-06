@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import KaizenWordmark from './KaizenWordmark';
+import { useLang } from '../lib/LangContext';
 import { RELEVO } from '../lib/cintaPuente';
 import '../styles/Hero.css';
 import '../styles/Interludio.css';
@@ -26,8 +27,22 @@ import '../styles/Interludio.css';
 // Interpolación con tope (ver el gotcha de useTransform en ProyectosReel.jsx)
 const rango = (v, [a, b], [c, d]) => c + (d - c) * Math.min(1, Math.max(0, (v - a) / (b - a)));
 
-const LINEA_1 = ['Evoluciona', 'la', 'forma'];
-const LINEA_2 = [['en'], ['que'], ['haces', true], ['negocio', true]];
+// Titular palabra por palabra, por idioma ([palabra, en itálica])
+const TITULAR = {
+  es: [['Evoluciona', 'la', 'forma'], [['en'], ['que'], ['haces', true], ['negocio', true]]],
+  en: [['Evolve', 'the', 'way'], [['you'], ['do', true], ['business', true]]],
+};
+const TITULAR_TXT = { es: 'Evoluciona la forma en que haces negocio', en: 'Evolve the way you do business' };
+// Frase de la apertura; desde `EM` va en itálica
+const FRASE = {
+  es: { palabras: ['Pequeñas', 'mejoras,', 'todos', 'los', 'días.'], em: 2 },
+  en: { palabras: ['Small', 'improvements,', 'every', 'day.'], em: 2 },
+};
+const CABECERA = { es: ['Marca · Redes · Web · Apps', 'Nº 01 — 2026'], en: ['Brand · Social · Web · Apps', 'No. 01 — 2026'] };
+const BOTONES = {
+  es: ['Cuéntanos tu proyecto', 'Ver proyectos'],
+  en: ['Tell us about your project', 'See our work'],
+};
 const SALIDA = [0.9, 0.98];
 // Antes de esto se calcula la ENTRADA de cada pieza; después, su salida
 const MITAD = 0.89;
@@ -68,6 +83,10 @@ function PalabraFrase({ p, i, total, children }) {
 }
 
 const Hero = () => {
+  const { lang, t } = useLang();
+  const [LINEA_1, LINEA_2] = TITULAR[lang];
+  const [cab1, cab2] = CABECERA[lang];
+  const [boton1, boton2] = BOTONES[lang];
   const ref = useRef(null);
   const reduced = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -86,16 +105,16 @@ const Hero = () => {
         <div className="hero-stage">
           <div className="hero-content">
             <div className="hero-masthead hero-masthead--static">
-              <span>Marca · Redes · Web · Apps</span>
-              <span>Nº 01 — 2026</span>
+              <span>{cab1}</span>
+              <span>{cab2}</span>
             </div>
             <h1>
-              <span className="hero-line-break">Evoluciona la forma</span> en que{' '}
-              <em className="hero-em">haces negocio</em>
+              <span className="hero-line-break">{LINEA_1.join(' ')}</span>{' '}
+              {LINEA_2.map(([w, em]) => (em ? <em key={w} className="hero-em">{w} </em> : `${w} `))}
             </h1>
             <div className="hero-actions">
-              <a href="#contact" className="btn-metallic btn-large">Cuéntanos tu proyecto</a>
-              <a href="#portfolio" className="btn-secondary btn-large">Ver soluciones</a>
+              <a href="#contact" className="btn-metallic btn-large">{boton1}</a>
+              <a href="#portfolio" className="btn-secondary btn-large">{boton2}</a>
             </div>
           </div>
         </div>
@@ -103,7 +122,7 @@ const Hero = () => {
     );
   }
 
-  const frase = ['Pequeñas', 'mejoras,', 'todos', 'los', 'días.'];
+  const { palabras: frase, em: desdeEm } = FRASE[lang];
 
   return (
     <section ref={ref} className="hero-section" data-nube="kaizen" data-nube-modo="apertura">
@@ -121,35 +140,35 @@ const Hero = () => {
           </div>
           <p className="interludio-frase" aria-label={frase.join(' ')}>
             {frase.map((w, i) => (
-              <PalabraFrase key={w} p={p} i={i} total={frase.length}>
-                {i >= 2 ? <em>{w}</em> : w}
+              <PalabraFrase key={`${lang}-${w}`} p={p} i={i} total={frase.length}>
+                {i >= desdeEm ? <em>{w}</em> : w}
               </PalabraFrase>
             ))}
           </p>
           <motion.p className="interludio-desliza" style={{ opacity: kicker }}>
-            Desliza
+            {t({ es: 'Desliza', en: 'Scroll' })}
           </motion.p>
         </div>
 
         {/* Capa 2 · el hero, que se arma en el mismo lugar */}
         <div className="hero-content">
           <div className="hero-masthead">
-            <motion.span style={{ opacity: cabecera }}>Marca · Redes · Web · Apps</motion.span>
-            <motion.span style={{ opacity: cabecera }}>Nº 01 — 2026</motion.span>
+            <motion.span style={{ opacity: cabecera }}>{cab1}</motion.span>
+            <motion.span style={{ opacity: cabecera }}>{cab2}</motion.span>
             <motion.i className="hero-rule" style={{ scaleX: regla }} aria-hidden="true" />
           </div>
 
-          <h1 aria-label="Evoluciona la forma en que haces negocio">
+          <h1 aria-label={TITULAR_TXT[lang]}>
             <span className="hero-line-break" aria-hidden="true">
               {LINEA_1.map((w, i) => (
-                <React.Fragment key={w}>
+                <React.Fragment key={`${lang}-${w}`}>
                   <Palabra p={p} i={i} texto={w} />{' '}
                 </React.Fragment>
               ))}
             </span>
             <span aria-hidden="true">
               {LINEA_2.map(([w, em], i) => (
-                <React.Fragment key={w}>
+                <React.Fragment key={`${lang}-${w}`}>
                   <Palabra p={p} i={i + LINEA_1.length} texto={w} em={em} />{' '}
                 </React.Fragment>
               ))}
@@ -160,8 +179,8 @@ const Hero = () => {
             className="hero-actions"
             style={{ opacity: acciones, y: accionesY, pointerEvents: accionesEventos }}
           >
-            <a href="#contact" className="btn-metallic btn-large">Cuéntanos tu proyecto</a>
-            <a href="#portfolio" className="btn-secondary btn-large">Ver soluciones</a>
+            <a href="#contact" className="btn-metallic btn-large">{boton1}</a>
+            <a href="#portfolio" className="btn-secondary btn-large">{boton2}</a>
           </motion.div>
         </div>
       </div>

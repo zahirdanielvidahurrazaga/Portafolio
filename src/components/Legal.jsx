@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import KaizenWordmark from './KaizenWordmark';
-import { CORREO, DOMICILIO, RESPONSABLES, SITIO, LEGAL_ACTUALIZADO, WHATSAPP_VISIBLE } from '../data/contacto';
+import LangToggle from './LangToggle';
+import { useLang } from '../lib/LangContext';
+import { CORREO, DOMICILIO, RESPONSABLES, SITIO, LEGAL_ACTUALIZADO, LEGAL_ACTUALIZADO_EN, WHATSAPP_VISIBLE } from '../data/contacto';
 import '../styles/Legal.css';
 
 /**
@@ -79,8 +81,8 @@ function Privacidad() {
 
       <h2>6. Cookies y tecnologías similares</h2>
       <p>
-        Este sitio no usa cookies de rastreo ni de publicidad. Solo guarda en tu propio navegador tu
-        preferencia de tema claro u oscuro, y puedes borrarla cuando quieras desde la configuración de tu
+        Este sitio no usa cookies de rastreo ni de publicidad. Solo guarda en tu propio navegador tus
+        preferencias de tema claro u oscuro y de idioma, y puedes borrarlas cuando quieras desde la configuración de tu
         navegador. Nuestro proveedor de alojamiento puede procesar datos técnicos de la conexión, como la
         dirección IP, para mantener el sitio seguro y funcionando.
       </p>
@@ -221,34 +223,249 @@ function Terminos() {
   );
 }
 
+/* ── Inglés ─────────────────────────────────────────────────────────────
+   Versión de cortesía: el aviso se rige por la ley mexicana y lo que manda es
+   la versión en español (se dice en el texto). */
+const NOTA_EN = (
+  <p className="legal-nota">
+    This is a courtesy translation. The Spanish version of this document is the one that governs.
+  </p>
+);
+
+function PrivacyEn() {
+  return (
+    <>
+      <h1>
+        Privacy <em>notice</em>
+      </h1>
+      <p className="legal-lede">
+        At KaiZen we take care of your personal data. This notice explains what data we collect at {SITIO}, what
+        we use it for and how you can exercise your rights, under Mexico’s Federal Law on the Protection of
+        Personal Data Held by Private Parties.
+      </p>
+      {NOTA_EN}
+
+      <h2>1. Who is responsible for your data</h2>
+      <p>
+        KaiZen is the trade name under which {responsables}, individuals, work. They are responsible for
+        processing your personal data, with an address at {DOMICILIO}, Mexico.
+      </p>
+      <p>
+        For anything related to your data you can write to us at <a href={`mailto:${CORREO}`}>{CORREO}</a>.
+      </p>
+
+      <h2>2. What data we collect</h2>
+      <p>When you contact us through the contact form, WhatsApp or email, we may collect:</p>
+      <ul>
+        <li>Name.</li>
+        <li>Email address.</li>
+        <li>Phone number and profile name, if you contact us on WhatsApp.</li>
+        <li>The type of project you’re interested in and any information about your business you choose to share.</li>
+      </ul>
+      <p>
+        We don’t ask for sensitive personal data (for example, about health, religion or ethnic origin). Please
+        don’t include it in your messages.
+      </p>
+
+      <h2>3. What we use your data for</h2>
+      <p>We use your data only to:</p>
+      <ul>
+        <li>Reply to your message and handle your request.</li>
+        <li>Understand your project and prepare a proposal or quote.</li>
+        <li>Follow up on the conversation you started.</li>
+      </ul>
+      <p>
+        We don’t use your data for any other purpose, we don’t send you advertising without your consent and we
+        don’t sell it. If you hire a service, the handling of your data within the project is also governed by the
+        contract or proposal we sign.
+      </p>
+
+      <h2>4. How the form works</h2>
+      <p>
+        The form on this site doesn’t store your information in any database: when you submit it, it builds a
+        message and opens it in WhatsApp so you can decide whether to send it. From there, the conversation takes
+        place on WhatsApp and is also subject to that service’s terms and privacy notice.
+      </p>
+
+      <h2>5. Who we share your data with</h2>
+      <p>
+        We don’t share your data with third parties, except when a competent authority requires it by law. To
+        operate we use providers that process information on our behalf, such as the site’s hosting service
+        (Cloudflare) and the platforms you use to reach us (WhatsApp or your email provider).
+      </p>
+
+      <h2>6. Cookies and similar technologies</h2>
+      <p>
+        This site doesn’t use tracking or advertising cookies. It only stores your light or dark theme and
+        language preferences in your own browser, and you can delete them at any time from your browser settings.
+        Our hosting provider may process technical connection data, such as your IP address, to keep the site
+        secure and running.
+      </p>
+
+      <h2>7. How long we keep your data</h2>
+      <p>
+        Only for as long as needed to handle your request and follow up on our relationship with you, and then as
+        long as applicable legal obligations require.
+      </p>
+
+      <h2>8. Your rights</h2>
+      <p>
+        You have the right to access your data, correct it if it’s inaccurate, delete it or object to its use
+        (ARCO rights), as well as to withdraw your consent or limit the use of your data. To do so, email us at{' '}
+        <a href={`mailto:${CORREO}`}>{CORREO}</a> including:
+      </p>
+      <ul>
+        <li>Your name and a way to reply to you.</li>
+        <li>A document proving your identity (or your representative’s).</li>
+        <li>Which right you want to exercise and over which data.</li>
+      </ul>
+      <p>We’ll reply within the time limits set by law.</p>
+      <p>If you believe your right to data protection has been violated, you can contact the competent authority.</p>
+
+      <h2>9. Changes to this notice</h2>
+      <p>If we update this notice, we’ll publish the new version on this same page, with its update date.</p>
+    </>
+  );
+}
+
+function TermsEn() {
+  return (
+    <>
+      <h1>
+        Terms & <em>conditions</em>
+      </h1>
+      <p className="legal-lede">
+        These terms govern the use of {SITIO} and explain, in general, how we work. By using the site you accept
+        them.
+      </p>
+      {NOTA_EN}
+
+      <h2>1. Who we are</h2>
+      <p>
+        KaiZen is the trade name under which {responsables}, individuals with an address at {DOMICILIO}, Mexico,
+        offer brand identity, social media, websites, online stores, point of sale, apps and automation services.
+        Contact: <a href={`mailto:${CORREO}`}>{CORREO}</a> · WhatsApp {WHATSAPP_VISIBLE}.
+      </p>
+
+      <h2>2. Use of the site</h2>
+      <p>
+        You may browse and share this site freely. We ask you to use it lawfully and not to try to damage it,
+        interfere with how it works or access parts that aren’t public.
+      </p>
+
+      <h2>3. The information on this site is not a quote</h2>
+      <p>
+        The services, examples and texts on this site are for information only. They are not an offer or a quote:
+        the scope, deliverables, timeline and price of each project are defined in writing in a proposal for your
+        case.
+      </p>
+
+      <h2>4. How we work together</h2>
+      <p>
+        Before starting, we agree in writing on what the project includes. Anything not in the accepted proposal
+        is out of scope and quoted separately. If something additional is needed during the project, we tell you
+        first and only do it with your approval.
+      </p>
+      <p>
+        If anything in these terms differs from your project’s proposal or contract, the document signed or
+        accepted by both parties prevails.
+      </p>
+
+      <h2>5. Third-party services</h2>
+      <p>
+        Many projects rely on services that aren’t ours and have their own cost, such as the domain, hosting,
+        Apple and Google developer accounts, payment processors, artificial intelligence services and other
+        platforms, paid advertising on social media or search engines, and professional photography or video.
+      </p>
+      <p>
+        Unless the proposal says otherwise, those costs aren’t included and are covered by the client, ideally in
+        their own name so the accounts and assets belong to them. We let you know in advance which ones your
+        project needs. Each is governed by its own terms, and we’re not responsible for their price changes,
+        failures or outages.
+      </p>
+
+      <h2>6. Maintenance and support</h2>
+      <p>
+        Delivering a project doesn’t include ongoing maintenance or support unless a plan is hired. Changes or new
+        features beyond what was agreed are quoted separately.
+      </p>
+
+      <h2>7. Intellectual property</h2>
+      <p>
+        The KaiZen brand and the texts, designs and animations on this site are ours; you may not copy or use them
+        without permission. The client projects we show are published with their authorization, and their names
+        and brands belong to their owners.
+      </p>
+      <p>
+        What we build for you becomes yours as agreed in your proposal or contract, once the project is paid in
+        full.
+      </p>
+
+      <h2>8. Liability</h2>
+      <p>
+        We do our best to keep the site available and its information accurate, but we don’t guarantee it will
+        run without interruptions or be error-free. We’re not responsible for damages arising from the use of the
+        site or for the content of third-party sites or services it links to.
+      </p>
+
+      <h2>9. Privacy</h2>
+      <p>
+        How we handle your personal data is explained in our <a href="/aviso-de-privacidad">privacy notice</a>.
+      </p>
+
+      <h2>10. Changes to these terms</h2>
+      <p>We may update these terms. The version in force is always the one published on this page, with its update date.</p>
+
+      <h2>11. Governing law</h2>
+      <p>
+        These terms are governed by the laws of the United Mexican States. Any dispute will be resolved before the
+        competent courts of KaiZen’s domicile, unless the law provides otherwise.
+      </p>
+    </>
+  );
+}
+
 export default function Legal({ tipo }) {
+  const { lang, t } = useLang();
+  const esPriv = tipo === 'privacidad';
   useEffect(() => {
-    document.title = `${tipo === 'privacidad' ? 'Aviso de privacidad' : 'Términos y condiciones'} · KaiZen`;
-    window.scrollTo(0, 0);
-  }, [tipo]);
+    document.title = `${
+      esPriv ? t({ es: 'Aviso de privacidad', en: 'Privacy notice' }) : t({ es: 'Términos y condiciones', en: 'Terms & conditions' })
+    } · KaiZen`;
+  }, [esPriv, t]);
+  useEffect(() => window.scrollTo(0, 0), [tipo]);
+
+  const cuerpo = esPriv ? (lang === 'en' ? <PrivacyEn /> : <Privacidad />) : lang === 'en' ? <TermsEn /> : <Terminos />;
 
   return (
     <div className="legal">
       <header className="legal-top">
-        <a href="/" className="legal-marca" aria-label="KaiZen, volver al inicio">
+        <a href="/" className="legal-marca" aria-label={t({ es: 'KaiZen, volver al inicio', en: 'KaiZen, back to home' })}>
           <KaizenWordmark height={18} />
         </a>
-        <a href="/" className="legal-volver">← Volver al sitio</a>
+        <div className="legal-top-acciones">
+          <LangToggle />
+          <a href="/" className="legal-volver">
+            {t({ es: '← Volver al sitio', en: '← Back to site' })}
+          </a>
+        </div>
       </header>
 
       <main className="legal-cuerpo">
         <div className="legal-rule">
           <span>Legal</span>
-          <span>Actualizado: {LEGAL_ACTUALIZADO}</span>
+          <span>
+            {t({ es: 'Actualizado:', en: 'Updated:' })} {t({ es: LEGAL_ACTUALIZADO, en: LEGAL_ACTUALIZADO_EN })}
+          </span>
         </div>
-        {tipo === 'privacidad' ? <Privacidad /> : <Terminos />}
+        {cuerpo}
       </main>
 
       <footer className="legal-pie">
         <span>© {new Date().getFullYear()} KaiZen</span>
         <nav>
-          <a href="/aviso-de-privacidad">Aviso de privacidad</a>
-          <a href="/terminos">Términos y condiciones</a>
+          <a href="/aviso-de-privacidad">{t({ es: 'Aviso de privacidad', en: 'Privacy notice' })}</a>
+          <a href="/terminos">{t({ es: 'Términos y condiciones', en: 'Terms & conditions' })}</a>
         </nav>
       </footer>
     </div>

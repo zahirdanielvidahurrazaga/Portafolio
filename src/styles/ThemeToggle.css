@@ -33,3 +33,38 @@
   display: grid;
   place-items: center;
 }
+
+/* Botón de idioma ES / EN (LangToggle.jsx): cápsula hermana del sol/luna */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 36px;
+  padding: 0 11px;
+  margin-right: var(--spacing-2);
+  flex-shrink: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  background: var(--tint-2);
+  border: 1px solid var(--border-color);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.lang-toggle:hover {
+  background: var(--tint-4);
+  border-color: var(--border-strong);
+}
+.lang-toggle:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+.lang-toggle .is-on {
+  color: var(--text-strong);
+}
+.lang-toggle-sep {
+  opacity: 0.4;
+}

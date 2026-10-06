@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import '../styles/KaizenReel.css';
+import { useLang } from '../lib/LangContext';
 
 /**
  * Animación de marca (~16 s, en loop) que vive en la pantalla de la laptop del
@@ -39,6 +40,7 @@ function Qr({ x, y, size }) {
 }
 
 export default function KaizenReel({ fit = 'slice', frozen = false, paused = false, className = '' }) {
+  const { t } = useLang();
   const clip = useId();
   const [sync] = useState(() => (frozen ? '-8.6s' : `${-(((performance.now() - EPOCH) % CICLO) / 1000).toFixed(3)}s`));
 
@@ -60,7 +62,7 @@ export default function KaizenReel({ fit = 'slice', frozen = false, paused = fal
       {/* 1 · Idea */}
       <path className="kr-line" d="M500 580H1100" pathLength="1" />
       <text className="kr-title" x="800" y="530" textAnchor="middle">
-        Tu negocio
+        {t({ es: 'Tu negocio', en: 'Your business' })}
       </text>
 
       {/* 2 · Diseño: el teléfono y su plano */}
@@ -80,7 +82,7 @@ export default function KaizenReel({ fit = 'slice', frozen = false, paused = fal
       {/* 3 · Construcción */}
       <g className="kr-build">
         <text className="kr-pop kr-small" x="696" y="261">
-          Hoy · 7:00
+          {t({ es: 'Hoy · 7:00', en: 'Today · 7:00' })}
         </text>
         <g className="kr-bars">
           {BARRAS.map((h, i) => (
@@ -92,7 +94,7 @@ export default function KaizenReel({ fit = 'slice', frozen = false, paused = fal
         </g>
         <g className="kr-pop" style={{ '--d': '1.6s' }}>
           <text className="kr-small" x="822" y="500">
-            Ventas
+            {t({ es: 'Ventas', en: 'Sales' })}
           </text>
           {/* Corto a propósito: "$1,250" no cabía en la caja de 112 */}
           <text className="kr-num" x="822" y="542">
@@ -102,10 +104,10 @@ export default function KaizenReel({ fit = 'slice', frozen = false, paused = fal
         <g className="kr-pop kr-btn" style={{ '--d': '0.2s' }}>
           <rect x="680" y="600" width="240" height="60" rx="30" />
           <text className="kr-btn-a" x="800" y="638" textAnchor="middle">
-            Reservar
+            {t({ es: 'Reservar', en: 'Book now' })}
           </text>
           <text className="kr-btn-b" x="800" y="638" textAnchor="middle">
-            Reservado ✓
+            {t({ es: 'Reservado ✓', en: 'Booked ✓' })}
           </text>
         </g>
 
@@ -114,7 +116,7 @@ export default function KaizenReel({ fit = 'slice', frozen = false, paused = fal
           <g className="kr-pop kr-pass" style={{ '--d': '1.4s' }}>
             <rect className="kr-card" x="380" y="300" width="210" height="290" rx="20" />
             <text className="kr-small" x="404" y="342">
-              PASE
+              {t({ es: 'PASE', en: 'PASS' })}
             </text>
             <text className="kr-pass-t" x="404" y="374">
               Pilates 7:00
@@ -132,7 +134,7 @@ export default function KaizenReel({ fit = 'slice', frozen = false, paused = fal
             <g className="kr-ticket">
               <rect className="kr-card" x="1022" y="296" width="186" height="250" />
               <text className="kr-small" x="1040" y="336">
-                Nº 0142
+                {t({ es: 'Nº 0142', en: 'No. 0142' })}
               </text>
               <path className="kr-rule" d="M1040 356H1190 M1040 392H1150 M1040 422H1170 M1040 452H1130" />
               {/* Etiqueta y monto en dos renglones: en uno se enciman */}
