@@ -10,7 +10,7 @@
 #    número (og-image-v4.jpg…) y actualiza og:image y twitter:image en index.html.
 import os
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '.fuentes'))
-SALIDA = os.path.join('..', '..', '..', 'public', 'og-image-v3.jpg')
+SALIDA = os.path.join('..', '..', '..', 'public', 'og-image-v4.jpg')
 import random
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
@@ -43,7 +43,7 @@ PAD = 64 * K
 
 # Cabecera de revista con filete (como el hero)
 inter = fuente('Inter.ttf', 17, 500, 14)
-texto(d, (PAD, 58 * K), 'APPS MÓVILES · SITIOS WEB · PUNTO DE VENTA', inter, MUTED, 0.12)
+texto(d, (PAD, 58 * K), 'MARCA · REDES · WEB · APPS', inter, MUTED, 0.12)
 derecha = 'Nº 01 — 2026'
 texto(d, (W - PAD - ancho(derecha, inter, 0.12), 58 * K), derecha, inter, MUTED, 0.12)
 d.line([(PAD, 96 * K), (W - PAD, 96 * K)], fill=(70, 70, 74), width=K)

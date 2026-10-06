@@ -130,7 +130,64 @@ const FORMAS = {
       ctx.stroke(new Path2D('M700 130L610 240L700 350 M860 130L950 240L860 350 M805 100L755 380'));
     },
   },
-  // ── Servicios (escena Índice + nube): una figura por servicio ──
+  // ── Servicios (escena Índice + nube): una figura por línea de KaiZen ──
+  // Brand: la plumilla de la herramienta "pluma" de diseño, con su curva
+  pluma: {
+    box: [0, 0, 300, 300],
+    draw(ctx) {
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 9;
+      // Curva bezier con sus dos manijas, como en un programa de diseño
+      ctx.stroke(new Path2D('M20 250C60 120 120 300 170 210'));
+      ctx.lineWidth = 5;
+      ctx.stroke(new Path2D('M20 250L52 168 M170 210L222 262'));
+      for (const [x, y] of [[52, 168], [222, 262]]) {
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // Plumilla (la punta toca el final de la curva)
+      ctx.save();
+      ctx.translate(170, 210);
+      ctx.rotate(-Math.PI / 4.6);
+      ctx.lineWidth = 9;
+      ctx.stroke(new Path2D('M0 0L-46 -80L-28 -170H28L46 -80Z'));
+      ctx.stroke(new Path2D('M0 0V-92'));
+      ctx.beginPath();
+      ctx.arc(0, -100, 12, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillRect(-30, -196, 60, 20);
+      ctx.restore();
+    },
+  },
+  // Social: globo de conversación con un corazón (un "me gusta")
+  social: {
+    box: [0, 0, 300, 280],
+    draw(ctx) {
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 10;
+      ctx.stroke(new Path2D('M60 20H240A40 40 0 0 1 280 60V170A40 40 0 0 1 240 210H120L62 262V210H60A40 40 0 0 1 20 170V60A40 40 0 0 1 60 20Z'));
+      ctx.fill(
+        new Path2D('M150 176C96 138 82 112 92 88C102 64 136 62 150 88C164 62 198 64 208 88C218 112 204 138 150 176Z')
+      );
+    },
+  },
+  // Launch: cohete despegando
+  cohete: {
+    box: [0, 0, 260, 320],
+    draw(ctx) {
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 10;
+      ctx.stroke(new Path2D('M130 12C188 60 198 140 178 214H82C62 140 72 60 130 12Z'));
+      ctx.beginPath();
+      ctx.arc(130, 100, 24, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.stroke(new Path2D('M84 160L40 236L84 222 M176 160L220 236L176 222'));
+      // Fuego
+      ctx.fill(new Path2D('M100 226Q130 320 160 226Z'));
+    },
+  },
   // Ventana de navegador con un sitio dentro
   navegador: {
     box: [0, 0, 340, 250],
@@ -182,24 +239,6 @@ const FORMAS = {
       }
     },
   },
-  // Impresora de mostrador con el ticket saliendo
-  ticket: {
-    box: [0, 0, 250, 320],
-    draw(ctx) {
-      ctx.lineWidth = 7;
-      ctx.beginPath();
-      ctx.roundRect(8, 8, 234, 74, 16);
-      ctx.stroke();
-      ctx.fillRect(40, 58, 170, 10);
-      // Ticket con borde dentado abajo
-      ctx.lineWidth = 6;
-      ctx.stroke(new Path2D('M50 68V290L66 278L82 290L98 278L114 290L130 278L146 290L162 278L178 290L194 278L200 283V68'));
-      ctx.fillRect(70, 100, 110, 10);
-      for (const [y, w] of [[134, 90], [156, 70], [178, 100], [200, 60]]) ctx.fillRect(70, y, w, 6);
-      ctx.fillRect(70, 234, 50, 12);
-      ctx.fillRect(140, 230, 40, 16);
-    },
-  },
   // IA: destello de cuatro puntas con dos más chicos
   ia: {
     box: [0, 0, 260, 260],
@@ -211,28 +250,6 @@ const FORMAS = {
       ctx.fill(estrella(112, 140, 104));
       ctx.fill(estrella(212, 52, 38));
       ctx.fill(estrella(218, 214, 24));
-    },
-  },
-  // QR (decorativo: no se puede leer)
-  qr: {
-    box: [0, 0, 210, 210],
-    draw(ctx) {
-      const c = 10;
-      const ojo = (x, y) => {
-        ctx.lineWidth = c;
-        ctx.strokeRect(x + c / 2, y + c / 2, 6 * c, 6 * c);
-        ctx.fillRect(x + 2 * c, y + 2 * c, 3 * c, 3 * c);
-      };
-      ojo(0, 0);
-      ojo(14 * c, 0);
-      ojo(0, 14 * c);
-      const rnd = mulberry32(42);
-      for (let r = 0; r < 21; r++) {
-        for (let k = 0; k < 21; k++) {
-          const enOjo = (r < 8 && k < 8) || (r < 8 && k > 12) || (r > 12 && k < 8);
-          if (!enOjo && rnd() > 0.52) ctx.fillRect(k * c + 1, r * c + 1, c - 2, c - 2);
-        }
-      }
     },
   },
   // Ícono Κ (mismo que el favicon)

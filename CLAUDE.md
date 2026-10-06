@@ -130,7 +130,7 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
       `--section-pad-y` 8→6.5rem.
 - [x] **Voz "nosotros"** en todo el sitio + `<title>`/metas a KaiZen. "Sobre mí" → **Nosotros** (#sobre-mi se
       conserva): sin foto individual, ahí van las caras de partículas. Se quitó "Ingeniero en Mecatrónica".
-      PENDIENTE: el correo de contacto sigue siendo zahirdaniel@hotmail.com.
+      Correo de contacto: kaizenstudioinfo@gmail.com (5-oct).
 - [x] **Imagen al compartir = `og-image-v3.jpg` (2026-10-05)**: oscura, cabecera de revista, titular del hero con
       "haces negocio" en itálica con degradado, ΚΛΙΖΣΝ HECHO DE PARTÍCULAS y "Proyectos reales, no demos.". Sin foto.
       Se genera con `tools/marca/og.py` (PIL + Familjen Grotesk/Inter; fuentes en `tools/marca/.fuentes/`, no van
@@ -167,6 +167,20 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
 ## Componentes clave
 - **`Hero.jsx`** — titular estrella "Software a tu medida: que se adapte a ti, **no tú a él.**" + franja de prueba (`.hero-proof`: App Store/Play · en producción · proyectos reales) + 2 CTAs. Glows azul/morado viajeros por CSS. En móvil: anclado arriba (no centrado) con más aire.
 - **`SobreMi.jsx`** — "Quién soy": foto (4:5) + bio corta + CTA "Trabajemos juntos". Foto en `public/sobre-mi.jpg`.
+- **OFERTA NUEVA = 7 LÍNEAS (catálogo "KaiZen Servicios", 2026-10-05, su PDF en Downloads):** Brand, Social
+  (community management, NUEVO), Launch, Web, Commerce (tienda + POS), Automate, Experience (apps: reservaciones
+  con lista de espera y pagos, Wallet, álbum, invitaciones). **SIN PRECIOS en el sitio** (decisión suya; se cotiza
+  por WhatsApp). Adaptado en TODO el sitio: índice de Servicios (figuras nuevas `pluma`, `social`, `cohete`; se
+  borraron `ticket` y `qr`), cabecera del hero "Marca · Redes · Web · Apps", tipos del formulario, FAQ (redes,
+  publicidad pagada no incluida, cuentas de Apple/Google a nombre del cliente, tiempos por tipo), mitad I de
+  Nosotros ("Estrategia, marca y redes"), lede de Proceso (los ~2 meses son "en un proyecto de software"), metas
+  e imagen al compartir (`og-image-v4.jpg`).
+- **Páginas legales** `/aviso-de-privacidad` y `/terminos` (`Legal.jsx`, main.jsx elige por la ruta; Pages sirve
+  index.html en cualquier ruta). Redactadas DESDE CERO (pidió no copiar los puntos de su PDF) para cómo funciona el
+  sitio: formulario → WhatsApp, sin base de datos ni cookies de rastreo. Responsables: Karime Pérez Cruz y Zahir
+  Daniel Vidahurrázaga Marín (personas físicas). Datos en `src/data/contacto.js`: correo kaizenstudioinfo@gmail.com,
+  domicilio Segundo Andador de los Padres No. 1, Col. La Hacienda, C.P. 72570, Puebla, Puebla. La pantalla de carga solo corre en la portada (index.html).
+  Recomendado: que un abogado las revise.
 - **`Servicios.jsx`** (id `#about`, "Servicios") — **"ÍNDICE + NUBE" (2026-10-05)**. Reemplazó al carrusel de cápsulas
   (`FactorMecatronico.jsx`, borrado; su historia y las lecciones del marquee están en git) porque se veía "plantilla"
   junto al hero. Escena fija (`.srv-pista` = 100vh + 6×72vh; 6×60 en móvil): a la izquierda un ÍNDICE de revista
@@ -208,7 +222,7 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
   - **Cómo agregar otro video:** poner el MP4 y su póster en `public/testimonios/` y llenar los 3 campos en el arreglo `TESTIMONIOS`. Sin video, la tarjeta se ve igual que antes.
 - **`ProcesoTrabajo.jsx`** (id `#process`) — **5 pasos** (eran 7; ver el comentario del archivo), **sin tiempos por paso**: los había estimado yo y nunca se validaron. El usuario confirmó UNO —**~2 meses de la firma del contrato a producción**— y ese va en el encabezado (y en el FAQ). Cinco estimaciones inventadas junto a un dato real restaban. **Luz viajera** detrás (`.process-glow`, loop) + tarjetas **glass sutiles** para que se vea pasar la luz.
 - **`Faq.jsx`** (id `#faq`) — acordeón anti-objeciones (6 preguntas: cuánto tarda [**~2 meses desde el contrato**], código es mío, soporte, presupuesto/fases, sube a tiendas, escalable).
-- **`Footer.jsx`** (id `#contact`) — los tipos de proyecto del `<select>` salen de `TIPO_LABEL` y **deben seguir a las tarjetas de Servicios** (faltaba "Sitio web", que es servicio principal). Form que **arma un mensaje y abre WhatsApp** (`wa.me/528138833422?text=...`), sin backend. Correo directo: **zahirdaniel@hotmail.com**.
+- **`Footer.jsx`** (id `#contact`) — los tipos de proyecto del `<select>` salen de `TIPO_LABEL` y **deben seguir a las tarjetas de Servicios** (faltaba "Sitio web", que es servicio principal). Form que **arma un mensaje y abre WhatsApp** (`wa.me/528138833422?text=...`), sin backend. Correo: **kaizenstudioinfo@gmail.com** (desde `src/data/contacto.js`).
 - **`FloatingWhatsApp.jsx`** — botón flotante, WhatsApp con mensaje prellenado.
 - **`Navbar.jsx`** — links: Sobre mí · Servicios · Soluciones · Testimonios · Proceso · FAQ. Menú móvil centrado con `left/right` (NO `transform`: framer-motion lo pisa).
 

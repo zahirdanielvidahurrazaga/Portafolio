@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import LiquidGlass from './LiquidGlass';
+import { WHATSAPP } from '../data/contacto';
 
 const FloatingWhatsApp = () => {
   return (
     <motion.a
-      href="https://wa.me/528138833422?text=Hola%2C%20equipo%20KaiZen.%20Vi%20su%20sitio%20y%20me%20gustar%C3%ADa%20platicar%20sobre%20un%20proyecto%20para%20mi%20negocio."
+      href={`https://wa.me/${WHATSAPP}?text=Hola%2C%20equipo%20KaiZen.%20Vi%20su%20sitio%20y%20me%20gustar%C3%ADa%20platicar%20sobre%20un%20proyecto%20para%20mi%20negocio.`}
       target="_blank"
       rel="noopener noreferrer"
       className="floating-whatsapp"

@@ -27,7 +27,7 @@
     <title>KaiZen · Apps, sitios web y software a la medida</title>
     <meta
       name="description"
-      content="Construimos apps móviles, sitios web, e-commerce, puntos de venta y automatización a la medida para tu negocio — del software al hardware, listos para producción."
+      content="Estudio de marca, redes sociales y software a la medida: identidad de marca, community management, sitios web, tiendas en línea, punto de venta, apps y automatización con IA."
     />
     <meta name="author" content="KaiZen" />
 
@@ -36,7 +36,7 @@
          Pages "zahirportafolio", que sigue respondiendo en zahirportafolio.pages.dev).
          Van en URL ABSOLUTA a propósito: varias apps no resuelven rutas relativas.
          ⚠️ WhatsApp CACHEA la vista previa por URL. Si cambias el diseño de la imagen,
-         renómbrala (og-image-v3.jpg…) o seguirá enseñando la vieja durante días. -->
+         renómbrala (og-image-v4.jpg…) o seguirá enseñando la vieja durante días. -->
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_MX" />
     <meta property="og:site_name" content="KaiZen" />
@@ -44,9 +44,9 @@
     <meta property="og:title" content="Evoluciona la forma en que haces negocio" />
     <meta
       property="og:description"
-      content="Apps móviles, sitios web, e-commerce, POS y automatización a la medida para tu negocio. Soluciones reales, ya en producción."
+      content="Marca, redes sociales, sitios web, apps y software a la medida para tu negocio. Proyectos reales, ya en producción."
     />
-    <meta property="og:image" content="https://kaizenstudiomx.com/og-image-v3.jpg" />
+    <meta property="og:image" content="https://kaizenstudiomx.com/og-image-v4.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta
@@ -59,9 +59,9 @@
     <meta name="twitter:title" content="Evoluciona la forma en que haces negocio" />
     <meta
       name="twitter:description"
-      content="Apps, sitios web, e-commerce, POS y automatización a la medida para tu negocio. Soluciones reales, ya en producción."
+      content="Marca, redes sociales, sitios web, apps y software a la medida para tu negocio. Proyectos reales, ya en producción."
     />
-    <meta name="twitter:image" content="https://kaizenstudiomx.com/og-image-v3.jpg" />
+    <meta name="twitter:image" content="https://kaizenstudiomx.com/og-image-v4.jpg" />
 
     <!-- Anti-parpadeo: fija el tema en el <html> ANTES de pintar. Sin esto, la
          página aparece un instante en oscuro y luego salta a claro. Debe ir en
@@ -86,10 +86,12 @@
         // PANTALLA DE CARGA: al abrir solo se ven las partículas; la nube
         // (src/lib/nube.js) quita 'intro' cuando ya armó ΚΛΙΖΣΝ. Siempre se
         // empieza arriba (sin restaurar el scroll). No aplica si se llega con
-        // #ancla o con reduced-motion. Respaldo: se quita sola a los 6 s por si
+        // #ancla, con reduced-motion ni fuera de la portada. Respaldo: se quita sola a los 6 s por si
         // el 3D no carga.
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!reduce && !location.hash) {
+        // Solo en la portada: las páginas legales no tienen nube que la quite.
+        var portada = location.pathname === '/' || location.pathname === '/index.html';
+        if (!reduce && !location.hash && portada) {
           if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
           document.documentElement.classList.add('intro');
           // Bloquear el scroll SIN tocar overflow: en Safari, alternar el

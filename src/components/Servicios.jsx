@@ -3,45 +3,61 @@ import { useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion'
 import SectionHead from './SectionHead';
 import '../styles/Servicios.css';
 
+// Las 7 líneas de KaiZen (catálogo "KaiZen Servicios", 2026-10-05). SIN precios
+// en el sitio, a propósito: se cotiza por WhatsApp. `linea` = el nombre de la
+// línea tal como va en su catálogo. Las apps móviles no tienen línea propia:
+// viven en Experience (reservaciones, Wallet) y Commerce (POS en iOS/Android).
 const SERVICIOS = [
   {
-    forma: 'telefono',
-    title: 'Apps móviles',
-    desc: 'Aplicaciones iOS y Android nativas, publicadas en las tiendas y conectadas a tu operación en tiempo real.',
+    forma: 'pluma',
+    linea: 'Brand',
+    title: 'Identidad de marca',
+    desc: 'Logo, paleta, tipografías y manual de marca: una identidad coherente en todo lo que tu negocio muestra, de la papelería a las redes.',
+  },
+  {
+    forma: 'social',
+    linea: 'Social',
+    title: 'Redes sociales',
+    desc: 'Estrategia, diseño, copy, reels y community management cada mes, con calendario de contenido y reportes de resultados.',
+  },
+  {
+    forma: 'cohete',
+    linea: 'Launch',
+    title: 'Lanzamiento',
+    desc: 'Tu negocio listo para salir: marca básica, redes configuradas, landing page con formularios y estrategia inicial de contenido.',
   },
   {
     forma: 'navegador',
+    linea: 'Web',
     title: 'Sitios web',
-    desc: 'Landing pages y sitios premium: rápidos, responsivos y diseñados para convertir visitantes en clientes.',
+    desc: 'Landing pages y sitios empresariales a la medida: rápidos, adaptados a celular y con SEO para que te encuentren en Google.',
   },
   {
     forma: 'carrito',
-    title: 'E-commerce',
-    desc: 'Tiendas en línea con catálogo, carrito y pagos integrados (tarjeta, Apple Pay y Google Pay).',
-  },
-  {
-    forma: 'ticket',
-    title: 'Punto de venta',
-    desc: 'Sistema POS multi-sucursal con cobro, control de inventario y cortes de caja en tiempo real, en web y móvil.',
+    linea: 'Commerce',
+    title: 'Tiendas y punto de venta',
+    desc: 'Tiendas en línea con carrito y pagos, y punto de venta multisucursal con inventario y cortes de caja, en web, iOS y Android.',
   },
   {
     forma: 'ia',
-    title: 'Automatización & IA',
-    desc: 'Procesos inteligentes y asistentes con IA que le ahorran horas de trabajo manual a tu equipo.',
+    linea: 'Automate',
+    title: 'Automatización e IA',
+    desc: 'Procesos que se hacen solos y asistentes con IA que le ahorran horas de trabajo manual a tu equipo.',
   },
-  // Nada de sobreprometer: lo que sí se hace (lector QR, tickets, pases de Wallet)
+  // Aquí viven las apps (Be Fit Lab): reservaciones, lista de espera, pagos, Wallet
   {
-    forma: 'qr',
-    title: 'Acceso QR y tickets',
-    desc: 'Pases de membresía en Apple Wallet y Google Wallet, control de acceso con lector QR e impresión de tickets en el mostrador.',
+    forma: 'telefono',
+    linea: 'Experience',
+    title: 'Apps y experiencias',
+    desc: 'Apps de reservaciones con lista de espera y pagos, pases QR para Apple y Google Wallet, álbumes compartidos, invitaciones y catálogos digitales.',
   },
 ];
 const N = SERVICIOS.length;
 
 /**
- * SERVICIOS = "Índice + nube" (modo presentación). Reemplazó al carrusel de
+ * SERVICIOS = "Índice + nube" (modo presentación). 7 líneas desde el 5-oct. Reemplazó al carrusel de
  * cápsulas (FactorMecatronico, 2026-10-05): se veía "plantilla" junto al hero.
- * La pista (.srv-pista) mide ~6 tramos; la escena se queda fija y:
+ * La pista (.srv-pista) mide un tramo por servicio; la escena se queda fija y:
  *  - a la izquierda, un índice de revista: el servicio del tramo se enciende y
  *    abre su descripción, los demás quedan tenues;
  *  - a la derecha, LA NUBE (lib/nube.js, modo "secuencia") se transforma de la
@@ -76,9 +92,9 @@ export default function Servicios() {
           num="02"
           label="Servicios"
           className="factor-header"
-          lede="Del sitio web al punto de venta, conectado con el lector y la impresora de tu mostrador."
+          lede="De la marca y las redes al software a la medida: todo lo que tu negocio necesita para crecer, en un solo estudio."
         >
-          Lo que <em>construimos</em>
+          Lo que <em>hacemos</em>
         </SectionHead>
       </div>
 
@@ -110,6 +126,7 @@ export default function Servicios() {
                   <button className="srv-item" onClick={() => irA(i)} aria-expanded={i === activo}>
                     <span className="srv-num">{String(i + 1).padStart(2, '0')}</span>
                     <span className="srv-nombre">{s.title}</span>
+                    <span className="srv-linea">{s.linea}</span>
                   </button>
                   <div className="srv-desc">
                     <p>{s.desc}</p>

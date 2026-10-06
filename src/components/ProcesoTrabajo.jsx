@@ -52,8 +52,8 @@ const ProcesoTrabajo = () => {
         label="Proceso"
         lede={
           <>
-            Cinco pasos para transformar tu negocio. De la firma del contrato a
-            producción: alrededor de <strong>2 meses</strong>.
+            Cinco pasos para transformar tu negocio. En un proyecto de software, de la
+            firma del contrato a producción: alrededor de <strong>2 meses</strong>.
           </>
         }
       >

@@ -86,7 +86,7 @@ const Hero = () => {
         <div className="hero-stage">
           <div className="hero-content">
             <div className="hero-masthead hero-masthead--static">
-              <span>Apps móviles · Sitios web · Punto de venta</span>
+              <span>Marca · Redes · Web · Apps</span>
               <span>Nº 01 — 2026</span>
             </div>
             <h1>
@@ -134,7 +134,7 @@ const Hero = () => {
         {/* Capa 2 · el hero, que se arma en el mismo lugar */}
         <div className="hero-content">
           <div className="hero-masthead">
-            <motion.span style={{ opacity: cabecera }}>Apps móviles · Sitios web · Punto de venta</motion.span>
+            <motion.span style={{ opacity: cabecera }}>Marca · Redes · Web · Apps</motion.span>
             <motion.span style={{ opacity: cabecera }}>Nº 01 — 2026</motion.span>
             <motion.i className="hero-rule" style={{ scaleX: regla }} aria-hidden="true" />
           </div>

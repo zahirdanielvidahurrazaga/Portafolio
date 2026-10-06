@@ -4,30 +4,37 @@ import { Plus } from 'lucide-react';
 import SectionHead from './SectionHead';
 import '../styles/Faq.css';
 
+// Adaptadas a las 7 líneas (5-oct): ya no solo software — también marca y redes.
+// Los tiempos son los que Zahir confirmó (~2 meses en software); el resto se
+// dice sin números inventados.
 const FAQS = [
   {
     q: '¿Cuánto tarda mi proyecto?',
-    a: 'Alrededor de 2 meses desde que firmamos el contrato hasta que está operando. Un sitio web sencillo puede ser bastante menos. El tiempo exacto de tu caso va por escrito en la propuesta.',
+    a: 'Depende de lo que necesites. Una identidad de marca o una landing page toma semanas; un proyecto de software, alrededor de 2 meses desde que firmamos hasta que está operando. Las redes sociales se trabajan mes con mes. El tiempo exacto de tu caso va por escrito en la propuesta.',
   },
   {
-    q: '¿El código y la información son míos?',
-    a: 'Sí. Al finalizar, el proyecto, su código y todos los datos son 100% tuyos, sin ataduras ni dependencias hacia nosotros.',
+    q: '¿Manejan nuestras redes sociales?',
+    a: 'Sí. Planeamos el calendario, diseñamos y redactamos las publicaciones, hacemos reels, las programamos, respondemos a tu comunidad y te entregamos reportes de resultados cada mes.',
+  },
+  {
+    q: '¿La publicidad pagada está incluida?',
+    a: 'No. Podemos crear y administrar tus campañas, pero el presupuesto de anuncios (Meta, TikTok, Google) lo pagas directo a cada plataforma, así siempre tienes el control de cuánto inviertes.',
+  },
+  {
+    q: '¿Lo que construyen es mío?',
+    a: 'Sí. Al liquidar el proyecto, tu marca, tu sitio, tu código y tus datos son tuyos, sin ataduras ni dependencias hacia nosotros.',
   },
   {
     q: '¿Dan soporte y mantenimiento después del lanzamiento?',
-    a: 'Sí. Ofrecemos planes de soporte y mantenimiento para mantener tu sistema actualizado, seguro y funcionando sin interrupciones.',
+    a: 'Sí. Ofrecemos planes de soporte y mantenimiento para mantener tu sitio o sistema actualizado, seguro y funcionando sin interrupciones.',
   },
   {
     q: '¿Trabajan con mi presupuesto?',
-    a: 'Cada proyecto se cotiza a la medida según lo que necesitas. Podemos arrancar con lo esencial y crecer por fases, a tu ritmo.',
+    a: 'Cada proyecto se cotiza a la medida. Podemos arrancar con lo esencial y crecer por fases, a tu ritmo. Escríbenos y te decimos qué conviene para tu caso.',
   },
   {
     q: '¿Suben mi app a la App Store y Google Play?',
-    a: 'Sí. Nos encargamos de todo el proceso de publicación en las tiendas, así como del despliegue de tu sitio o sistema web.',
-  },
-  {
-    q: '¿La solución es escalable a futuro?',
-    a: 'Construimos con tecnología moderna y robusta, pensada para crecer contigo: agregar funciones o usuarios después no implica rehacer todo.',
+    a: 'Sí, nos encargamos de la publicación. Las cuentas de desarrollador de Apple y Google van a nombre de tu negocio (para que la app sea tuya) y sus cuotas anuales se pagan directo a ellos.',
   },
 ];
 

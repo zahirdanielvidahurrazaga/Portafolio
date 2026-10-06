@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import SectionHead from './SectionHead';
+import { WHATSAPP, CORREO } from '../data/contacto';
 import '../styles/Footer.css';
 
-const WHATSAPP = '528138833422';
-// Las opciones siguen a las tarjetas de "Lo que construimos": si alguien tocó
-// un servicio en el carrusel, espera encontrarlo aquí con el mismo nombre.
-// (Faltaba "Sitio web", que es de los servicios principales; y "Biometría"
-// prometía algo que no se hace.)
+// Las opciones siguen a las 7 líneas de "Lo que hacemos" (Servicios.jsx): si
+// alguien vio un servicio ahí, espera encontrarlo aquí con el mismo nombre.
 const TIPO_LABEL = {
+  marca: 'Identidad de marca',
+  redes: 'Redes sociales',
+  lanzamiento: 'Lanzamiento (marca + redes + landing)',
   sitio: 'Sitio web',
-  app: 'App móvil (iOS / Android)',
-  ecommerce: 'Tienda en línea',
-  pos: 'Punto de venta',
+  tienda: 'Tienda en línea o punto de venta',
   ia: 'Automatización o IA',
+  app: 'App o experiencia digital',
   otro: 'Otra cosa',
 };
 
@@ -60,8 +60,8 @@ const Footer = () => {
           {/* Columna izquierda: contacto directo */}
           <div className="footer-direct">
             <p className="footer-direct-label">Escríbenos directo</p>
-            <a href="mailto:zahirdaniel@hotmail.com" className="footer-mail">
-              zahirdaniel@hotmail.com
+            <a href={`mailto:${CORREO}`} className="footer-mail">
+              {CORREO}
             </a>
             <p className="footer-direct-note">
               ¿Prefieres WhatsApp? Toca el botón de la esquina.
@@ -129,6 +129,11 @@ const Footer = () => {
                   <span>Enviar por WhatsApp</span>
                   <span className="submit-arrow">→</span>
                 </button>
+                {/* Aviso simplificado: el formulario recaba datos personales */}
+                <p className="form-aviso">
+                  Al enviar aceptas nuestro <a href="/aviso-de-privacidad">aviso de privacidad</a>. Usamos tus
+                  datos solo para responderte.
+                </p>
               </form>
             )}
           </div>
@@ -138,6 +143,10 @@ const Footer = () => {
       {/* ── Pie: firma de la revista ── */}
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} KaiZen</span>
+        <nav className="footer-legal" aria-label="Legal">
+          <a href="/aviso-de-privacidad">Aviso de privacidad</a>
+          <a href="/terminos">Términos y condiciones</a>
+        </nav>
         <span>Evoluciona la forma en que haces negocio</span>
       </div>
     </footer>

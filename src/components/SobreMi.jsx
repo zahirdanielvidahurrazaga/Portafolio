@@ -22,9 +22,9 @@ import '../styles/SobreMi.css';
 const MITADES = [
   {
     num: 'I',
-    titulo: 'Estrategia y diseño',
+    titulo: 'Estrategia, marca y redes',
     texto:
-      'Escuchamos tu negocio, diseñamos la experiencia y la identidad, y te acompañamos en cada decisión, de la primera charla al lanzamiento.',
+      'Escuchamos tu negocio, diseñamos su identidad y su experiencia, y cuidamos cómo se comunica en redes, de la primera charla a cada publicación.',
   },
   {
     num: 'II',

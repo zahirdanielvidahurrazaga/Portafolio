@@ -261,3 +261,26 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Aviso simplificado bajo el botón del formulario */
+.form-aviso {
+  margin-top: var(--spacing-3);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.form-aviso a,
+.footer-legal a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+.footer-legal {
+  display: flex;
+  gap: var(--spacing-6);
+}
+.footer-legal a {
+  text-decoration: none;
+}
+.footer-legal a:hover {
+  color: var(--text-color);
+}
