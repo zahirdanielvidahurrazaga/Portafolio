@@ -284,3 +284,27 @@
 .footer-legal a:hover {
   color: var(--text-color);
 }
+
+/* Redes, bajo el contacto directo: texto en versalitas como la barra */
+.footer-redes-label {
+  margin-top: var(--spacing-8);
+}
+.footer-redes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-6);
+}
+.footer-redes a {
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--border-strong);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+}
+.footer-redes a:hover {
+  border-color: currentColor;
+}

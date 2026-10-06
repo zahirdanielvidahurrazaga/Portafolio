@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SectionHead from './SectionHead';
-import { WHATSAPP, CORREO } from '../data/contacto';
+import { WHATSAPP, CORREO, REDES } from '../data/contacto';
 import '../styles/Footer.css';
 
 // Las opciones siguen a las 7 líneas de "Lo que hacemos" (Servicios.jsx): si
@@ -66,6 +66,14 @@ const Footer = () => {
             <p className="footer-direct-note">
               ¿Prefieres WhatsApp? Toca el botón de la esquina.
             </p>
+            <p className="footer-direct-label footer-redes-label">Síguenos</p>
+            <nav className="footer-redes" aria-label="Redes sociales">
+              {REDES.map(([nombre, url]) => (
+                <a key={nombre} href={url} target="_blank" rel="noopener noreferrer">
+                  {nombre} <span aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </nav>
           </div>
 
           <div className="footer-form-card">

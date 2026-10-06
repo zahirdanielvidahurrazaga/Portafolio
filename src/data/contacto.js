@@ -9,6 +9,13 @@ export const WHATSAPP_VISIBLE = '+52 81 3883 3422';
 // Reenvía a kaizenstudioinfo@gmail.com (Cloudflare Email Routing, solo recibe)
 export const CORREO = 'info@kaizenstudiomx.com';
 
+// Redes (links limpios: el de Instagram venía con parámetros del QR y el de
+// Facebook era un link de "compartir" que redirige a este perfil)
+export const REDES = [
+  ['Instagram', 'https://www.instagram.com/kaizen.studio.mx/'],
+  ['Facebook', 'https://www.facebook.com/profile.php?id=61595147010434'],
+];
+
 // Responsables del tratamiento de datos (personas físicas, corresponsables)
 export const RESPONSABLES = ['Karime Pérez Cruz', 'Zahir Daniel Vidahurrázaga Marín'];
 export const DOMICILIO = 'Segundo Andador de los Padres No. 1, Col. La Hacienda, C.P. 72570, Puebla, Puebla';
