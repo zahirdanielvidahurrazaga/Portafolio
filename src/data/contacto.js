@@ -14,6 +14,7 @@ export const CORREO = 'info@kaizenstudiomx.com';
 export const REDES = [
   ['Instagram', 'https://www.instagram.com/kaizen.studio.mx/'],
   ['Facebook', 'https://www.facebook.com/profile.php?id=61595147010434'],
+  ['TikTok', 'https://www.tiktok.com/@kaizen_studio.mx'],
 ];
 
 // Responsables del tratamiento de datos (personas físicas, corresponsables)
