@@ -30,6 +30,13 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
       `#about .factor-header`. Se probaron ola, órbita y ∞ anclados a Servicios y se DESCARTARON: la cinta brillante
       detrás del título blanco lo volvía ilegible. Ya NO sigue al mouse (lo pidió él). Vive en App, canvas
       FIJOS (back z −1 / front z 11); se apaga y oculta en cuanto sale (p = 1).
+      **TELÓN (2026-10-26, le gustó):** el estado B ya NO es el arco de salida. Sobre p: se endereza en banda
+      diagonal (~22°, p 0→0.16), ENGORDA hasta tapar toda la pantalla (radio = medio ancho de pantalla sobre la
+      normal ×1.12, p 0.10→0.28; centro en z 0.3 → silueta en el canvas de ENFRENTE, tapa el contenido) y SUBE
+      destapando Servicios (p 0.50→0.88). Se apaga en p 0.9. Revisado cuadro por cuadro a 1440 y 390 (claro/oscuro)
+      con playwright-core en el scratchpad (`telon.mjs`: scroll a p concretos + screenshot).
+      Descartado ese mismo día (NO reproponer): disolver la cinta en partículas que arman la pluma, la cinta
+      DIBUJANDO las figuras de Servicios en un trazo, y la cinta SUBRAYANDO el índice con una ficha a la derecha.
       **Cruza las letras:** 2 canvas (detrás z1 / delante z11 del titular) con la misma cámara y un plano de recorte
       en z=0; el recorrido en z va cargado hacia atrás (−0.75) para que pase delante solo ~30% del tiempo.
 - [x] **Barra editorial**: arriba sin cápsula, transparente y en la retícula del hero (1280 + --spacing-4), links en

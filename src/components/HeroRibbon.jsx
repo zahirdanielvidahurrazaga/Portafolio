@@ -3,8 +3,8 @@ import { useTheme } from '../lib/ThemeContext';
 import '../styles/HeroRibbon.css';
 
 /**
- * Cinta 3D del hero que, al hacer scroll, se desenrolla y sale de escena
- * antes de la sección de servicios (ver heroRibbon.js). Son DOS canvas fijos a pantalla: uno detrás
+ * Cinta 3D del hero que, al hacer scroll, se vuelve un TELÓN que tapa la pantalla
+ * y sube destapando la sección de servicios (ver heroRibbon.js). Son DOS canvas fijos a pantalla: uno detrás
  * del contenido y otro delante, para que la cinta pueda cruzar las letras.
  * Vive en App (no dentro del Hero) porque acompaña al scroll fuera del hero.
  * three.js (~150 KB gzip) se carga con import() DESPUÉS de pintar la página,

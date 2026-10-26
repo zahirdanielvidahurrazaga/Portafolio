@@ -12,7 +12,12 @@ import { cinta, RELEVO, fase, progresoApertura } from './cintaPuente';
  * - Estado A (hero): una serpiente que vaga sola. La cabeza recorre una curva
  *   de Lissajous y el cuerpo es ese mismo recorrido unos instantes atrás
  *   (punto i = curva(t − i·LAG)), así que el cuerpo sigue a la cabeza sin física.
- * - Estado B (salida): un arco fuera de pantalla por la derecha.
+ * - Estado B (TELÓN, 2026-10-26): la cinta se endereza en una banda diagonal,
+ *   se viene al frente y ENGORDA hasta tapar toda la pantalla; ya tapada,
+ *   sube y sale por arriba destapando Servicios. Un corte de capítulo hecho
+ *   con la misma materia (cromo / grafito). Antes salía por un arco a la
+ *   derecha y Servicios aparecía desconectado; también se probaron disolverla
+ *   en partículas, dibujar las figuras y subrayar el índice: no le gustaron.
  * - El progreso p va de 0 (arriba del todo) a 1 (encabezado de "Qué puedo
  *   construir…" centrado en pantalla). La cinta acompaña al scroll mientras se
  *   desenrolla y sale; al subir vuelve a entrar por el mismo camino.
@@ -141,18 +146,30 @@ export function createHeroRibbon(
       1.7 * Math.sin(u * 0.27) - 0.75
     );
 
-  // Estado B: SALIDA. La cinta se estira en un arco suave que queda fuera de
-  // pantalla ARRIBA a la derecha, así que al bajar se desenrolla y se va hacia
-  // arriba —en sentido contrario al título de Servicios, que sube desde abajo,
-  // para no cruzarlo nunca—; al subir regresa. Se probaron una ola, una órbita y un ∞ anclados a Servicios
-  // (2026-10-05) y se descartaron: la cinta brillante detrás del título
-  // blanco lo hacía ilegible.
-  const salida = (s, t, out) =>
-    out.set(
-      W * 0.3 + s * W * 0.9,
-      H * 0.62 + s * H * 0.25 + H * 0.03 * Math.sin(s * 6 + t * 0.8),
-      -1 - s * 0.6
+  // TELÓN: banda diagonal (≈22°) de cinta. o = desplazamiento perpendicular
+  // del eje (0 = centro de pantalla, + = hacia arriba). Larga de sobra para
+  // que sus puntas nunca se vean. zc > 0: la silueta cae en el canvas de
+  // ENFRENTE y tapa el contenido.
+  const DIR = new THREE.Vector2(Math.cos(0.38), Math.sin(0.38));
+  const NRM = new THREE.Vector2(-DIR.y, DIR.x);
+  const ZC = 0.3;
+  const telon = (s, t, o, out) => {
+    const L = (W + H) * 2.2;
+    const u = (s - 0.5) * L;
+    // Una ondulación larga y suave: que se lea cinta, no tubo
+    const ola = H * 0.06 * Math.sin(s * Math.PI * 2 + t * 0.4);
+    return out.set(
+      DIR.x * u + NRM.x * (o + ola),
+      DIR.y * u + NRM.y * (o + ola),
+      ZC
     );
+  };
+  // Medio ancho de la pantalla medido a lo largo de la normal de la banda, en
+  // el plano de la banda (con perspectiva): con un radio mayor, la tapa toda
+  const medioAncho = () => {
+    const f = (CAM_Z - ZC) / CAM_Z;
+    return ((W * f * Math.abs(NRM.x) + H * f * Math.abs(NRM.y)) / 2);
+  };
 
   const pts = Array.from({ length: N }, () => new THREE.Vector3());
   const a = new THREE.Vector3();
@@ -181,23 +198,27 @@ export function createHeroRibbon(
   };
 
   let born = 1;
+  let grosor = radius;
   const shape = (t) => {
     const m = measure();
     const { p, anchorA } = m;
     born = m.born;
-    // Termina de salir a la mitad del recorrido: el título de Servicios apenas
-    // va entrando por abajo y la pantalla ya está limpia.
-    const e = smooth(clamp01(p / 0.5));
-    // La profundidad se va atrás MUCHO antes que la forma: en cuanto empieza el
-    // scroll la cinta deja de pasar por delante de nada.
-    const ez = smooth(clamp01(p / 0.12));
+    // Fases del telón sobre p (0 = el hero se suelta, 1 = título de Servicios
+    // centrado): se endereza → engorda hasta tapar → sube y destapa
+    // (tapa ANTES de que asome el título de Servicios por abajo, ~p 0.2)
+    const e = smooth(clamp01(p / 0.16)); // de serpiente a banda
+    const crece = smooth(clamp01((p - 0.1) / 0.18)); // ya casi recta: 0.10 → 0.28 tapa todo
+    const sube = smooth(clamp01((p - 0.5) / 0.38)); // 0.50 → 0.88 se va
+    const ha = medioAncho();
+    const rMax = ha * 1.12;
+    grosor = radius + (rMax - radius) * crece;
+    const o = sube * (ha + rMax) * 1.15;
     for (let i = 0; i < N; i++) {
       const s = i / (N - 1);
       wander(t - i * LAG, a);
       a.y += anchorA;
-      salida(s, t, b);
+      telon(s, t, o, b);
       pts[i].lerpVectors(a, b, e);
-      pts[i].z = a.z + (b.z - a.z) * ez;
     }
   };
 
@@ -217,13 +238,13 @@ export function createHeroRibbon(
 
   const rebuild = () => {
     const curve = new THREE.CatmullRomCurve3(pts);
-    const geo = new THREE.TubeGeometry(curve, 200, radius, 20, false);
+    const geo = new THREE.TubeGeometry(curve, 200, grosor, 28, false);
     tube.geometry.dispose();
     tube.geometry = geo;
     capHead.position.copy(pts[0]);
     capTail.position.copy(pts[N - 1]);
-    capHead.scale.setScalar(radius);
-    capTail.scale.setScalar(radius);
+    capHead.scale.setScalar(grosor);
+    capTail.scale.setScalar(grosor);
     publicar();
   };
 
@@ -280,9 +301,9 @@ export function createHeroRibbon(
     cancelAnimationFrame(raf);
   };
 
-  // Rango activo: mientras la cinta no haya salido del todo (p < 0.5)
+  // Rango activo: mientras el telón no haya salido del todo (p < 0.9)
   const checkRange = () => {
-    const now = measure().p < 0.5;
+    const now = measure().p < 0.9;
     if (now !== inRange) {
       inRange = now;
       onVisible?.(inRange);
@@ -307,7 +328,7 @@ export function createHeroRibbon(
   window.addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVisibility);
 
-  inRange = measure().p < 0.5;
+  inRange = measure().p < 0.9;
   onVisible?.(inRange);
   render();
   start();
