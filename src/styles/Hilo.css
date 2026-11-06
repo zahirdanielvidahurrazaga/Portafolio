@@ -1,0 +1,97 @@
+/* EL HILO (Hilo.jsx): SVG del alto de la página, detrás del contenido (z −1, como
+   la nube) y encima del fondo del body. No captura el mouse. */
+.hilo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hilo-trazo {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* Más protagonismo (6-nov): halo ancho y tenue que le da luz propia */
+.hilo-aura {
+  stroke: var(--hilo-brillo);
+  stroke-width: 16;
+  opacity: 0.07;
+}
+/* Cuerpo: la materia de la cinta (hueso en oscuro / grafito en claro) */
+.hilo-cuerpo {
+  stroke: var(--hilo-cuerpo);
+  stroke-width: 4.5;
+}
+/* Filo de luz corrido: lo que lo hace leerse como tubo y no como raya */
+.hilo-brillo {
+  stroke: var(--hilo-brillo);
+  stroke-width: 1.4;
+  transform: translate(-1px, -1px);
+}
+/* Estela: el tramo recién dibujado brilla, como metal todavía caliente */
+.hilo-estela {
+  fill: none;
+  stroke: var(--text-strong);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Sin filter: su caja es el hilo ENTERO (21,000 px de alto) y un drop-shadow
+     se recalcularía en cada cuadro */
+  transition: opacity 0.4s ease;
+}
+.hilo-punta {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.hilo-punta.is-on {
+  opacity: 1;
+}
+.hilo-nucleo {
+  fill: var(--text-strong);
+  r: 6.5px;
+  filter: drop-shadow(0 0 8px var(--hilo-brillo));
+}
+.hilo-halo {
+  fill: var(--text-strong);
+  r: 22px;
+  opacity: 0.16;
+  animation: hilo-latido 2.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes hilo-latido {
+  50% {
+    transform: scale(1.35);
+    opacity: 0.06;
+  }
+}
+@media (max-width: 900px) {
+  .hilo-cuerpo,
+  .hilo-estela {
+    stroke-width: 3;
+  }
+  .hilo-aura {
+    stroke-width: 10;
+  }
+  .hilo-halo {
+    r: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hilo-halo {
+    animation: none;
+  }
+}
+
+/* PROCESO: el paso se enciende cuando la punta del hilo llega a él */
+.process-row .process-num {
+  transition: color 0.5s ease, opacity 0.5s ease;
+  opacity: 0.45;
+}
+.process-row.hilo-on .process-num {
+  color: var(--text-strong);
+  opacity: 1;
+}

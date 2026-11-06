@@ -8,191 +8,191 @@
   padding-bottom: 0;
 }
 
-/* ── Each project row ── */
-.showcase-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.showcase-item {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: var(--spacing-16);
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: var(--spacing-16) var(--spacing-4);
-  overflow: hidden;
-}
-
-/* Filete entre proyectos, a todo el ancho de la retícula (como el de las
-   cabeceras de sección) */
-.showcase-item + .showcase-item::before {
-  content: '';
+/* ── ÍNDICE DE PROYECTOS (2026-11-06) ── */
+.sr-only {
   position: absolute;
-  top: 0;
-  left: var(--spacing-4);
-  right: var(--spacing-4);
+  width: 1px;
   height: 1px;
-  background: var(--border-color);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
-
-/* Even items: text left, phone right (default) */
-.showcase-item--normal .showcase-text  { order: 1; }
-.showcase-item--normal .showcase-device { order: 2; }
-
-/* Odd items: phone left, text right */
-.showcase-item--reversed .showcase-text  { order: 2; }
-.showcase-item--reversed .showcase-device { order: 1; }
-
-/* ── Text block ── */
-.showcase-text {
+.pi {
+  list-style: none;
+  margin: 0 auto;
+  padding-top: var(--spacing-12);
+  padding-bottom: var(--section-pad-y);
+}
+.pi-item {
+  border-top: 1px solid var(--border-color);
+}
+.pi-item:last-child {
+  border-bottom: 1px solid var(--border-color);
+}
+.pi-btn {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 15rem) 2.5rem;
+  align-items: center;
+  gap: var(--spacing-6);
+  padding: clamp(1.4rem, 3.4vh, 2.4rem) 0;
+  cursor: pointer;
   position: relative;
-  z-index: 2;
+}
+.pi-btn:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 4px;
+}
+.pi-num {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  align-self: start;
+  padding-top: 0.9rem;
+}
+.pi-total {
+  opacity: 0.5;
+}
+.pi-texto {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
-}
-
-.showcase-category {
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.showcase-title {
-  font-size: clamp(2.4rem, 5vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  line-height: 0.95;
-  color: var(--text-color);
-  margin: 0;
-}
-
-.showcase-description {
-  font-size: 1.05rem;
-  color: var(--text-muted);
-  line-height: 1.65;
-  max-width: 480px;
-}
-
-.showcase-tags {
-  margin-top: var(--spacing-2);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-/* ── CTA row under text ── */
-.showcase-cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-4);
-  margin-top: var(--spacing-6);
-}
-
-.showcase-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.7rem 1.3rem;
-  border-radius: var(--radius-full);
-  border: none;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--on-accent);
-  background: var(--accent-color);
-  box-shadow: 0 8px 26px rgba(var(--accent-rgb), 0.28);
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
-.showcase-cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
-.showcase-cta svg { transition: transform 0.2s ease; }
-.showcase-cta:hover svg { transform: translateX(3px); }
-
-.showcase-link {
-  display: inline-flex;
-  align-items: center;
   gap: 0.35rem;
-  font-size: 0.92rem;
-  font-weight: 500;
+  min-width: 0;
+}
+.pi-nombre {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.2rem, 5.4vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: var(--text-strong);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  transform-origin: left center;
+}
+.pi-tagline {
+  font-size: 1rem;
   color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.2s ease;
 }
-.showcase-link:hover { color: var(--text-color); }
-
-/* ── Device area ── */
-.showcase-device {
-  position: relative;
-  z-index: 2;
+.pi-meta {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.pi-plataformas {
+  opacity: 0.7;
+}
+.pi-flecha {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  color: var(--text-strong);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, color 0.3s ease;
+}
+/* Con mouse: el que no está bajo el cursor se apaga y el activo se corre en itálica */
+@media (hover: hover) and (pointer: fine) {
+  .pi:hover .pi-nombre {
+    opacity: 0.28;
+  }
+  .pi-btn:hover .pi-nombre,
+  .pi-btn:focus-visible .pi-nombre {
+    opacity: 1;
+    font-style: italic;
+    transform: translateX(0.18em);
+  }
+  .pi-btn:hover .pi-flecha {
+    background: var(--text-strong);
+    color: var(--bg-color);
+    transform: rotate(45deg);
+  }
 }
 
-/* Make the whole device a clickable trigger without button chrome */
-.showcase-device-trigger {
+/* Mockup flotante que sigue al cursor (fijo a la pantalla, no captura el mouse) */
+.pi-flotante {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+.pi-flotante-img {
+  position: absolute;
+  width: clamp(300px, 30vw, 460px);
+  /* a la DERECHA del cursor y centrado en su altura: así no tapa el nombre que señalas */
+  transform: translate(48px, -50%);
+}
+.pi-flotante-img--phone {
+  width: clamp(260px, 24vw, 380px);
+}
+.pi-flotante-img .mockup {
+  width: 100%;
+  height: auto;
   display: block;
-  width: 100%;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  appearance: none;
 }
 
-/* El aparato lo dibuja <Mockup>: un PNG renderizado que YA trae su ángulo, su
-   material y sus reflejos. Aquí solo se decide el tamaño. Nada de rotateY por
-   CSS — se le sumaría al ángulo del render y saldría deformado. */
-.showcase-device-trigger--phone {
-  display: flex;
-  justify-content: center;
+/* En el renglón: solo sin mouse (celular / tablet) */
+.pi-thumb {
+  display: none;
 }
-/* OJO: el mockup de "teléfono" son DOS aparatos en una sola imagen, así que es
-   casi cuadrada (boda 1.13, pos 0.93, befit 0.81) — no una silueta vertical.
-   Tratarla como un teléfono suelto y limitarla a 280px la dejaba enana y con un
-   hueco enorme al lado. Llena su columna, igual que el mockup de escritorio. */
-.showcase-device-trigger--phone .mockup {
-  width: min(520px, 100%);
-}
-.showcase-device-trigger--mac .mockup {
-  width: 100%;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .showcase-device-trigger:hover .mockup {
-    transform: translateY(-8px) scale(1.015);
+@media (hover: none), (max-width: 900px) {
+  .pi-flotante {
+    display: none;
   }
-}
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  .showcase-item {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-8);
-    padding: var(--spacing-16) var(--spacing-4);
+  .pi-btn {
+    grid-template-columns: minmax(0, 1fr) 2.5rem;
+    grid-template-areas:
+      'thumb thumb'
+      'num num'
+      'texto flecha'
+      'meta meta';
+    gap: var(--spacing-3);
+    padding: var(--spacing-8) 0;
   }
-
-  /* On mobile, always show text first then device */
-  .showcase-item--normal .showcase-text,
-  .showcase-item--reversed .showcase-text  { order: 1; }
-  .showcase-item--normal .showcase-device,
-  .showcase-item--reversed .showcase-device { order: 2; }
-
-  .showcase-description {
-    max-width: 100%;
+  .pi-thumb {
+    grid-area: thumb;
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--spacing-2);
   }
-}
-
-@media (max-width: 600px) {
-  .showcase-item {
-    padding: var(--spacing-8) var(--spacing-4);
+  .pi-thumb .mockup {
+    width: min(100%, 520px);
+    height: auto;
+  }
+  .pi-thumb--phone .mockup {
+    width: min(86%, 400px);
+  }
+  .pi-num {
+    grid-area: num;
+    padding-top: 0;
+  }
+  .pi-texto {
+    grid-area: texto;
+  }
+  .pi-meta {
+    grid-area: meta;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+  }
+  .pi-flecha {
+    grid-area: flecha;
+    align-self: start;
+  }
+  .pi-nombre {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+  .pi-tagline {
+    font-size: 0.92rem;
   }
 }

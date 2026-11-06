@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowUpRight } from 'lucide-react';
 import SectionHead from './SectionHead';
 import { useLang } from '../lib/LangContext';
+import { WHATSAPP } from '../data/contacto';
 import '../styles/Faq.css';
 
 // Adaptadas a las 7 líneas (5-oct): ya no solo software — también marca y redes.
@@ -64,46 +65,68 @@ const Faq = () => {
   const [open, setOpen] = useState(null);
   const { t } = useLang();
 
+  // FAQ en DOS COLUMNAS (2026-11-06): a la izquierda, fija mientras bajas, la
+  // cabecera y una salida directa ("¿Otra duda?" → WhatsApp con mensaje armado):
+  // quien llega a las dudas ya está cerca de escribir, no hay que mandarlo hasta
+  // el formulario. A la derecha, las preguntas numeradas.
+  const otraDuda = t({
+    es: 'Hola, KaiZen. Tengo una duda antes de empezar: ',
+    en: 'Hi, KaiZen. I have a question before getting started: ',
+  });
   return (
     <section id="faq" className="section-container faq-section">
-      <SectionHead
-        num="07"
-        label={t({ es: 'Preguntas frecuentes', en: 'FAQ' })}
-        lede={t({ es: 'Lo que la mayoría quiere saber antes de empezar.', en: 'What most people want to know before getting started.' })}
-      >
-        {t({ es: <>Antes de <em>empezar</em></>, en: <>Before we <em>start</em></> })}
-      </SectionHead>
+      <div className="faq-grid">
+        <div className="faq-lado">
+          <SectionHead
+            num="08"
+            label={t({ es: 'Preguntas frecuentes', en: 'FAQ' })}
+            lede={t({ es: 'Lo que la mayoría quiere saber antes de empezar.', en: 'What most people want to know before getting started.' })}
+          >
+            {t({ es: <>Antes de <em>empezar</em></>, en: <>Before we <em>start</em></> })}
+          </SectionHead>
+          <div className="faq-otra">
+            <p>{t({ es: '¿Tu duda no está aquí?', en: 'Question not here?' })}</p>
+            <a
+              className="faq-otra-btn"
+              href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(otraDuda)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t({ es: 'Pregúntanos por WhatsApp', en: 'Ask us on WhatsApp' })} <ArrowUpRight size={16} />
+            </a>
+            <span className="faq-otra-nota">
+              {t({ es: 'Te respondemos en menos de 24 horas.', en: 'We reply within 24 hours.' })}
+            </span>
+          </div>
+        </div>
 
-      <div className="faq-list rule-list">
-        {FAQS.map((f, i) => {
-          const isOpen = open === i;
-          return (
-            <div key={i} className={`faq-item ${isOpen ? 'is-open' : ''}`}>
-              <button
-                className="faq-q"
-                onClick={() => setOpen(isOpen ? null : i)}
-                aria-expanded={isOpen}
-              >
-                <span>{t(f.q)}</span>
-                <Plus className="faq-chevron" size={22} aria-hidden="true" />
-              </button>
-
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    className="faq-a"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <p>{t(f.a)}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
+        <div className="faq-list rule-list">
+          {FAQS.map((f, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={i} className={`faq-item ${isOpen ? 'is-open' : ''}`}>
+                <button className="faq-q" onClick={() => setOpen(isOpen ? null : i)} aria-expanded={isOpen}>
+                  <span className="faq-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="faq-q-texto">{t(f.q)}</span>
+                  <Plus className="faq-chevron" size={22} aria-hidden="true" />
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      className="faq-a"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <p>{t(f.a)}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

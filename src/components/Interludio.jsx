@@ -15,7 +15,7 @@ import '../styles/Interludio.css';
  */
 const rango = (v, [a, b], [c, d]) => c + (d - c) * Math.min(1, Math.max(0, (v - a) / (b - a)));
 
-export default function Interludio({ forma, kicker, children, fallback, extra, id }) {
+export default function Interludio({ forma, kicker, children, fallback, extra, id, origen }) {
   const ref = useRef(null);
   // Mismo progreso que la nube; ver el gotcha de useTransform en ProyectosReel.jsx
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -24,7 +24,14 @@ export default function Interludio({ forma, kicker, children, fallback, extra, i
   const blur = useTransform(p, (v) => `blur(${v < 0.4 ? rango(v, [0.02, 0.16], [8, 0]) : rango(v, [0.56, 0.66], [0, 8])}px)`);
 
   return (
-    <section ref={ref} id={id} className={`interludio interludio--${forma}`} data-nube={forma}>
+    <section
+      ref={ref}
+      id={id}
+      className={`interludio interludio--${forma}`}
+      data-nube={forma}
+      // origen="hilo": la forma se arma con las partículas del HILO (ver hiloPuente.js)
+      data-nube-origen={origen}
+    >
       <div className="interludio-sticky">
         {kicker && (
           <motion.p className="interludio-kicker" style={{ opacity }}>

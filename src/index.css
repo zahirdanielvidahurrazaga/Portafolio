@@ -14,6 +14,9 @@
    Por eso invertirlos en el tema claro arregla la mayoría de los componentes solo.
    ============================================================================ */
 :root {
+  /* El hilo (Hilo.jsx): cuerpo + filo de luz, la materia de la cinta */
+  --hilo-cuerpo: #8f897e;
+  --hilo-brillo: #f6f1e8;
   color-scheme: dark;
 
   /* Fondos */
@@ -157,6 +160,8 @@
    Los glows también bajan: a intensidad de modo oscuro manchan el fondo claro.
    --------------------------------------------------------------------------- */
 :root[data-theme='light'] {
+  --hilo-cuerpo: #3a3734;
+  --hilo-brillo: rgba(255, 255, 255, 0.55);
   color-scheme: light;
 
   --bg-color: #ffffff;

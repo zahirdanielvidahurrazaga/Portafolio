@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { cinta, RELEVO, fase } from './cintaPuente';
+import { hilo, suelta } from './hiloPuente';
 
 /**
  * LA NUBE: un solo sistema de partículas, fijo detrás de todo el sitio, que
@@ -505,6 +506,8 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
       formas: el.dataset.nube.split(','),
       apertura: el.dataset.nubeModo === 'apertura',
       secuencia: el.dataset.nubeModo === 'secuencia',
+      // CIERRE: las partículas salen del hilo (Hilo.jsx), no del polvo
+      origenHilo: el.dataset.nubeOrigen === 'hilo',
       cache: {},
     }));
   let estaciones = leerEstaciones();
@@ -574,7 +577,8 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
         mejor = { st, a, e, fa: st.formas[j], fb: st.formas[Math.min(j + 1, n - 1)], m };
         break;
       }
-      const a = smooth(clamp01((q + 0.3) / 0.42));
+      // Si nace del hilo, el armado lo marca el hilo (mismo progreso que su consumo)
+      const a = st.origenHilo && hilo.listo ? hilo.estallido : smooth(clamp01((q + 0.3) / 0.42));
       const e = smooth(clamp01((q - 0.66) / 0.36));
       if (a > 0 && e < 1) {
         mejor = { st, a, e };
@@ -682,6 +686,30 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
           y = fy + (y - fy) * e + dy * empuje;
           // Se apaga rápido: sin "polvo" regado sobre la sección siguiente
           al = al + (0.92 - al) * (1 - e) * (1 - e);
+        } else if (est.st.origenHilo && hilo.listo && hilo.n > 1) {
+          // CIERRE: cada partícula nace en su punto del tramo final del hilo y
+          // se suelta cuando el hilo (que se consume desde la punta) llega a
+          // ella; de ahí vuela en curva a su lugar en la Κ.
+          const sIdx = cs[i] * (hilo.n - 1);
+          const j = Math.min(hilo.n - 2, Math.floor(sIdx));
+          const fr = sIdx - j;
+          const P = hilo.pts;
+          const hx = P[j * 2] + (P[j * 2 + 2] - P[j * 2]) * fr;
+          const hy = P[j * 2 + 1] + (P[j * 2 + 3] - P[j * 2 + 1]) * fr;
+          // Grosor del hilo: un poco de dispersión alrededor del trazo
+          const sx = hx - vw / 2 + Math.cos(cang[i]) * 2.5;
+          const syy = vh / 2 - hy + Math.sin(cang[i]) * 2.5;
+          const f = smooth(clamp01((a - suelta(cs[i])) / 0.4));
+          const vx = fx - sx;
+          const vy = fy - syy;
+          const giro = Math.sin(Math.PI * f) * 0.45 * (burst[i] - 0.6);
+          // Estalla: al soltarse sale disparada hacia afuera (dirección propia)
+          // y luego la jala la Κ; el empuje es máximo a mitad del vuelo
+          const boom = Math.sin(Math.PI * Math.min(1, f * 1.25)) * 150 * burst[i];
+          x = sx + vx * f - vy * giro + Math.cos(cang[i]) * boom;
+          y = syy + vy * f + vx * giro + Math.sin(cang[i]) * boom;
+          // Antes de soltarse es parte del hilo (que aún se dibuja): invisible
+          al = f > 0 ? 0.92 : 0;
         } else {
           // Armado: del polvo a la forma, en curva (no en línea recta)
           const vx = fx - x;

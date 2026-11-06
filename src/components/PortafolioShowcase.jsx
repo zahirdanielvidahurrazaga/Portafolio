@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useMotionValue, useSpring } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import Mockup from './Mockup';
 import ProjectModal from './ProjectModal';
-import ProyectosReel from './ProyectosReel';
 import SectionHead from './SectionHead';
 import { projects, localizar } from '../data/projects';
 import { useLang } from '../lib/LangContext';
@@ -18,118 +17,132 @@ function portadaDe(project) {
   return app ? { ...app, kind: 'phone' } : null;
 }
 
-const ShowcaseItem = ({ project, index, total, onOpen }) => {
+/**
+ * ÍNDICE DE PROYECTOS (2026-11-06). Antes cada proyecto era una pantalla completa
+ * (mockup grande + texto, alternando lados): con 3 ya eran ~3 pantallas y vienen
+ * más (Natural: sitio + sistema). Ahora es un índice tipográfico que escala:
+ *  - Escritorio: renglones grandes; al pasar el mouse, el mockup del proyecto
+ *    flota y SIGUE AL CURSOR (resorte). Clic = el caso completo (modal).
+ *  - Celular / sin mouse: cada renglón trae su mockup arriba.
+ * Para agregar un proyecto basta con sumarlo a VISIBLES en projects.js.
+ */
+function Renglon({ project, index, total, onOpen, onHover }) {
   const { t } = useLang();
-  const isEven = index % 2 === 0;
   const portada = portadaDe(project);
-
   return (
-    <motion.div
-      className={`showcase-item ${isEven ? 'showcase-item--normal' : 'showcase-item--reversed'}`}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.8 }}
-    >
-      {/* Sin glow de color detrás (2026-10-05): con la paleta mármol se veían
-          como manchas. El color de cada proyecto vive solo en sus capturas. */}
-      {/* Text block */}
-      <motion.div
-        className="showcase-text"
-        initial={{ opacity: 0, x: isEven ? -40 : 40 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.7, delay: 0.1 }}
-      >
-        <span className="showcase-category">
-          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')} — {project.category}
-        </span>
-        <h2 className="showcase-title">{project.title}</h2>
-        {/* El GANCHO, no el detalle: la tarjeta se lee en segundos y la
-            descripción larga (209 caracteres en Be Fit Lab) hacía que las tres
-            tarjetas ocuparan 3 pantallas de móvil. El caso completo está a un
-            clic, en el modal. `description` queda en projects.js sin usarse. */}
-        <p className="showcase-description">{project.tagline || project.description}</p>
-        {/* Tecnologías como línea de créditos, no como píldoras */}
-        <p className="showcase-tags">{project.tags.join(' · ')}</p>
-
-        <div className="showcase-cta-row">
-          <button className="showcase-cta" onClick={() => onOpen(project)}>
-            {t({ es: 'Ver el proyecto', en: 'View project' })} <ArrowRight size={16} />
-          </button>
-          {project.website && (
-            <a
-              className="showcase-link"
-              href={project.website}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t({ es: 'Sitio web', en: 'Website' })} <ExternalLink size={14} />
-            </a>
-          )}
-        </div>
-      </motion.div>
-
-      {/* Device mockup */}
-      <motion.div
-        className="showcase-device"
-        initial={{ opacity: 0, x: isEven ? 40 : -40, y: 20 }}
-        whileInView={{ opacity: 1, x: 0, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+    <li className="pi-item">
+      <button
+        type="button"
+        className="pi-btn"
+        onClick={() => onOpen(project)}
+        onMouseEnter={() => onHover(project.id)}
+        onFocus={() => onHover(project.id)}
       >
         {portada && (
-          <button
-            className={`showcase-device-trigger showcase-device-trigger--${portada.kind}`}
-            onClick={() => onOpen(project)}
-            aria-label={`${t({ es: 'Ver el proyecto', en: 'View project' })} ${project.title}`}
-          >
-            {/* Sin inclinación por CSS: el ángulo ya viene en el render. Si se
-                le sumara un rotateY encima, el aparato saldría doblemente
-                deformado. */}
-            <Mockup
-              kind={portada.kind}
-              src={portada.src}
-              fallback={portada.fallback}
-              alt={project.title}
-            />
-          </button>
+          <span className={`pi-thumb pi-thumb--${portada.kind}`} aria-hidden="true">
+            <Mockup kind={portada.kind} src={portada.src} fallback={portada.fallback} alt="" />
+          </span>
         )}
-      </motion.div>
+        <span className="pi-num">
+          {String(index + 1).padStart(2, '0')}
+          <span className="pi-total"> / {String(total).padStart(2, '0')}</span>
+        </span>
+        <span className="pi-texto">
+          <span className="pi-nombre">{project.title}</span>
+          <span className="pi-tagline">{project.tagline}</span>
+        </span>
+        <span className="pi-meta">
+          <span>{project.category}</span>
+          <span className="pi-plataformas">{(project.platforms || []).join(' · ')}</span>
+        </span>
+        <span className="pi-flecha" aria-hidden="true">
+          <ArrowUpRight size={22} />
+        </span>
+        <span className="sr-only">{t({ es: 'Ver el proyecto', en: 'View project' })}</span>
+      </button>
+    </li>
+  );
+}
+
+/** El mockup que flota junto al cursor (solo con mouse) */
+function Flotante({ lista, activo }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 260, damping: 28, mass: 0.6 });
+  const sy = useSpring(y, { stiffness: 260, damping: 28, mass: 0.6 });
+  useEffect(() => {
+    const mover = (e) => {
+      x.set(e.clientX);
+      y.set(e.clientY);
+    };
+    window.addEventListener('pointermove', mover, { passive: true });
+    return () => window.removeEventListener('pointermove', mover);
+  }, [x, y]);
+  return (
+    <motion.div className="pi-flotante" style={{ x: sx, y: sy }} aria-hidden="true">
+      <AnimatePresence>
+        {lista.map((p) => {
+          const portada = portadaDe(p);
+          return p.id === activo && portada ? (
+            // Dos capas: la de afuera (CSS) lo COLOCA junto al cursor con su translate; la
+            // de adentro anima. Si fuera una sola, el transform de la animación pisaba el
+            // translate y el mockup salía abajo a la derecha (hallazgo de Codex, 6-nov).
+            <div key={p.id} className={`pi-flotante-img pi-flotante-img--${portada.kind}`}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85, rotate: -3, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.9, filter: 'blur(8px)' }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Mockup kind={portada.kind} src={portada.src} fallback={portada.fallback} alt="" />
+              </motion.div>
+            </div>
+          ) : null;
+        })}
+      </AnimatePresence>
     </motion.div>
   );
-};
+}
 
 const PortafolioShowcase = () => {
   const { lang, t } = useLang();
   const [active, setActive] = useState(null);
+  const [hover, setHover] = useState(null);
   const lista = projects.map((p) => localizar(p, lang));
+
+  // "Ver el caso" desde Servicios abre aquí el proyecto que respalda ese servicio
+  useEffect(() => {
+    const onAbrir = (e) => e.detail?.id && setActive(e.detail.id);
+    window.addEventListener('kaizen:proyecto', onAbrir);
+    return () => window.removeEventListener('kaizen:proyecto', onAbrir);
+  }, []);
 
   return (
     <section id="portfolio" className="showcase-section">
-      {/* Entrada estilo Lusion: la laptop crece a pantalla completa */}
-      <ProyectosReel />
+      {/* (El reel de la laptop se quitó el 6-nov: su motion ahora vive en Demos.jsx) */}
       <div className="showcase-header section-container">
         <SectionHead
-          num="04"
+          num="05"
           label={t({ es: 'Proyectos', en: 'Work' })}
-          lede={t({ es: 'Entra a cada uno para ver el sitio y la app.', en: 'Open each one to see the website and the app.' })}
+          lede={t({ es: 'Y estos ya están funcionando: negocios reales que hoy operan con lo que construimos.', en: 'And these are already running: real businesses operating today on what we built.' })}
         >
           {t({ es: <>Soluciones <em>en producción</em></>, en: <>Solutions <em>in production</em></> })}
         </SectionHead>
       </div>
 
-      <div className="showcase-list">
+      <ol className="pi section-container" onMouseLeave={() => setHover(null)}>
         {lista.map((project, i) => (
-          <ShowcaseItem
+          <Renglon
             key={project.id}
             project={project}
             index={i}
             total={lista.length}
             onOpen={(pr) => setActive(pr.id)}
+            onHover={setHover}
           />
         ))}
-      </div>
+      </ol>
+      <Flotante lista={lista} activo={hover} />
 
       {/* Se guarda el id (no el objeto) para que el modal siga al idioma si se cambia con él abierto */}
       <ProjectModal project={lista.find((pr) => pr.id === active) || null} onClose={() => setActive(null)} />

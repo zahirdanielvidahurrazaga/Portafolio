@@ -1,0 +1,443 @@
+/* DEMOS (Demos.jsx, 2026-11-06): "Pruébalo antes de tenerlo". Motion fijo de 3
+   pasos + galería por giro + "con tu marca". */
+.demos-section {
+  padding-top: var(--section-pad-y);
+}
+.demos-head {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* ── Motion ── */
+.dm-pista {
+  position: relative;
+  height: 380vh;
+}
+.dm-escena {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 80px var(--spacing-4) 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: var(--spacing-12);
+}
+.dm-pasos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+.dm-pasos li {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  opacity: 0.25;
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dm-pasos li.is-done {
+  opacity: 0.45;
+}
+.dm-pasos li.is-active {
+  opacity: 1;
+  transform: translateX(0.4rem);
+}
+.dm-paso-num {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.dm-paso-texto {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.9vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+}
+.dm-pasos li.is-active .dm-paso-texto {
+  font-style: italic;
+}
+
+.dm-stage {
+  position: relative;
+  height: min(76vh, 640px);
+  display: grid;
+  place-items: center;
+}
+/* Teléfono: marco oscuro en los dos temas, la pantalla adentro */
+.dm-tel {
+  height: 100%;
+  /* proporción de las capturas (780×1488) + el marco: no recorta los lados */
+  aspect-ratio: 0.545;
+  padding: 10px;
+  border-radius: 44px;
+  background: #121212;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.6), inset 0 0 0 1.5px rgba(255, 255, 255, 0.12);
+  position: relative;
+  z-index: 1;
+}
+.dm-pantalla {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 34px;
+  overflow: hidden;
+  background: #efe9df;
+}
+.dm-campo {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 42%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: #1d1d1f;
+}
+.dm-campo-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a847a;
+}
+.dm-campo-valor {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+  letter-spacing: -0.03em;
+  padding-bottom: 0.45rem;
+  border-bottom: 2px solid #1d1d1f;
+  min-height: 2.6rem;
+}
+.dm-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: #1d1d1f;
+  animation: dm-parpadeo 1s steps(1) infinite;
+}
+@keyframes dm-parpadeo {
+  50% {
+    opacity: 0;
+  }
+}
+.dm-boceto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.dm-boceto rect {
+  fill: none;
+  stroke: #1d1d1f;
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+.dm-real {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.dm-aviso {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 4%;
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.7rem 0.8rem;
+  border-radius: 16px;
+  background: rgba(20, 20, 20, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #f2efe9;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.5);
+}
+.dm-aviso b {
+  font-weight: 600;
+}
+.dm-vivo {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.3rem;
+  border-radius: 50%;
+  background: #f2efe9;
+  animation: esc-late 2s ease-out infinite;
+}
+/* Pase de acceso que entra junto al teléfono */
+.dm-pase {
+  position: absolute;
+  right: 0;
+  bottom: 12%;
+  width: min(270px, 46%);
+  padding: 1.1rem 1.2rem;
+  border-radius: 22px;
+  background: var(--text-strong);
+  color: var(--bg-color);
+  z-index: 2;
+  box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.55);
+}
+.dm-pase-kicker {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.dm-pase-nombre {
+  margin: 0.3rem 0 0.2rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: -0.03em;
+}
+.dm-pase-sub {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.dm-pase-pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.7rem;
+  border-top: 1px dashed currentColor;
+  font-size: 0.75rem;
+}
+.dm-pase-codigo {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.dm-frase {
+  position: absolute;
+  inset: auto var(--spacing-4) 50% var(--spacing-4);
+  transform: translateY(50%);
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 5.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--text-strong);
+  text-wrap: balance;
+  pointer-events: none;
+}
+.dm-frase em {
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* ── Galería por giro ── */
+.dm-galeria-wrap {
+  padding-top: var(--spacing-12);
+  padding-bottom: var(--section-pad-y);
+}
+.dm-galeria-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  padding-bottom: var(--spacing-6);
+  border-bottom: 1px solid var(--border-strong);
+}
+.dm-galeria-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+}
+.dm-galeria-head h3 em,
+.dm-marca-titulo em {
+  font-style: italic;
+  color: var(--text-muted);
+}
+.dm-galeria-head p {
+  margin: 0;
+  color: var(--text-muted);
+}
+.dm-galeria {
+  list-style: none;
+  margin: var(--spacing-8) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-6) var(--spacing-4);
+}
+.dm-card--ancho {
+  /* 6 demos en 4 columnas: la del punto de venta (horizontal) cierra el 2º renglón */
+  grid-column: span 3;
+}
+.dm-card a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  text-decoration: none;
+  color: inherit;
+}
+.dm-card-img {
+  display: block;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--border-color);
+  aspect-ratio: 390 / 560;
+  background: var(--tint-2);
+}
+.dm-card--ancho .dm-card-img {
+  aspect-ratio: auto;
+  height: 100%;
+}
+.dm-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dm-card a:hover .dm-card-img img,
+.dm-card a:focus-visible .dm-card-img img {
+  transform: scale(1.04);
+}
+.dm-card--ancho a {
+  height: 100%;
+}
+.dm-card--ancho .dm-card-img {
+  flex: 1;
+}
+.dm-card-texto {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.dm-card-giro {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.dm-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 1px;
+}
+.dm-card a:hover .dm-card-cta {
+  color: var(--text-strong);
+  border-color: var(--text-strong);
+}
+
+/* ── Nivel 2: con tu marca ── */
+.dm-marca {
+  margin-top: var(--spacing-12);
+  padding: var(--spacing-8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-strong);
+  background: linear-gradient(135deg, var(--tint-3), transparent 70%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-6);
+  flex-wrap: wrap;
+}
+.dm-marca-titulo {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  letter-spacing: -0.035em;
+  color: var(--text-strong);
+}
+.dm-marca-texto {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 52ch;
+}
+.dm-marca-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .dm-pista {
+    height: 340vh;
+  }
+  .dm-escena {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: var(--spacing-4);
+    padding-top: 92px;
+  }
+  /* En celular: solo el paso activo, arriba del teléfono */
+  .dm-pasos li {
+    display: none;
+  }
+  .dm-pasos li.is-active {
+    display: flex;
+    transform: none;
+  }
+  .dm-paso-texto {
+    font-size: 1.45rem;
+  }
+  .dm-stage {
+    height: min(62vh, 560px);
+  }
+  .dm-pase {
+    width: 58%;
+    bottom: 6%;
+    padding: 0.9rem 1rem;
+  }
+  .dm-pase-nombre {
+    font-size: 1.15rem;
+  }
+  .dm-galeria {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dm-card-texto {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .dm-card--ancho {
+    grid-column: span 2;
+  }
+  .dm-card--ancho .dm-card-img {
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dm-caret,
+  .dm-vivo {
+    animation: none;
+  }
+}

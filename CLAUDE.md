@@ -221,6 +221,92 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
     barajados a la mitad del morph todo se volvía una bola.
   - Entrada/salida sin "polvo regado": alfa del armado ∝ a², y al explotar se apaga con (1−e)².
   - El `<SectionHead>` conserva la clase `factor-header`: la cinta del hero sale rumbo a `#about .factor-header`.
+- **SERVICIOS v2 "Índice · Ficha · Nube" (2026-11-06, sin desplegar)** — reemplaza lo de arriba. Zahir: "no me
+  gusta del todo" + "que VENDA". Tres columnas en la escena fija (60vh por servicio): índice con los 7 servicios
+  agrupados en 3 NECESIDADES (Que te conozcan · Que te compren · Que funcione solo), FICHA (gancho = resultado con
+  `<em>`, descripción, 3 entregables, botón **"Cotizar X"** y **"Ver caso real"** si hay proyecto VISIBLE que lo
+  respalde: POS→Tito, Apps→Be Fit Lab) y la nube. "Cotizar" dispara `kaizen:cotizar` {tipo} → Footer preselecciona
+  el `<select>`; "Ver caso" dispara `kaizen:proyecto` {id} → PortafolioShowcase abre el modal. Pantallas bajas
+  esconden la descripción. Móvil: figura chica + fila de números 01–07 + ficha.
+  **SIN ÍCONOS (6-nov):** se probaron partículas y luego trazo cromado; Zahir: "no quiero íconos". La columna
+  derecha es una **ESCENA DEL RESULTADO** (`ServiciosEscenas.jsx` + css): mini pantalla en código, mármol, sigue
+  al tema, con lo que el cliente VA A VER (manual de marca "Aurora", post programado, checklist "Listo para abrir",
+  su resultado en Google + WhatsApp, "Nueva venta $1,250" + gráfica, chat del asistente, reserva + pase). Los
+  renglones entran en cascada al cambiar de servicio y hay un punto vivo que late. Nombres/montos = de ejemplo de
+  maqueta (no son cifras de clientes). Sin emoji (tienen color). **Móvil:** la escena va DENTRO de la ficha
+  (`.srv-ficha-escena`, copia que en escritorio se oculta), con `zoom` 0.82/0.72/0.62 según el alto, sin párrafo
+  y con los entregables en UNA línea separados por "·" (::after, para que el punto no quede al inicio del renglón).
+  La nube ya no tiene estación en Servicios (sin `data-nube`).
+  ⚠️ NO usar `forceContextLoss()`/`loseContext()` en los destroy de WebGL: el canvas es el mismo al re-montar
+  (StrictMode, cambio de tema, HMR) y quedaba muerto — la barra liquid glass salió rota. Se revirtió.
+- **EL HILO (`Hilo.jsx` + `styles/Hilo.css`, 2026-11-06, sin desplegar)** — lo que conecta la web tras el telón.
+  SVG del alto del documento (z −1, coordenadas de PÁGINA) que se DIBUJA con el scroll: la punta va al 62% de la
+  pantalla. Ruta en ÁNGULOS RECTOS con esquinas redondeadas (la curva libre Catmull-Rom cruzaba el texto): entra por
+  la derecha en Testimonios, baja por los márgenes y cruza de lado SOLO en la frontera entre secciones; en Proceso
+  baja en ESCALERA entre número y título (medida desde el `h3`, porque `.process-num` ocupa toda su columna) y cada
+  paso se enciende (`.hilo-on`) cuando llega la punta; termina dentro de la Κ del "¿Empezamos?". Medición con
+  offsetTop (no getBoundingClientRect: las filas entran con translateY). Tokens `--hilo-cuerpo/--hilo-brillo`.
+  **BarraScroll** muestra el capítulo ("06 PROCESO") junto al pulgar SOLO mientras hay scroll (quieto se encimaba
+  con el texto de la derecha).
+- **TESTIMONIOS = "CASOS" (2026-11-06, sin desplegar)** — reemplaza "LECTURA" (2,611 px → 1,111). Una tarjeta por
+  cliente, lado a lado: voz del cliente (video con vista previa muda que se monta al aparecer + lightbox con sonido,
+  o cita que se lee palabra por palabra al entrar), autor, **"Qué cambió"** (`cambio` en el arreglo, sacado del
+  `result` REAL de su proyecto — no inventar) y **"Ver el proyecto"** (`proyecto` id → evento `kaizen:proyecto`).
+  Con >2 clientes la fila se vuelve carrusel con snap (`.casos--carrusel`). Móvil: apiladas, video recortado a 4:5.
+- **PROYECTOS = ÍNDICE (2026-11-06, sin desplegar)** — reemplaza las filas alternadas de pantalla completa (no
+  escalaban: vienen Natural sitio+sistema y otro). Renglones tipográficos grandes (Nº, nombre, tagline, categoría,
+  plataformas, flecha); con mouse el resto se apaga, el activo pasa a itálica y su MOCKUP FLOTA SIGUIENDO AL CURSOR
+  (`Flotante`, useSpring, fijo z 40). Sin mouse / <900px: el mockup va dentro del renglón. Clic = modal. El reel de
+  la laptop sigue igual arriba (es lo que hace que la sección mida ~6,000 px; la lista son ~575).
+  Para sumar un proyecto: entrada en `allProjects` + su id en `VISIBLES` + mockups en `public/mockups/`.
+- **NOSOTROS = "DOS MITADES, UN HILO" (2026-11-06, sin desplegar)** — se QUITÓ la escena de partículas (lápiz y
+  `</>` → teléfono; Zahir no quiere íconos). Flujo normal (2,845 → 1,880 px): bio → kicker "Marca + tecnología, un
+  solo equipo" → dos columnas (I Estrategia, marca y redes / II Tecnología) con sus servicios en píldoras y una
+  RANURA central de 9rem por donde baja EL HILO (las une) → frase "De una idea a las manos de tus clientes." →
+  Misión·Visión·Valores → CTA. El hilo cruza a lo ancho en el hueco bajo el kicker (margin-bottom 4rem). La forma
+  `mitades` de nube.js ya no se usa. Móvil: apiladas, hilo por el margen.
+- **FAQ en DOS COLUMNAS (2026-11-06, sin desplegar)** — izquierda fija (sticky) con la cabecera + "¿Tu duda no está
+  aquí? → Pregúntanos por WhatsApp" (mensaje armado) + "Te respondemos en menos de 24 horas"; derecha, preguntas
+  numeradas 01–07. Móvil: `.faq-lado {display: contents}` para poner la salida a WhatsApp DESPUÉS de las preguntas.
+- **CIERRE: EL HILO ESTALLA Y ARMA LA Κ (2026-11-06, idea de Zahir, sin desplegar)** — `src/lib/hiloPuente.js`
+  (mismo patrón que cintaPuente): Hilo.jsx publica en cada scroll su TRAMO FINAL (1.2 pantallas) en px de pantalla
+  y `estallido` (0→1, progreso de `.interludio--k`: q −0.2→0.14). El hilo se CONSUME desde la punta
+  (`largo − tramo·min(1, est/SUELTA)`) y la punta se oculta. En nube.js, la estación con `data-nube-origen="hilo"`
+  (prop `origen` de Interludio, App la pone en la Κ) usa `hilo.estallido` como armado y cada partícula nace en su
+  punto del tramo (`cs[i]`), se suelta cuando el consumo la alcanza (`suelta(s) = (1−s)·0.6`), sale disparada
+  hacia afuera (`boom`, dirección `cang[i]`) y la jala la Κ. Antes de soltarse es invisible (es parte del hilo).
+  Ligado al scroll: al subir, el hilo se vuelve a formar. Editar nube.js = recargar la página.
+- **DEMOS = "PRUÉBALO ANTES DE TENERLO" (2026-11-06, capítulo Nº 04 nuevo, sin desplegar)** — decisión de Zahir y
+  Karime: demos por giro gratis para todos + "con tu marca" gratis tras 15 min + funciones nuevas = proyecto pagado.
+  El sitio de demos SIGUE con candado (13-oct, salió en TikTok): las tarjetas piden acceso por WhatsApp con el giro
+  escrito y ellos mandan código de 7 días (`accesos.mjs nuevo` en ~/Developer/demos). Capturas reales en
+  `public/demos/*.webp` (playwright con el link maestro; pos y clínica del servidor local, sin publicar aún; barra de
+  "demostración" recortada). Giros: pilates (Alma), gimnasio (Atlas), restaurante (Hoja), florería (Dalia), clínica
+  (Raíz), ferretería POS (Bisagra, tarjeta ancha) y rifas (Fortuna). NO poner demos de prospectos reales (Autocinema,
+  KADE). Motion (`.dm-pista` 380vh, ligado al scroll): pasos 01–03 a la izquierda; en el teléfono se escribe
+  "Florería Dalia" → boceto que se dibuja (pathLength) → la captura real lo barre (clip-path) → entra "Pedido nuevo" y
+  el pase de acceso con código → "Antes de firmar, ya lo viste funcionando." **Reemplazó al reel de la laptop de
+  Proyectos** (ProyectosReel/KaizenReel ya no se usan en la página; quedan en el repo porque `tools/video` los filma).
+  Capítulos renumerados: 04 Demos · 05 Proyectos · 06 Nosotros · 07 Proceso · 08 FAQ · 09 Contacto (Navbar y
+  BarraScroll al día). El hilo cruza de lado en cada frontera (Testimonios→Demos→Proyectos→Nosotros).
+- **CONTACTO v2 (2026-11-06, sin desplegar)** — "¿Qué necesitas?" en BOTONES (radios con `required`, estilo
+  `.form-tipos .form-chip`: `.form-field label` les ponía mayúsculas) con la opción nueva **"Ver una demo"** (`demo`
+  en TIPO_LABEL); **correo y descripción OPCIONALES** (menos fricción; el WhatsApp ya identifica); "¿Qué sigue?" a la
+  izquierda (24 h · 15 min con la demo de tu giro · propuesta por escrito) + número de WhatsApp visible; confirmación
+  con "¿No se abrió? Toca aquí" (guarda el wa.me) y "Escribir otro mensaje". `kaizen:cotizar` preselecciona el
+  botón y enfoca el nombre sin mover la página. Probado interceptando `window.open`.
+- **Navbar con 7 links (6-nov):** cápsula compacta 1000 → 1160px, gap/letter-spacing menores bajo 1360px y
+  hamburguesa bajo **1180px** (antes 960). Verificado a 1440/1280/1190.
+- **Revisión completa 6-nov:** modo claro, inglés, celular por sección, telón y modal OK, sin errores de consola.
+  Página: **27,078 → 21,232 px** en escritorio, aun con el capítulo Demos nuevo.
+- **HILO CON MÁS PROTAGONISMO (6-nov):** (1) cruza de lado JUSTO sobre el filete (`.sh-rule`) de cada capítulo
+  — "dibuja" la línea "ETIQUETA ——— Nº 0X" — alternando: Testimonios entra desde fuera por la derecha → izq;
+  Demos izq→der; Proyectos der→izq; Nosotros izq→der (luego der → ranura central); FAQ desde el último escalón hacia
+  la izq. Proceso sigue entrando por arriba de la lista (cruzar su filete pasaba detrás del título). (2) Más peso:
+  `.hilo-aura` 16px al 7%, cuerpo 4.5px, brillo 1.4px, punta 6.5/22px con drop-shadow, y `.hilo-estela` = los
+  últimos 260px antes de la punta en `--text-strong` (dasharray calculado en `pintar`). ⚠️ SIN `filter` en la estela
+  ni en los trazos: su caja es el hilo entero (~21,000 px) y se recalcularía cada cuadro.
+- Demos: se QUITÓ Fortuna (rifas: es personal de Zahir). 6 demos; Bisagra (horizontal) ocupa 3 columnas.
 - **`Mockup.jsx`** — la imagen de cualquier dispositivo. Intenta `src` (el render de
   Rotato/Shots.so en `/public/mockups/`) y si ese archivo no existe cae a `fallback` (la captura
   plana). Así la página funciona antes de que lleguen los renders y al soltarlos no se toca código.

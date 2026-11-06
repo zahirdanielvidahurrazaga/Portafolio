@@ -46,7 +46,8 @@
 }
 
 .apple-navbar.scrolled {
-  max-width: 1000px;
+  /* 1000 → 1160 (6-nov): con Demos son 7 links y el logo quedaba pegado */
+  max-width: 1160px;
   width: 90%;
   padding: 0;
   background: var(--nav-bg-scrolled);
@@ -237,13 +238,17 @@
 
 /* Los links en versalitas espaciadas ocupan más: entre 960 y 1100 se juntan,
    y debajo de 960 ya no caben en la cápsula → menú hamburguesa. */
-@media (max-width: 1100px) {
+@media (max-width: 1360px) {
   .nav-links {
     gap: var(--spacing-4);
   }
+  .nav-links a {
+    letter-spacing: 0.1em;
+  }
 }
 
-@media (max-width: 960px) {
+/* 7 links: debajo de 1180 ya no caben con aire → hamburguesa (antes 960 con 6) */
+@media (max-width: 1180px) {
   .nav-links {
     display: none;
   }

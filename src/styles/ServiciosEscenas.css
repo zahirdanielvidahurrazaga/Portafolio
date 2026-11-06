@@ -1,0 +1,350 @@
+/* Escenas del resultado (ServiciosEscenas.jsx). Una tarjeta tipo pantalla, mármol,
+   con los mismos tokens del sitio: sigue al tema solo. */
+.esc {
+  width: min(100%, 360px);
+  padding: 1.1rem;
+  border-radius: 26px;
+  background: linear-gradient(180deg, var(--tint-3), var(--tint-1));
+  border: 1px solid var(--border-color);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.55), inset 0 1px 0 var(--tint-4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: var(--text-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.esc b {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.esc-tenue {
+  color: var(--text-muted);
+}
+.esc-derecha {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+/* Cada renglón entra uno tras otro */
+.esc-fila {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(4px);
+  animation: esc-entra 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(0.08s + var(--i) * 0.12s);
+}
+@keyframes esc-entra {
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.esc-cabeza {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-strong);
+  padding: 0 0.15rem;
+}
+.esc-pie,
+.esc-lista {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 14px;
+  background: var(--tint-2);
+}
+.esc-pie {
+  background: none;
+  padding: 0.2rem 0.15rem 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+/* Palomita dibujada con bordes (sin íconos ni emoji) */
+.esc-check {
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: var(--text-strong);
+  position: relative;
+}
+.esc-check::after {
+  content: '';
+  position: absolute;
+  left: 0.36rem;
+  top: 0.2rem;
+  width: 0.22rem;
+  height: 0.46rem;
+  border: solid var(--bg-color);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Aviso tipo notificación, con su punto vivo */
+.esc-noti {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 16px;
+  background: var(--tint-4);
+  border: 1px solid var(--border-color);
+}
+.esc-vivo {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-top: 0.35rem;
+  border-radius: 50%;
+  background: var(--text-strong);
+  box-shadow: 0 0 0 0 var(--tint-6);
+  animation: esc-late 2s ease-out infinite;
+}
+.esc-cabeza .esc-vivo {
+  margin-top: 0;
+}
+@keyframes esc-late {
+  0% {
+    box-shadow: 0 0 0 0 var(--tint-6);
+  }
+  100% {
+    box-shadow: 0 0 0 9px transparent;
+  }
+}
+
+/* Marca */
+.esc-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 1.4rem 0 1.1rem;
+  border-radius: 16px;
+  background: var(--tint-2);
+}
+.esc-logo-marca {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 2.3rem;
+  letter-spacing: -0.05em;
+  color: var(--text-strong);
+  line-height: 1;
+}
+.esc-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.45rem;
+}
+.esc-sw {
+  height: 2.6rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+.esc-sw--1 {
+  background: var(--text-strong);
+}
+.esc-sw--2 {
+  background: var(--tint-6);
+}
+.esc-sw--3 {
+  background: var(--tint-3);
+}
+.esc-sw--4 {
+  background: var(--bg-color);
+}
+.esc-tipos {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.3rem 0.15rem;
+}
+.esc-aa {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+}
+
+/* Redes */
+.esc-perfil {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.esc-avatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tint-6), var(--tint-2));
+  border: 1px solid var(--border-strong);
+}
+.esc-post {
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 90% at 30% 20%, var(--tint-5), transparent 60%),
+    linear-gradient(160deg, var(--tint-4), var(--tint-1));
+  display: flex;
+  align-items: flex-end;
+  padding: 0.9rem;
+}
+.esc-post-texto {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.5rem;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+}
+.esc-reacciones {
+  display: flex;
+  gap: 1rem;
+  padding: 0 0.15rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.esc-reacciones .esc-tenue {
+  margin-left: auto;
+  font-weight: 400;
+}
+
+/* Web: un resultado de Google */
+.esc-buscador {
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--tint-2);
+}
+.esc-resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem;
+  border-radius: 16px;
+  background: var(--tint-3);
+  border: 1px solid var(--border-strong);
+}
+.esc-resultado-titulo {
+  font-size: 1rem;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+.esc-resultado--otro {
+  background: none;
+  border-color: var(--border-color);
+  gap: 0.45rem;
+  opacity: 0.5;
+}
+.esc-raya {
+  height: 0.55rem;
+  border-radius: 4px;
+  background: var(--tint-4);
+}
+.esc-raya--corta {
+  width: 62%;
+}
+
+/* Tienda: barras de la semana que crecen */
+.esc-grafica {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+  height: 6.5rem;
+  padding: 0.7rem;
+  border-radius: 16px;
+  background: var(--tint-2);
+}
+.esc-grafica span {
+  flex: 1;
+  height: var(--h);
+  border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, var(--text-strong), var(--tint-6));
+  transform-origin: bottom;
+  transform: scaleY(0);
+  animation: esc-crece 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(0.45s + var(--j) * 0.06s);
+}
+@keyframes esc-crece {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Automatización: chat */
+.esc-burbuja {
+  max-width: 82%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 16px 16px 16px 4px;
+  background: var(--tint-4);
+}
+.esc-burbuja--cliente {
+  align-self: flex-end;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--text-strong);
+  color: var(--bg-color);
+}
+
+/* App: pase con un QR de adorno (sin datos) */
+.esc--tel {
+  border-radius: 34px;
+  padding: 1.2rem 1.1rem 1.1rem;
+}
+.esc-pase {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 18px;
+  background: var(--text-strong);
+  color: var(--bg-color);
+}
+.esc-pase b,
+.esc-pase .esc-tenue {
+  color: var(--bg-color);
+}
+.esc-pase .esc-tenue {
+  opacity: 0.6;
+}
+.esc-qr {
+  width: 3.6rem;
+  height: 3.6rem;
+  padding: 0.25rem;
+  border-radius: 6px;
+  background: var(--text-strong);
+  fill: var(--bg-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esc-fila,
+  .esc-grafica span {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .esc-vivo {
+    animation: none;
+  }
+}
+@media (max-width: 900px) {
+  .esc {
+    font-size: 0.8rem;
+    gap: 0.45rem;
+    padding: 0.85rem;
+  }
+}

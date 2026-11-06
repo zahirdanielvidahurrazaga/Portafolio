@@ -308,3 +308,138 @@
 .footer-redes a:hover {
   border-color: currentColor;
 }
+
+/* ── Contacto v2 (2026-11-06) ── */
+/* ¿Qué sigue? */
+.footer-pasos {
+  list-style: none;
+  margin: 0 0 var(--spacing-8);
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.footer-pasos li {
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
+  font-size: 1.02rem;
+  line-height: 1.4;
+  color: var(--text-color);
+}
+.footer-pasos li span {
+  flex: none;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.footer-wa {
+  display: table; /* en su propio renglón, debajo del correo */
+  margin-top: 0.9rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 2px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.footer-wa:hover {
+  color: var(--text-strong);
+  border-color: var(--text-strong);
+}
+
+/* ¿Qué necesitas? en botones */
+.form-tipos {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.form-tipos legend {
+  padding: 0;
+  margin-bottom: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.form-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.form-chip {
+  position: relative;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  font-size: 0.88rem;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+.form-chip:hover {
+  border-color: var(--text-strong);
+}
+.form-chip.is-on {
+  background: var(--text-strong);
+  border-color: var(--text-strong);
+  color: var(--bg-color);
+}
+/* El radio real queda invisible pero accesible (y con `required` el navegador avisa) */
+.form-chip input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.form-chip:has(input:focus-visible) {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+.form-opcional {
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+/* Confirmación */
+.footer-success-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem 1.4rem;
+  margin-top: var(--spacing-6);
+}
+.footer-success-acciones a,
+.footer-success-acciones button {
+  all: unset;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 2px;
+}
+.footer-success-acciones a:hover,
+.footer-success-acciones button:hover {
+  color: var(--text-strong);
+}
+/* `.form-field label` (mayúsculas espaciadas) le ganaba a .form-chip: más específico aquí */
+.form-tipos .form-chip {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-color);
+}
+.form-tipos .form-chip.is-on {
+  color: var(--bg-color);
+}
+/* El fieldset es el ÚNICO de su tipo → `.form-field:last-of-type` le quitaba el margen
+   y los botones quedaban pegados a "Tu nombre" */
+.form-field.form-tipos {
+  margin-bottom: var(--spacing-8);
+}

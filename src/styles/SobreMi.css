@@ -1,6 +1,6 @@
-/* NOSOTROS (SobreMi.jsx) = "Dos mitades → una app", 2026-10-05.
-   Arriba la declaración; abajo la escena fija donde la nube dibuja las dos
-   mitades (lápiz / </>) y las funde en el teléfono. */
+/* NOSOTROS (SobreMi.jsx) = "Dos mitades, un hilo", 2026-11-06. Bio arriba; las dos
+   mitades del estudio con la ranura del centro por donde baja el hilo; la frase;
+   Misión · Visión · Valores. */
 .sobre-section {
   padding-top: var(--section-pad-y);
 }
@@ -82,112 +82,107 @@
   opacity: 0.7;
 }
 
-/* ── Escena: 2 tramos (mitades, teléfono) + la pantalla fija ── */
-.nos-pista {
-  position: relative;
-  height: calc(100vh + 2 * 95vh);
+/* ── Dos mitades, un hilo (2026-11-06) ── */
+.nos-cuerpo {
+  padding-top: var(--spacing-16);
+  padding-bottom: var(--section-pad-y);
 }
-.nos-escena {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 76px var(--spacing-4) clamp(1rem, 4vh, 2.5rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1rem, 3vh, 2rem);
+.nos-kicker {
+  /* El hilo cruza a lo ancho en este hueco (entre el kicker y las mitades): el
+     kicker queda "parado" sobre él y de ahí baja por la ranura del centro */
+  margin: 0 0 var(--spacing-16);
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
-
-/* Una sola caja para las dos figuras (izquierda / derecha) y, después, para
-   el teléfono centrado. Proporción 1000×480, igual que la forma "mitades". */
-.nos-forma {
-  width: min(100%, 1000px, calc((100svh - 330px) * 2.083));
-  aspect-ratio: 1000 / 480;
-  flex: none;
-}
-
-/* Los dos textos (mitades y frase) ocupan el mismo lugar: se cruzan */
-.nos-textos {
-  display: grid;
-  width: min(100%, 1000px);
-}
-.nos-textos > * {
-  grid-area: 1 / 1;
-}
-
+/* La ranura del centro (columna de 9rem) es por donde baja el hilo: no poner nada ahí */
 .nos-mitades {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-12);
+  grid-template-columns: minmax(0, 1fr) 9rem minmax(0, 1fr);
+}
+.nos-mitad:nth-child(2) {
+  grid-column: 3;
 }
 .nos-mitad {
-  display: grid;
-  grid-template-columns: 2.4rem 1fr;
-  column-gap: var(--spacing-3);
-  padding-top: var(--spacing-4);
+  padding-top: var(--spacing-6);
   border-top: 1px solid var(--border-strong);
 }
 .nos-mitad-num {
-  grid-row: span 2;
+  display: block;
+  margin-bottom: var(--spacing-4);
   font-family: var(--font-display);
   font-style: italic;
+  font-weight: 600;
   font-size: 1.1rem;
   color: var(--text-muted);
 }
-.nos-mitad h3 {
-  margin: 0 0 var(--spacing-2);
-  font-size: 1.35rem;
-  letter-spacing: -0.02em;
+.nos-mitad-titulo {
+  margin: 0 0 var(--spacing-4);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
 }
-.nos-mitad p {
-  margin: 0;
-  color: var(--text-muted);
+.nos-mitad-texto {
+  margin: 0 0 var(--spacing-6);
+  max-width: 40ch;
+  font-size: 1.02rem;
   line-height: 1.55;
-  font-size: 0.98rem;
+  color: var(--text-muted);
 }
-
-.nos-final {
+.nos-mitad-servicios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-3);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.nos-mitad-servicios li {
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  font-size: 0.85rem;
+  color: var(--text-color);
+}
+/* La frase a la que llega el hilo */
+.nos-frase {
+  margin: var(--spacing-24) auto var(--spacing-16);
+  max-width: 18ch;
   text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5.6vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--text-strong);
+  text-wrap: balance;
 }
-.nos-final .interludio-frase {
-  max-width: none;
+.nos-frase em {
+  font-style: italic;
+  color: var(--text-muted);
 }
-
-/* Sin animación */
-.nos-static {
-  padding-top: var(--spacing-12);
-  padding-bottom: var(--section-pad-y);
-}
-.nos-static-frase {
-  margin-top: var(--spacing-12);
-  max-width: none;
-}
-
-@media (max-width: 768px) {
-  .nos-pista {
-    height: calc(100vh + 2 * 80vh);
+@media (max-width: 900px) {
+  .nos-cuerpo {
+    padding-top: var(--spacing-12);
+  }
+  .nos-kicker {
+    text-align: left;
   }
   .nos-mitades {
-    gap: var(--spacing-4);
-  }
-  .nos-mitad {
     grid-template-columns: 1fr;
+    gap: var(--spacing-8);
   }
-  .nos-mitad-num {
-    grid-row: auto;
+  .nos-mitad:nth-child(2) {
+    grid-column: auto;
   }
-  .nos-mitad h3 {
-    font-size: 1.05rem;
-  }
-  .nos-mitad p {
-    display: none; /* en celular no caben: queda el título bajo cada figura */
+  .nos-frase {
+    margin: var(--spacing-16) 0 var(--spacing-12);
+    text-align: left;
   }
 }

@@ -13,6 +13,7 @@ import '../styles/Navbar.css';
 const LINKS = [
   ['about', { es: 'Servicios', en: 'Services' }],
   ['testimonios', { es: 'Testimonios', en: 'Testimonials' }],
+  ['demos', { es: 'Demos', en: 'Demos' }],
   ['portfolio', { es: 'Proyectos', en: 'Work' }],
   ['sobre-mi', { es: 'Nosotros', en: 'About' }],
   ['process', { es: 'Proceso', en: 'Process' }],

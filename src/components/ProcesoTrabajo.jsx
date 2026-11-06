@@ -65,7 +65,7 @@ const ProcesoTrabajo = () => {
   return (
     <section id="process" className="section-container process-section">
       <SectionHead
-        num="06"
+        num="07"
         label={t({ es: 'Proceso', en: 'Process' })}
         lede={t({
           es: (

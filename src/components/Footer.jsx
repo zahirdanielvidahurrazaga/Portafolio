@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SectionHead from './SectionHead';
-import { WHATSAPP, CORREO, REDES } from '../data/contacto';
+import { WHATSAPP, WHATSAPP_VISIBLE, CORREO, REDES } from '../data/contacto';
 import { useLang } from '../lib/LangContext';
 import '../styles/Footer.css';
 
@@ -14,6 +14,8 @@ const TIPO_LABEL = {
   tienda: { es: 'Tienda en línea o punto de venta', en: 'Online store or point of sale' },
   ia: { es: 'Automatización o IA', en: 'Automation or AI' },
   app: { es: 'App o experiencia digital', en: 'App or digital experience' },
+  // Del capítulo Demos: quien solo quiere ver la demo de su giro antes de cotizar
+  demo: { es: 'Ver una demo', en: 'See a demo' },
   otro: { es: 'Otra cosa', en: 'Something else' },
 };
 
@@ -26,21 +28,42 @@ const Footer = () => {
     descripcion: ''
   });
   const [status, setStatus] = useState('idle');
+  const [enlace, setEnlace] = useState(''); // el wa.me que se abrió (respaldo si el navegador lo bloquea)
+  const nombreRef = useRef(null);
+
+  // "Cotizar este servicio" (Servicios.jsx) llega con el tipo ya elegido: el
+  // cliente no tiene que volver a decir qué quiere.
+  useEffect(() => {
+    const onCotizar = (e) => {
+      const tipo = e.detail?.tipo;
+      if (tipo && TIPO_LABEL[tipo]) {
+        setStatus('idle');
+        setFormData((f) => ({ ...f, tipo }));
+        // Ya eligió qué quiere: que escriba su nombre (sin mover la página)
+        setTimeout(() => nombreRef.current?.focus({ preventScroll: true }), 900);
+      }
+    };
+    window.addEventListener('kaizen:cotizar', onCotizar);
+    return () => window.removeEventListener('kaizen:cotizar', onCotizar);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const { nombre, email, tipo, descripcion } = formData;
-    // El mensaje sale en el idioma del sitio (así le llega a KaiZen)
+    // El mensaje sale en el idioma del sitio (así le llega a KaiZen). Correo y
+    // descripción son OPCIONALES (6-nov): cada campo obligatorio de menos es un
+    // prospecto más que termina; el WhatsApp ya da con quién hablar.
     const tipoTxt = TIPO_LABEL[tipo] ? t(TIPO_LABEL[tipo]) : tipo;
-    const msg =
-      lang === 'en'
-        ? `Hi, KaiZen team. I'm ${nombre}.\nProject type: ${tipoTxt}\nEmail: ${email}\n\n${descripcion}`
-        : `Hola, equipo KaiZen. Soy ${nombre}.\nTipo de proyecto: ${tipoTxt}\nCorreo: ${email}\n\n${descripcion}`;
-    window.open(
-      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,
-      '_blank',
-      'noopener'
-    );
+    const en = lang === 'en';
+    const lineas = [
+      en ? `Hi, KaiZen team. I'm ${nombre}.` : `Hola, equipo KaiZen. Soy ${nombre}.`,
+      `${en ? 'I need' : 'Me interesa'}: ${tipoTxt}`,
+      email && `${en ? 'Email' : 'Correo'}: ${email}`,
+      descripcion && `\n${descripcion}`,
+    ].filter(Boolean);
+    const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(lineas.join('\n'))}`;
+    setEnlace(url);
+    window.open(url, '_blank', 'noopener');
     setStatus('success');
     setFormData({ nombre: '', email: '', tipo: '', descripcion: '' });
   };
@@ -52,7 +75,7 @@ const Footer = () => {
 
       <div className="section-container footer-contact">
         <SectionHead
-          num="08"
+          num="09"
           label={t({ es: 'Contacto', en: 'Contact' })}
           lede={t({
             es: 'Cuéntanos tu idea y te respondemos en menos de 24 horas.',
@@ -65,13 +88,27 @@ const Footer = () => {
         <div className="footer-grid">
           {/* Columna izquierda: contacto directo */}
           <div className="footer-direct">
+            {/* ¿Qué sigue? — quita la duda de "y luego qué pasa" justo antes de escribir */}
+            <p className="footer-direct-label">{t({ es: '¿Qué sigue?', en: 'What happens next?' })}</p>
+            <ol className="footer-pasos">
+              {[
+                { es: 'Te respondemos en menos de 24 horas.', en: 'We reply within 24 hours.' },
+                { es: 'Platicamos 15 minutos y te enseñamos la demo de tu giro.', en: 'A 15-minute call where we show you the demo for your industry.' },
+                { es: 'Te mandamos la propuesta por escrito: alcance, tiempos y costo.', en: 'We send a written proposal: scope, timeline and cost.' },
+              ].map((x, i) => (
+                <li key={i}>
+                  <span>{String(i + 1).padStart(2, '0')}</span>
+                  {t(x)}
+                </li>
+              ))}
+            </ol>
             <p className="footer-direct-label">{t({ es: 'Escríbenos directo', en: 'Email us' })}</p>
             <a href={`mailto:${CORREO}`} className="footer-mail">
               {CORREO}
             </a>
-            <p className="footer-direct-note">
-              {t({ es: '¿Prefieres WhatsApp? Toca el botón de la esquina.', en: 'Prefer WhatsApp? Tap the button in the corner.' })}
-            </p>
+            <a className="footer-wa" href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noopener noreferrer">
+              WhatsApp · {WHATSAPP_VISIBLE} <span aria-hidden="true">↗</span>
+            </a>
             <p className="footer-direct-label footer-redes-label">{t({ es: 'Síguenos', en: 'Follow us' })}</p>
             <nav className="footer-redes" aria-label={t({ es: 'Redes sociales', en: 'Social media' })}>
               {REDES.map(([nombre, url]) => (
@@ -85,35 +122,68 @@ const Footer = () => {
           <div className="footer-form-card">
 
             {status === 'success' ? (
-              <div className="footer-success">
+              <div className="footer-success" role="status">
                 <div className="success-icon">✓</div>
-                <h3>{t({ es: '¡Mensaje listo en WhatsApp!', en: 'Your message is ready in WhatsApp!' })}</h3>
+                <h3>{t({ es: '¡Tu mensaje está listo en WhatsApp!', en: 'Your message is ready in WhatsApp!' })}</h3>
                 <p>
                   {t({
-                    es: 'Solo dale enviar en el chat y te respondemos en menos de 24 horas.',
-                    en: 'Just hit send in the chat and we’ll reply within 24 hours.',
+                    es: 'Solo dale enviar en el chat. Te respondemos en menos de 24 horas.',
+                    en: 'Just hit send in the chat. We’ll reply within 24 hours.',
                   })}
                 </p>
+                <div className="footer-success-acciones">
+                  <a href={enlace} target="_blank" rel="noopener noreferrer">
+                    {t({ es: '¿No se abrió? Toca aquí', en: 'Didn’t open? Tap here' })} ↗
+                  </a>
+                  <button type="button" onClick={() => setStatus('idle')}>
+                    {t({ es: 'Escribir otro mensaje', en: 'Write another message' })}
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
+                <fieldset className="form-field form-tipos">
+                  <legend>{t({ es: '¿Qué necesitas?', en: 'What do you need?' })}</legend>
+                  <div className="form-chips">
+                    {Object.entries(TIPO_LABEL).map(([valor, texto]) => (
+                      <label key={valor} className={`form-chip${formData.tipo === valor ? ' is-on' : ''}`}>
+                        <input
+                          type="radio"
+                          name="tipo"
+                          value={valor}
+                          required
+                          checked={formData.tipo === valor}
+                          onChange={set('tipo')}
+                        />
+                        {t(texto)}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
                 <div className="form-row">
                   <div className="form-field">
-                    <label>{t({ es: 'Nombre completo', en: 'Full name' })}</label>
+                    <label htmlFor="f-nombre">{t({ es: 'Tu nombre', en: 'Your name' })}</label>
                     <input
+                      id="f-nombre"
+                      ref={nombreRef}
                       type="text"
-                      placeholder={t({ es: 'Tu nombre', en: 'Your name' })}
+                      autoComplete="name"
+                      placeholder={t({ es: 'Nombre y negocio', en: 'Name and business' })}
                       required
                       value={formData.nombre}
                       onChange={set('nombre')}
                     />
                   </div>
                   <div className="form-field">
-                    <label>{t({ es: 'Correo electrónico', en: 'Email' })}</label>
+                    <label htmlFor="f-correo">
+                      {t({ es: 'Correo', en: 'Email' })} <span className="form-opcional">{t({ es: '(opcional)', en: '(optional)' })}</span>
+                    </label>
                     <input
+                      id="f-correo"
                       type="email"
+                      autoComplete="email"
                       placeholder={t({ es: 'tu@email.com', en: 'you@email.com' })}
-                      required
                       value={formData.email}
                       onChange={set('email')}
                     />
@@ -121,27 +191,16 @@ const Footer = () => {
                 </div>
 
                 <div className="form-field">
-                  <label>{t({ es: '¿Qué tipo de proyecto tienes?', en: 'What kind of project do you have?' })}</label>
-                  <div className="form-select-wrap">
-                    <select required value={formData.tipo} onChange={set('tipo')}>
-                      <option value="" disabled>{t({ es: 'Selecciona una opción', en: 'Choose an option' })}</option>
-                      {Object.entries(TIPO_LABEL).map(([valor, texto]) => (
-                        <option key={valor} value={valor}>{t(texto)}</option>
-                      ))}
-                    </select>
-                    <span className="select-arrow">↓</span>
-                  </div>
-                </div>
-
-                <div className="form-field">
-                  <label>{t({ es: 'Cuéntanos sobre tu proyecto', en: 'Tell us about your project' })}</label>
+                  <label htmlFor="f-desc">
+                    {t({ es: 'Cuéntanos un poco', en: 'Tell us a bit' })} <span className="form-opcional">{t({ es: '(opcional)', en: '(optional)' })}</span>
+                  </label>
                   <textarea
+                    id="f-desc"
                     placeholder={t({
-                      es: 'Describe brevemente qué quieres construir, para cuándo lo necesitas y cualquier detalle relevante...',
-                      en: 'Briefly describe what you want to build, when you need it and any relevant details...',
+                      es: 'Qué tienes en mente, para cuándo lo necesitas…',
+                      en: 'What you have in mind, when you need it…',
                     })}
-                    rows="5"
-                    required
+                    rows="3"
                     value={formData.descripcion}
                     onChange={set('descripcion')}
                   />

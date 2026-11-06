@@ -9,140 +9,171 @@
   padding-bottom: 0;
 }
 
-.tv-cuenta {
-  margin: 0 0 var(--spacing-4);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
-}
-
-/* ════════ 01 · Testimonio en video: la tarjeta crece con el scroll ════════ */
-.tv {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: var(--spacing-12) var(--spacing-4) var(--spacing-16);
+/* ════════ CASOS (2026-11-06): una tarjeta por cliente, lado a lado ════════ */
+.casos {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: var(--spacing-12);
-  border-top: 1px solid var(--border-strong);
-  margin-top: var(--spacing-12);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--spacing-6);
+  padding-top: var(--spacing-12);
+  padding-bottom: var(--section-pad-y);
+  align-items: stretch;
 }
-.tv-nombre {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-style: italic;
-  font-size: clamp(3rem, 8vw, 7.5rem);
-  line-height: 0.9;
-  letter-spacing: -0.05em;
-  color: var(--text-strong);
+/* Con más de dos clientes: fila que se desliza con snap */
+.casos--carrusel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 }
-.tv-giro {
-  margin: var(--spacing-4) 0 var(--spacing-8);
-  max-width: 34ch;
-  color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.5;
+.casos--carrusel::-webkit-scrollbar {
+  display: none;
 }
-.tv-cta {
-  all: unset;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-  padding-bottom: 4px;
-  border-bottom: 1px solid currentColor;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-color);
-}
-.tv-cta:hover {
-  opacity: 0.7;
-}
-.tv-cta:focus-visible {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 4px;
+.casos--carrusel > .caso {
+  flex: 0 0 min(560px, 86%);
+  scroll-snap-align: start;
 }
 
-/* El video (9:16, grabado en celular) a su tamaño final; el scroll lo escala
-   desde ~0.55 (el tamaño de antes) hasta 1. */
-.tv-video {
+.caso {
+  margin: 0;
+  display: flex;
+  gap: var(--spacing-6);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  background: linear-gradient(180deg, var(--tint-2), transparent 70%);
+}
+.caso-cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+  flex: 1;
+}
+.caso-cuenta {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Video vertical: vista previa muda, tocar = lightbox con sonido */
+.caso-video {
+  all: unset;
   position: relative;
-  display: block;
-  /* Que quepa entera con la barra encima, aun en laptops bajas */
-  height: min(calc(100svh - 160px), 600px);
+  flex: 0 0 auto;
+  width: clamp(180px, 38%, 260px);
   aspect-ratio: 9 / 16;
-  padding: 0;
-  border: none;
   border-radius: 22px;
   overflow: hidden;
-  background: #000;
   cursor: pointer;
-  box-shadow: var(--shadow-xl);
-  transform-origin: center center;
-  will-change: transform;
+  background: #000;
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
 }
-.tv-video img,
-.tv-video video {
+.caso-video img,
+.caso-video video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.tv-video:focus-visible {
+.caso-video:focus-visible {
   outline: 2px solid var(--accent-color);
-  outline-offset: 6px;
+  outline-offset: 4px;
 }
-.tv-video:hover .testimonio-video-play::before {
-  background: rgba(255, 255, 255, 0.26);
-  transform: scale(1.08);
-}
-
-/* ════════ 02 · Cita que se lee con el scroll ════════ */
-.tc {
-  position: relative;
-  height: 230vh; /* pista: la escena se queda fija mientras se lee */
+.caso-voz {
   margin: 0;
-}
-.tc-escena {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 60px var(--spacing-4) 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-top: 1px solid var(--border-strong);
-}
-.tc-cita {
-  margin: 0 0 var(--spacing-8);
-  max-width: 26ch;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(2rem, min(5.2vw, 8vh), 5rem);
-  line-height: 1.02;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  line-height: 1.05;
   letter-spacing: -0.04em;
   color: var(--text-strong);
 }
-.tc-cita::before {
-  content: '“';
+.caso-voz em,
+.caso-cita em {
   color: var(--text-muted);
 }
-.tc--static {
-  height: auto;
+.caso-play {
+  all: unset;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  font-size: 0.88rem;
+  color: var(--text-strong);
+  cursor: pointer;
+  transition: background 0.25s ease;
 }
-.tc--static .tc-escena {
-  position: relative;
-  height: auto;
-  padding: var(--spacing-12) var(--spacing-4) var(--section-pad-y);
+.caso-play:hover,
+.caso-play:focus-visible {
+  background: var(--tint-3);
+}
+
+/* Cita que se lee con el scroll (cada palabra pasa de tenue a tinta) */
+.caso-cita {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.45rem, 2.2vw, 2.05rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  text-wrap: pretty;
+}
+.caso-comilla {
+  display: block;
+  font-size: 3.2em;
+  line-height: 0.6;
+  height: 0.42em;
+  color: var(--text-muted);
+}
+
+/* Qué cambió: la prueba, al pie de cada tarjeta */
+.caso-cambio {
+  margin-top: auto;
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border-color);
+}
+.caso-cambio-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.caso-cambio-texto {
+  margin: 0 0 0.8rem;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+.caso-link {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 2px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.caso-link:hover,
+.caso-link:focus-visible {
+  color: var(--text-strong);
+  border-color: var(--text-strong);
+}
+.caso .testimonio-author {
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .testimonio-author {
@@ -279,17 +310,26 @@
 }
 
 
-@media (max-width: 768px) {
-  .tv {
+@media (max-width: 900px) {
+  .casos {
     grid-template-columns: 1fr;
-    justify-items: start;
-    gap: var(--spacing-8);
+    gap: var(--spacing-4);
   }
-  .tv-video {
-    justify-self: center;
-    height: min(68vh, 560px);
+  .caso {
+    flex-direction: column;
+    padding: var(--spacing-4);
   }
-  .tc {
-    height: 200vh;
+  /* En celular un 9:16 a lo ancho mide más que la pantalla: se recorta a 4:5 */
+  .caso--video .caso-video {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: 62vh;
+  }
+  .caso-voz {
+    font-size: 1.55rem;
+  }
+  .caso-cita {
+    font-size: 1.35rem;
   }
 }
+

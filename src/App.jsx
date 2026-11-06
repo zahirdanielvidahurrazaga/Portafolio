@@ -15,6 +15,8 @@ import HeroRibbon from './components/HeroRibbon';
 import DiagonalReveal from './components/DiagonalReveal';
 import Nube from './components/Nube';
 import Interludio from './components/Interludio';
+import Hilo from './components/Hilo';
+import Demos from './components/Demos';
 import { useSmoothScroll } from './lib/useSmoothScroll';
 import { useLang } from './lib/LangContext';
 
@@ -46,6 +48,8 @@ function App() {
       <HeroRibbon />
       {/* La nube de partículas: toma el relevo de la cinta y se arma en cada Interludio */}
       <Nube />
+      {/* El hilo: lo que queda de la cinta tras el telón; recorre la página hasta la Κ */}
+      <Hilo />
       
       {/* Background Effect */}
       <motion.div 
@@ -68,6 +72,9 @@ function App() {
         <Hero />
         <Servicios />
         <Testimonios />
+        {/* "Pruébalo antes de tenerlo": quita el miedo a pagar sin ver; luego
+            Proyectos prueba que entregan */}
+        <Demos />
         <PortafolioShowcase />
         {/* Corte diagonal al entrar (estilo Lusion). Solo en dos secciones: en
             todas se volvería tic y dejaría de notarse. */}
@@ -82,6 +89,7 @@ function App() {
         <Faq />
         <Interludio
           forma="k"
+          origen="hilo"
           kicker={t({ es: 'Tu turno', en: 'Your turn' })}
           fallback={<FallbackK />}
           extra={
