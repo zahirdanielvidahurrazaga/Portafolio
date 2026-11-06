@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import KaizenWordmark from './KaizenWordmark';
 import { useLang } from '../lib/LangContext';
@@ -40,8 +40,8 @@ const FRASE = {
 };
 const CABECERA = { es: ['Marca · Redes · Web · Apps', 'Nº 01 — 2026'], en: ['Brand · Social · Web · Apps', 'No. 01 — 2026'] };
 const BOTONES = {
-  es: ['Cuéntanos tu proyecto', 'Ver proyectos'],
-  en: ['Tell us about your project', 'See our work'],
+  es: ['Cuéntanos tu proyecto', 'Ver demos'],
+  en: ['Tell us about your project', 'See demos'],
 };
 const SALIDA = [0.9, 0.98];
 // Antes de esto se calcula la ENTRADA de cada pieza; después, su salida
@@ -114,7 +114,7 @@ const Hero = () => {
             </h1>
             <div className="hero-actions">
               <a href="#contact" className="btn-metallic btn-large">{boton1}</a>
-              <a href="#portfolio" className="btn-secondary btn-large">{boton2}</a>
+              <a href="#demos" className="btn-secondary btn-large">{boton2}</a>
             </div>
           </div>
         </div>
@@ -140,9 +140,14 @@ const Hero = () => {
           </div>
           <p className="interludio-frase" aria-label={frase.join(' ')}>
             {frase.map((w, i) => (
-              <PalabraFrase key={`${lang}-${w}`} p={p} i={i} total={frase.length}>
+              <Fragment key={`${lang}-${w}`}>
+              {/* En pantallas angostas la frase se parte POR SENTIDO ("Pequeñas mejoras," /
+                  "todos los días.") y no donde caiga ("…todos los / días.") */}
+              {i === desdeEm && <span className="hk-salto" aria-hidden="true" />}
+              <PalabraFrase p={p} i={i} total={frase.length}>
                 {i >= desdeEm ? <em>{w}</em> : w}
               </PalabraFrase>
+              </Fragment>
             ))}
           </p>
           <motion.p className="interludio-desliza" style={{ opacity: kicker }}>
@@ -180,7 +185,7 @@ const Hero = () => {
             style={{ opacity: acciones, y: accionesY, pointerEvents: accionesEventos }}
           >
             <a href="#contact" className="btn-metallic btn-large">{boton1}</a>
-            <a href="#portfolio" className="btn-secondary btn-large">{boton2}</a>
+            <a href="#demos" className="btn-secondary btn-large">{boton2}</a>
           </motion.div>
         </div>
       </div>
