@@ -10,6 +10,8 @@
   inset: 0;
   width: 100vw;
   height: 100vh;
+  /* alto con la barra del navegador escondida: no cambia al deslizar (ver lib/viewport.js) */
+  height: 100lvh;
   pointer-events: none;
   opacity: 0;
   transition: opacity 1.2s ease;

@@ -6,6 +6,10 @@ import { RELEVO } from '../lib/cintaPuente';
 import '../styles/Hero.css';
 import '../styles/Interludio.css';
 
+// En celular el blur animado por palabra (repinta en cada cuadro) trababa el
+// hero; ahí la frase se va solo con movimiento y opacidad.
+const CON_BLUR = typeof window !== 'undefined' && !window.matchMedia('(pointer: coarse)').matches;
+
 /**
  * APERTURA + HERO = UN SOLO ESCENARIO FIJO (modo presentación, como lusion.co).
  * Nada "sube": la sección mide ~5 pantallas, el escenario se queda pegado y el
@@ -75,8 +79,9 @@ function PalabraFrase({ p, i, total, children }) {
   const skewX = useTransform(p, (v) => -lado * 14 * t(v));
   const opacity = useTransform(p, (v) => 1 - t(v));
   const filter = useTransform(p, (v) => `blur(${t(v) * 8}px)`);
+  const style = CON_BLUR ? { y, x, rotate, skewX, opacity, filter } : { y, x, rotate, skewX, opacity };
   return (
-    <motion.span className="hero-kaizen-w" style={{ y, x, rotate, skewX, opacity, filter }}>
+    <motion.span className="hero-kaizen-w" style={style}>
       {children}
     </motion.span>
   );

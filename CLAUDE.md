@@ -163,6 +163,23 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
       Descartados: túnel de colores y stickers 3D (no van con mármol / pesan mucho).
 - [x] ~~Nombre en `<title>`, metas, Sobre mí, footer, favicon/logo e imagen OG~~ — hecho (OG v3, 2026-10-05).
 
+## Rendimiento al cargar (8-nov-2026)
+Zahir: "en teléfonos se traba el hero" / "tarda demasiado en cargar". Medido con la build servida (`vite preview`) y
+`long-animation-frame` en Chrome; resultado en la Mac: primer pintado 0.06 s, 3D listo 0.20 s (antes 0.37), se puede
+deslizar a 2.1 s (antes 3.2), sin cuadros largos durante la intro.
+- **Pantalla de carga** `#carga` (inline en index.html, Κ que se dibuja + riel) → `src/lib/carga.js` la quita cuando
+  `nube`, `cinta` y `fuentes` avisan (`cargado()`, deja `performance.mark('carga:…')` para medir); tope 9 s. El reloj
+  de la intro de la nube (`INTRO`, ahora 0.6/1.5/2.0 s) arranca al quitarse. three.js se pide desde main.jsx.
+- **Shaders precompilados** (`renderer.compile`) en nube y cinta: antes la cinta compilaba al nacer, a media apertura.
+- **Canvas estables en celular** (`src/lib/viewport.js`): miden 100lvh y solo se redimensionan si cambia el ancho o
+  ese alto; la barra del navegador que sube/baja al deslizar re-alocaba los 3 lienzos (el tirón del hero). Cinta en
+  celular: DPR 1.25, menos segmentos, sin clearcoat. La frase de apertura sin `blur` animado en táctil.
+- **Carga en dos partes**: todo lo de debajo de Servicios va en `Resto.jsx` (React.lazy; Servicios se queda porque la
+  cinta sale rumbo a su título). OJO: lo que busque elementos de Resto al montar debe buscarlos tarde (el Hilo busca
+  `.interludio--k` en cada cuadro hasta encontrarla — Codex lo cachó: la Κ final no se armaba).
+- **Hilo** se arma después de la intro y en un momento libre (`requestIdleCallback`): medir la página son ~150 ms.
+- **Fuentes de Google sin bloquear** (`media="print"` + onload); main.jsx espera la hoja y luego las caras del hero.
+
 ## Stack y despliegue
 - **React 19 + Vite 8**, Framer Motion, lucide-react.
 - **Dominio: `kaizenstudiomx.com`** (comprado en Cloudflare Registrar el 2026-10-05, renueva sola ~$10.46/año) +

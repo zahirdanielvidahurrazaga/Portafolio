@@ -1,32 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Servicios from './components/Servicios';
-import SobreMi from './components/SobreMi';
-import PortafolioShowcase from './components/PortafolioShowcase';
-import Testimonios from './components/Testimonios';
-import ProcesoTrabajo from './components/ProcesoTrabajo';
-import Faq from './components/Faq';
-import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import BarraScroll from './components/BarraScroll';
 import HeroRibbon from './components/HeroRibbon';
-import DiagonalReveal from './components/DiagonalReveal';
 import Nube from './components/Nube';
-import Interludio from './components/Interludio';
 import Hilo from './components/Hilo';
-import Demos from './components/Demos';
 import { useSmoothScroll } from './lib/useSmoothScroll';
 import { useLang } from './lib/LangContext';
 
-// Respaldo del interludio final (sin WebGL o con reduced-motion): la misma forma en trazo
-const FallbackK = () => (
-  <svg viewBox="0 0 100 100" fill="none" stroke="currentColor">
-    <rect x="2" y="2" width="96" height="96" rx="22" strokeWidth="3" />
-    <path d="M33 27V73 M66 27 38 52 M48 44 68 73" strokeWidth="11" />
-  </svg>
-);
+// Lo que va debajo de Servicios llega en un segundo archivo (ver Resto.jsx)
+const Resto = lazy(() => import('./components/Resto'));
+const Pie = lazy(() => import('./components/Resto').then((m) => ({ default: m.Pie })));
 
 function App() {
   useSmoothScroll();
@@ -71,38 +58,14 @@ function App() {
             y espaciados, o el sitio se vuelve un trámite. */}
         <Hero />
         <Servicios />
-        <Testimonios />
-        {/* "Pruébalo antes de tenerlo": quita el miedo a pagar sin ver; luego
-            Proyectos prueba que entregan */}
-        <Demos />
-        <PortafolioShowcase />
-        {/* Corte diagonal al entrar (estilo Lusion). Solo en dos secciones: en
-            todas se volvería tic y dejaría de notarse. */}
-        <DiagonalReveal>
-          <SobreMi />
-        </DiagonalReveal>
-        {/* (El teléfono "De una idea a tu bolsillo" ahora vive dentro de Nosotros:
-            las dos mitades del estudio se funden en él. Ver SobreMi.jsx.) */}
-        <DiagonalReveal>
-          <ProcesoTrabajo />
-        </DiagonalReveal>
-        <Faq />
-        <Interludio
-          forma="k"
-          origen="hilo"
-          kicker={t({ es: 'Tu turno', en: 'Your turn' })}
-          fallback={<FallbackK />}
-          extra={
-            <a href="#contact" className="btn-metallic btn-large">
-              {t({ es: 'Cuéntanos tu proyecto', en: 'Tell us about your project' })}
-            </a>
-          }
-        >
-          {t({ es: <>¿<em>Empezamos</em>?</>, en: <>Shall we <em>start</em>?</> })}
-        </Interludio>
+        <Suspense fallback={null}>
+          <Resto />
+        </Suspense>
       </main>
 
-      <Footer />
+      <Suspense fallback={null}>
+        <Pie />
+      </Suspense>
       <FloatingWhatsApp />
       <BarraScroll />
     </div>

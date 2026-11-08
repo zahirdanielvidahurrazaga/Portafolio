@@ -11,9 +11,20 @@
          nuevo. Si algún día se rediseña el ícono, SUBIR ESTE NÚMERO. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fuentes SIN bloquear el primer pintado: con rel=stylesheet normal, en el
+         celular ni la pantalla de carga salía hasta que respondía Google. Se
+         cargan como "print" y al llegar pasan a "all"; la pantalla de carga
+         (src/lib/carga.js) espera a document.fonts.ready antes de irse. -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=3" />
@@ -86,7 +97,7 @@
         // PANTALLA DE CARGA: al abrir solo se ven las partículas; la nube
         // (src/lib/nube.js) quita 'intro' cuando ya armó ΚΛΙΖΣΝ. Siempre se
         // empieza arriba (sin restaurar el scroll). No aplica si se llega con
-        // #ancla, con reduced-motion ni fuera de la portada. Respaldo: se quita sola a los 6 s por si
+        // #ancla, con reduced-motion ni fuera de la portada. Respaldo: se quita sola a los 13 s por si
         // el 3D no carga.
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         // Solo en la portada: las páginas legales no tienen nube que la quite.
@@ -109,9 +120,10 @@
           ['wheel', 'touchmove', 'keydown'].forEach(function (tipo) {
             window.addEventListener(tipo, bloquea, { passive: false, capture: true });
           });
+          // (la pantalla de carga se va a más tardar a los 9 s y la intro dura ~3 s)
           setTimeout(function () {
             document.documentElement.classList.remove('intro');
-          }, 6000);
+          }, 13000);
         }
       })();
     </script>
@@ -125,9 +137,71 @@
         background-color: #ffffff;
         color: #1d1d1f;
       }
+      /* PANTALLA DE CARGA (src/lib/carga.js la quita cuando el 3D y las fuentes
+         están listos). Va aquí, en línea, para que se vea desde el primer
+         instante, antes de que baje cualquier JavaScript. */
+      #carga {
+        display: none;
+      }
+      html.intro #carga {
+        --tinta: #ece8df;
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        background: #000;
+        color: var(--tinta);
+        transition: opacity 0.8s ease, visibility 0.8s;
+      }
+      html[data-theme='light'].intro #carga {
+        --tinta: #1d1d1f;
+        background: #fff;
+      }
+      #carga.is-fuera {
+        opacity: 0;
+        visibility: hidden;
+      }
+      #carga svg {
+        width: 54px;
+        height: 54px;
+      }
+      #carga path {
+        stroke-dasharray: 160;
+        stroke-dashoffset: 160;
+        animation: carga-trazo 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+      }
+      #carga .carga-riel {
+        width: 120px;
+        height: 1px;
+        background: color-mix(in srgb, var(--tinta) 18%, transparent);
+        overflow: hidden;
+      }
+      #carga .carga-riel i {
+        display: block;
+        height: 100%;
+        background: var(--tinta);
+        transform-origin: left;
+        transform: scaleX(calc(0.08 + 0.92 * var(--p, 0)));
+        transition: transform 0.6s ease;
+      }
+      @keyframes carga-trazo {
+        0% { stroke-dashoffset: 160; }
+        45%, 60% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: -160; }
+      }
     </style>
   </head>
   <body>
+    <div id="carga" aria-hidden="true">
+      <svg viewBox="20 20 60 60" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="miter">
+        <path d="M33 27V73 M66 27 38 52 M48 44 68 73" />
+      </svg>
+      <div class="carga-riel"><i></i></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

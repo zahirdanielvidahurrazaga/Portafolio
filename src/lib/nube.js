@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { cinta, RELEVO, fase } from './cintaPuente';
 import { hilo, suelta } from './hiloPuente';
+import { medidaEstable, alRedimensionar } from './viewport';
+import { cargaLista } from './carga';
 
 /**
  * LA NUBE: un solo sistema de partículas, fijo detrás de todo el sitio, que
@@ -36,7 +38,8 @@ const TONOS = {
 };
 
 // Pantalla de carga (segundos desde que arranca la nube)
-const INTRO = { nube: 1.3, armado: 1.8, listo: 2.9 };
+// (8-nov: de 2.9 s a 2.0 s: en el celular, sumada a la descarga, se sentía que no cargaba)
+const INTRO = { nube: 0.6, armado: 1.5, listo: 2.0 };
 
 const smooth = (x) => x * x * (3 - 2 * x);
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
@@ -385,8 +388,7 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   }
   renderer.setClearColor(0x000000, 0);
 
-  let vw = window.innerWidth;
-  let vh = window.innerHeight;
+  let { w: vw, h: vh } = medidaEstable();
   const movil = vw < 768;
   // Celular: 5000 (antes 3200 y las figuras se veían ralas). Un teléfono actual
   // mueve esto sin problema: el cálculo es lineal y solo corre con forma en pantalla.
@@ -478,8 +480,7 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   setTheme(theme);
 
   const resize = () => {
-    vw = window.innerWidth;
-    vh = window.innerHeight;
+    ({ w: vw, h: vh } = medidaEstable());
     // Resolución real de la pantalla (iPhone = 3×). Con tope en 2 el lienzo se
     // estiraba 1.5× y las partículas se veían borrosas en el celular.
     const pr = Math.min(window.devicePixelRatio || 1, 3);
@@ -493,7 +494,7 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     camera.updateProjectionMatrix();
   };
   resize();
-  window.addEventListener('resize', resize);
+  const quitarResize = alRedimensionar(resize);
 
   // Estaciones: se leen del DOM. data-nube = una forma, o varias separadas por
   // coma (modo "secuencia": se transforman una en otra SIN explotar, ver
@@ -610,11 +611,15 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   let limpio = false; // ya se borró el canvas (no hay nada que dibujar)
 
   let raf = 0;
-  const t0 = performance.now();
+  // El reloj de la intro arranca cuando se va la pantalla de carga (lib/carga.js)
+  let t0 = null;
+  // Compilar el shader ahora, detrás de la pantalla de carga, y no en el primer cuadro
+  renderer.compile(scene, camera);
 
   const frame = (now) => {
     raf = requestAnimationFrame(frame);
-    if (document.hidden) return;
+    if (document.hidden || !cargaLista()) return;
+    if (t0 === null) t0 = now;
     const t = (now - t0) / 1000;
     if (introPendiente && t >= INTRO.listo) {
       introPendiente = false;
@@ -625,7 +630,9 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     const M = est ? est.pts.length / 2 : 0;
     const MB = est && est.ptsB ? est.ptsB.length / 2 : 0;
     // Sin forma en pantalla no hay nada que ver: no se calcula ni se dibuja
-    if (!est || M === 0) {
+    // Ya cruzó a la cinta: las partículas de la apertura están apagadas (al × (1 − cruce)),
+    // no tiene caso calcular 5000 posiciones por cuadro mientras se arma el titular
+    if (!est || M === 0 || (est.st.apertura && est.cruce >= 1)) {
       if (!limpio) {
         renderer.clear();
         limpio = true;
@@ -770,7 +777,7 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
       cancelAnimationFrame(raf);
       mo.disconnect();
       clearTimeout(releer);
-      window.removeEventListener('resize', resize);
+      quitarResize();
       geo.dispose();
       material.dispose();
       renderer.dispose();

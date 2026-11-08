@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { useTheme } from '../lib/ThemeContext';
+import { cargado } from '../lib/carga';
 
 /**
  * Canvas fijo de LA NUBE (ver lib/nube.js). Igual que la cinta, three.js se
@@ -17,6 +18,7 @@ export default function Nube() {
 
   useEffect(() => {
     if (reduced) {
+      cargado('nube');
       document.documentElement.classList.remove('intro');
       return undefined;
     }
@@ -24,6 +26,7 @@ export default function Nube() {
     import('../lib/nube').then(({ createNube }) => {
       if (cancelled || !ref.current) return;
       instRef.current = createNube(ref.current, { theme: themeRef.current });
+      cargado('nube');
       if (instRef.current) document.body.classList.add('nube-on');
       // Sin WebGL no hay pantalla de carga que esperar
       else document.documentElement.classList.remove('intro');

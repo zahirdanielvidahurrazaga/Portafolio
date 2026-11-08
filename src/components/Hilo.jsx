@@ -3,6 +3,7 @@ import { useReducedMotion } from 'framer-motion';
 import { useLang } from '../lib/LangContext';
 import { hilo as puente, SUELTA } from '../lib/hiloPuente';
 import '../styles/Hilo.css';
+import { alRedimensionar } from '../lib/viewport';
 
 /**
  * EL HILO KAIZEN (2026-11-06). Lo que queda de la cinta después del telón: un
@@ -254,8 +255,11 @@ export default function Hilo() {
 
     // CIERRE: progreso del estallido según la escena de la Κ (misma pista que
     // usa la nube). Arranca cuando la punta ya llegó a su lugar.
-    const kEl = document.querySelector('.interludio--k');
+    // Se busca cada vez (y se guarda al encontrarla): esa escena llega después,
+    // con el resto de la página (Resto.jsx, carga en dos partes)
+    let kEl = null;
     const estallidoEn = () => {
+      if (!kEl?.isConnected) kEl = document.querySelector('.interludio--k');
       if (!kEl || reduced) return 0;
       const r = kEl.getBoundingClientRect();
       const q = -r.top / Math.max(1, r.height - window.innerHeight);
@@ -315,22 +319,45 @@ export default function Hilo() {
       if (!raf) raf = requestAnimationFrame(pintar);
     };
     let t = 0;
+    let vivo = true;
+    let esperaIntro = null;
+    // Armar el hilo mide TODA la página (~150 ms en la Mac, varias veces eso en
+    // un celular). No se ve hasta pasar el hero, así que espera a que termine la
+    // intro y a un momento libre: antes caía justo mientras las partículas
+    // armaban ΚΛΙΖΣΝ y la intro daba tirones.
     const reconstruir = () => {
       clearTimeout(t);
-      t = setTimeout(construir, 120);
+      const raiz = document.documentElement;
+      if (raiz.classList.contains('intro')) {
+        if (!esperaIntro) {
+          esperaIntro = new MutationObserver(() => {
+            if (raiz.classList.contains('intro')) return;
+            esperaIntro.disconnect();
+            esperaIntro = null;
+            reconstruir();
+          });
+          esperaIntro.observe(raiz, { attributes: true, attributeFilter: ['class'] });
+        }
+        return;
+      }
+      const armar = () => { if (vivo) construir(); };
+      t = setTimeout(() => (window.requestIdleCallback ? requestIdleCallback(armar, { timeout: 1000 }) : armar()), 120);
     };
 
-    construir();
+    reconstruir();
     const ro = new ResizeObserver(reconstruir);
     ro.observe(document.body);
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', reconstruir);
+    // La barra del navegador del celular dispara resize al deslizar: se ignora
+    const quitarResize = alRedimensionar(reconstruir);
     return () => {
+      vivo = false;
       clearTimeout(t);
+      esperaIntro?.disconnect();
       cancelAnimationFrame(raf);
       ro.disconnect();
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', reconstruir);
+      quitarResize();
       for (const l of luces) l.el.classList.remove('hilo-on');
     };
   }, [reduced, lang]);

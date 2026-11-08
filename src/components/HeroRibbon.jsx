@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../lib/ThemeContext';
+import { cargado } from '../lib/carga';
 import '../styles/HeroRibbon.css';
 
 /**
@@ -29,6 +30,7 @@ export default function HeroRibbon() {
       // mismo escenario del hero. Con reduced-motion no existe → nace sólida.
       const openEl = document.querySelector('[data-nube-modo="apertura"]');
       if (cancelled || !backRef.current || !frontRef.current || !heroEl || !nextEl) {
+        if (!cancelled) cargado('cinta');
         return;
       }
       instRef.current = createHeroRibbon(backRef.current, frontRef.current, {
@@ -38,6 +40,7 @@ export default function HeroRibbon() {
         openEl,
         onVisible: setInRange,
       });
+      cargado('cinta');
       if (instRef.current) setReady(true);
     });
     return () => {

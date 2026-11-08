@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { cinta, RELEVO, fase, progresoApertura } from './cintaPuente';
+import { medidaEstable, alRedimensionar, movil } from './viewport';
 
 /**
  * Cinta 3D del hero (inspirada en el tubo de lusion.co).
@@ -96,7 +97,9 @@ export function createHeroRibbon(
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
   camera.position.z = CAM_Z;
 
-  const material = new THREE.MeshPhysicalMaterial({ clearcoat: 1, clearcoatRoughness: 0.08 });
+  // Celular: sin la capa de barniz (clearcoat), que casi duplica el costo del
+  // shader a pantalla completa; el metal y sus reflejos se quedan
+  const material = new THREE.MeshPhysicalMaterial({ clearcoat: movil ? 0 : 1, clearcoatRoughness: 0.08 });
   const setTheme = (t) => {
     const p = TONOS[t] || TONOS.dark;
     material.color.set(p.color);
@@ -120,10 +123,11 @@ export function createHeroRibbon(
   let radius = 0.16;
 
   const resize = () => {
-    vw = window.innerWidth || 1;
-    vh = window.innerHeight || 1;
+    ({ w: vw, h: vh } = medidaEstable());
     for (const { renderer } of layers) {
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+      // Celular: el metal con clearcoat a pantalla completa, dos veces por
+      // cuadro, es lo más caro del hero → tope 1.25 (a esa densidad no se nota)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, movil ? 1.25 : 1.75));
       renderer.setSize(vw, vh, false);
     }
     camera.aspect = vw / vh;
@@ -198,6 +202,7 @@ export function createHeroRibbon(
   };
 
   let born = 1;
+  let bornCss = '';
   let grosor = radius;
   const shape = (t) => {
     const m = measure();
@@ -224,7 +229,11 @@ export function createHeroRibbon(
 
   const draw = () => {
     // La opacidad la decide el relevo con la nube (variable en el CSS)
-    for (const { canvas } of layers) canvas.style.setProperty('--born', born.toFixed(3));
+    const b = born.toFixed(3);
+    if (b !== bornCss) {
+      bornCss = b;
+      for (const { canvas } of layers) canvas.style.setProperty('--born', b);
+    }
     if (born <= 0) {
       for (const { renderer } of layers) renderer.clear();
       return;
@@ -237,8 +246,17 @@ export function createHeroRibbon(
   };
 
   const rebuild = () => {
+    // Antes de nacer la cinta no se dibuja: solo hace falta publicar su recorrido
+    if (born <= 0) {
+      publicar();
+      return;
+    }
     const curve = new THREE.CatmullRomCurve3(pts);
-    const geo = new THREE.TubeGeometry(curve, 200, grosor, 28, false);
+    // Celular: menos segmentos (la cinta se ve igual de lisa a ese tamaño y
+    // esta geometría se rehace en CADA cuadro)
+    const geo = movil
+      ? new THREE.TubeGeometry(curve, 120, grosor, 18, false)
+      : new THREE.TubeGeometry(curve, 200, grosor, 28, false);
     tube.geometry.dispose();
     tube.geometry = geo;
     capHead.position.copy(pts[0]);
@@ -325,8 +343,17 @@ export function createHeroRibbon(
   };
   const onVisibility = () => (document.hidden ? stop() : start());
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onResize);
+  const quitarResize = alRedimensionar(onResize);
   document.addEventListener('visibilitychange', onVisibility);
+
+  // Compilar los shaders del metal YA (detrás de la pantalla de carga). Antes se
+  // compilaban la primera vez que la cinta nacía, a media apertura: el tirón
+  // justo antes de que se armara el titular.
+  for (const { renderer, env, plane } of layers) {
+    scene.environment = env;
+    material.clippingPlanes = [plane];
+    renderer.compile(scene, camera);
+  }
 
   inRange = measure().p < 0.9;
   onVisible?.(inRange);
@@ -341,7 +368,7 @@ export function createHeroRibbon(
     destroy() {
       stop();
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
+      quitarResize();
       document.removeEventListener('visibilitychange', onVisibility);
       tube.geometry.dispose();
       capGeo.dispose();
