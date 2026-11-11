@@ -17,12 +17,14 @@ export function useSmoothScroll() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     const lenis = new Lenis({ duration: 1.15, autoRaf: true, anchors: true });
+    window.__lenis = lenis; // lo usa lib/bloqueoScroll.js para cortar la inercia
     const sync = () =>
       document.body.classList.contains('pm-open') ? lenis.stop() : lenis.start();
     const mo = new MutationObserver(sync);
     mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     return () => {
       mo.disconnect();
+      if (window.__lenis === lenis) window.__lenis = null;
       lenis.destroy();
     };
   }, []);

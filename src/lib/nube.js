@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { cinta, RELEVO, fase } from './cintaPuente';
 import { hilo, suelta } from './hiloPuente';
-import { medidaEstable, alRedimensionar } from './viewport';
+import { medidaEstable, alRedimensionar, esTactil } from './viewport';
 import { cargaLista } from './carga';
 
 /**
@@ -30,6 +30,15 @@ import { cargaLista } from './carga';
  * (.interludio-forma), así el layout del DOM decide dónde y qué tan grandes.
  * Las posiciones se calculan en CPU (3–7 mil partículas sobra) y se suben cada
  * cuadro. Devuelve null si no hay WebGL.
+ *
+ * POTENCIADAS (2026-11-11): encima de esa posición, el SHADER les da
+ *  · PROFUNDIDAD: cada una vive en una capa (aCapa): las de cerca son más
+ *    grandes y salen de foco (bokeh) y con el cursor las capas se separan;
+ *  · TACTO: el cursor las aparta y deja una estela que se cierra sola
+ *    (10 huellas que se apagan; el empuje va TOPADO o el cursor quieto abre
+ *    un hoyo enorme). Sin cursor (celular) no hay tacto ni paralaje;
+ *  · DESTELLO: de vez en cuando una brilla.
+ * `uFx` las apaga mientras viajan a la cinta (ahí deben caer justo en el metal).
  */
 
 const TONOS = {
@@ -405,6 +414,8 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   const jy = new Float32Array(N);
   const burst = new Float32Array(N);
   const sizes = new Float32Array(N);
+  const capa = new Float32Array(N); // capa de profundidad (−1 atrás … 1 al frente; casi todas cerca de 0)
+  const semilla = new Float32Array(N * 2);
   const cs = new Float32Array(N); // lugar a lo largo de la cinta (0…1)
   const cang = new Float32Array(N); // lugar alrededor del tubo
   for (let i = 0; i < N; i++) {
@@ -420,6 +431,16 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     burst[i] = 0.3 + rand() ** 2 * 1.2;
     sizes[i] = 1 + 2.4 * dep[i];
   }
+  // (generador aparte: no altera las semillas de arriba, que deciden cómo se ve hoy cada figura)
+  const rand2 = mulberry32(20261111);
+  for (let i = 0; i < N; i++) {
+    const u = rand2() * 2 - 1;
+    capa[i] = u * u * u;
+    semilla[i * 2] = rand2();
+    semilla[i * 2 + 1] = rand2();
+  }
+  const ESTELA = 10;
+  const estela = Array.from({ length: ESTELA }, () => new THREE.Vector3());
 
   const pos = new Float32Array(N * 3);
   const alpha = new Float32Array(N);
@@ -427,6 +448,8 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
   geo.setAttribute('aAlpha', new THREE.BufferAttribute(alpha, 1).setUsage(THREE.DynamicDrawUsage));
   geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+  geo.setAttribute('aCapa', new THREE.BufferAttribute(capa, 1));
+  geo.setAttribute('aSeed', new THREE.BufferAttribute(semilla, 2));
 
   const material = new THREE.ShaderMaterial({
     transparent: true,
@@ -435,29 +458,57 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     uniforms: {
       uColor: { value: new THREE.Color(TONOS.dark.color) },
       uPR: { value: 1 },
+      uTime: { value: 0 },
+      uFx: { value: 1 },
+      uPar: { value: new THREE.Vector2() },
+      uEstela: { value: estela },
     },
     vertexShader: /* glsl */ `
       attribute float aAlpha;
       attribute float aSize;
+      attribute float aCapa;
+      attribute vec2 aSeed;
       uniform float uPR;
+      uniform float uTime;
+      uniform float uFx;
+      uniform vec2 uPar;
+      uniform vec3 uEstela[${ESTELA}];
       varying float vAlpha;
       varying float vPx;
+      varying float vFoco;
       void main() {
-        vAlpha = aAlpha;
-        gl_PointSize = aSize * uPR;
+        vec3 p = position;
+        float z = aCapa * uFx;
+        // profundidad: las capas se separan con el cursor
+        p.xy += uPar * z * 30.0;
+        // tacto: la estela del cursor las aparta (topado: las huellas se suman)
+        vec2 empuje = vec2(0.0);
+        for (int i = 0; i < ${ESTELA}; i++) {
+          vec2 d = p.xy - uEstela[i].xy;
+          empuje += normalize(d + 0.001) * uEstela[i].z * exp(-dot(d, d) / 5200.0);
+        }
+        float toque = min(1.0, length(empuje));
+        p.xy += normalize(empuje + 0.0001) * toque * (30.0 + aSeed.x * 56.0) * uFx;
+        float destello = pow(max(0.0, sin(uTime * 1.7 + aSeed.y * 90.0)), 24.0) * uFx;
+        vFoco = abs(z);
+        // (11-nov: profundidad a la mitad; con más, ΚΛΙΖΣΝ se leía borroso)
+        gl_PointSize = (aSize * (1.0 + z * 0.3 + vFoco * 0.7) + destello * 1.6 + toque * 1.2 * uFx) * uPR;
         vPx = gl_PointSize;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        vAlpha = aAlpha * (1.0 - vFoco * 0.4) + destello * 0.8 * step(0.05, aAlpha);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
       }`,
     fragmentShader: /* glsl */ `
       uniform vec3 uColor;
       varying float vAlpha;
       varying float vPx;
+      varying float vFoco;
       void main() {
         float d = length(gl_PointCoord - 0.5);
         // Borde de ~1 píxel FÍSICO, sea cual sea el tamaño del punto. Antes era
         // un difuminado fijo (0.15→0.5) que en pantallas chicas se comía casi
         // todo el punto y en celular se veían manchitas en vez de puntos.
-        float borde = min(0.35, 1.2 / vPx);
+        // Fuera de foco (capas de cerca o de lejos): disco suave, tipo bokeh.
+        float borde = mix(min(0.35, 1.2 / vPx), 0.5, clamp(vFoco * 0.8, 0.0, 1.0));
         float a = smoothstep(0.5, 0.5 - borde, d) * vAlpha;
         if (a < 0.01) discard;
         gl_FragColor = vec4(uColor, a);
@@ -610,6 +661,44 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   let introPendiente = conIntro;
   let limpio = false; // ya se borró el canvas (no hay nada que dibujar)
 
+  // Cursor (px desde el centro, y hacia arriba). En táctil no hay: sin tacto ni paralaje.
+  let cx = 1e5;
+  let cy = 1e5;
+  let hayCursor = false;
+  let px = 0;
+  let py = 0;
+  let ux = 0;
+  let uy = 0;
+  let sxp = 0;
+  let syp = 0;
+  let kEstela = 0;
+  let nCuadro = 0;
+  const alMover = (e) => {
+    if (e.pointerType === 'touch') return;
+    cx = e.clientX - vw / 2;
+    cy = vh / 2 - e.clientY;
+    hayCursor = true;
+  };
+  if (!esTactil) window.addEventListener('pointermove', alMover, { passive: true });
+  const efectos = (t, fx) => {
+    const u = material.uniforms;
+    u.uTime.value = t;
+    u.uFx.value = fx;
+    if (!hayCursor) return;
+    sxp += (Math.max(-1, Math.min(1, cx / (vw / 2))) - sxp) * 0.05;
+    syp += (Math.max(-1, Math.min(1, cy / (vh / 2))) - syp) * 0.05;
+    u.uPar.value.set(-sxp, -syp);
+    px += (cx - px) * 0.35;
+    py += (cy - py) * 0.35;
+    for (const e of estela) e.z *= 0.93;
+    if (nCuadro++ % 2 === 0) {
+      estela[kEstela].set(px, py, Math.min(1, 0.3 + Math.hypot(px - ux, py - uy) / 22));
+      kEstela = (kEstela + 1) % ESTELA;
+      ux = px;
+      uy = py;
+    }
+  };
+
   let raf = 0;
   // El reloj de la intro arranca cuando se va la pantalla de carga (lib/carga.js)
   let t0 = null;
@@ -640,6 +729,8 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
       return;
     }
     limpio = false;
+    // Camino a la cinta los efectos se apagan: cada partícula debe caer justo en el metal
+    efectos(t, est.st.apertura ? 1 - smooth(clamp01(est.flujo / 0.25)) : 1);
     const H = vh * 1.3;
     // Partículas sueltas de la pantalla de carga (solo antes de que se arme ΚΛΙΖΣΝ)
     const nubeAl = 0.85 * smooth(clamp01(t / 0.8));
@@ -775,6 +866,7 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     setTheme,
     destroy() {
       cancelAnimationFrame(raf);
+      window.removeEventListener('pointermove', alMover);
       mo.disconnect();
       clearTimeout(releer);
       quitarResize();

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { TONOS, entornoEstudio } from './cromo';
 import { cinta, RELEVO, fase, progresoApertura } from './cintaPuente';
 import { medidaEstable, alRedimensionar, movil } from './viewport';
 
@@ -32,6 +32,13 @@ import { medidaEstable, alRedimensionar, movil } from './viewport';
  * Cada canvas tiene su propio contexto WebGL y su propio mapa de entorno: una
  * textura de un contexto no sirve en el otro.
  *
+ * LISTÓN (2026-11-11, "poténcialo"): ya no es un tubo. La sección es una elipse
+ * aplanada que se RETUERCE a lo largo y con el tiempo (malla propia: anillos
+ * de RAD vértices sobre los marcos de la curva), refleja un entorno de estudio
+ * con cajas de luz largas (cromo.js) y esa luz la recorre con el tiempo y el
+ * scroll (`scene.environmentRotation`). En el TELÓN vuelve a ser redonda: así
+ * sigue tapando toda la pantalla con el mismo radio de antes.
+ *
  * Material: cromo hueso en oscuro y grafito brillante en claro (paleta mármol).
  * Ahorro: se pausa y se oculta en cuanto termina de salir (p = 0.5) o la
  * pestaña está oculta; limita el DPR. Con prefers-reduced-motion no anima por
@@ -39,17 +46,13 @@ import { medidaEstable, alRedimensionar, movil } from './viewport';
  * Devuelve null si no hay WebGL.
  */
 
-const TONOS = {
-  dark: { color: '#efeae0', metalness: 1, roughness: 0.14, envMapIntensity: 1.25 },
-  light: { color: '#3a3734', metalness: 0.85, roughness: 0.2, envMapIntensity: 1.1 },
-};
-
 const N = 90; // puntos del cuerpo
 const LAG = 0.07; // separación en "tiempo" entre puntos del cuerpo
 const FOV = 35;
 const CAM_Z = 10;
 
 const smooth = (x) => x * x * (3 - 2 * x);
+const suave5 = (x) => x * x * x * (x * (x * 6 - 15) + 10); // arranca y llega aún más suave
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 
 function makeLayer(canvas) {
@@ -58,9 +61,7 @@ function makeLayer(canvas) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.localClippingEnabled = true;
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  pmrem.dispose();
+  const env = entornoEstudio(renderer);
   return { canvas, renderer, env };
 }
 
@@ -105,15 +106,39 @@ export function createHeroRibbon(
     material.color.set(p.color);
     material.metalness = p.metalness;
     material.roughness = p.roughness;
+    baseRough = p.roughness;
     material.envMapIntensity = p.envMapIntensity;
   };
+  let baseRough = 0.14;
   setTheme(theme);
 
-  const tube = new THREE.Mesh(new THREE.BufferGeometry(), material);
-  const capGeo = new THREE.SphereGeometry(1, 32, 16);
-  const capHead = new THREE.Mesh(capGeo, material);
-  const capTail = new THREE.Mesh(capGeo, material);
-  scene.add(tube, capHead, capTail);
+  // Malla del listón: SEG tramos a lo largo × RAD vértices por anillo (cada
+  // anillo cierra sobre sí mismo). Los índices se arman una vez; las posiciones
+  // se reescriben en cada cuadro. Celular: menos de todo (se ve igual de lisa).
+  const SEG = movil ? 120 : 220;
+  const RAD = movil ? 14 : 26;
+  const geo = new THREE.BufferGeometry();
+  const posA = new Float32Array((SEG + 1) * RAD * 3);
+  const norA = new Float32Array((SEG + 1) * RAD * 3);
+  const centros = new Float32Array((SEG + 1) * 3);
+  const COS = Float32Array.from({ length: RAD }, (_, j) => Math.cos((j / RAD) * Math.PI * 2));
+  const SEN = Float32Array.from({ length: RAD }, (_, j) => Math.sin((j / RAD) * Math.PI * 2));
+  geo.setAttribute('position', new THREE.BufferAttribute(posA, 3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('normal', new THREE.BufferAttribute(norA, 3).setUsage(THREE.DynamicDrawUsage));
+  {
+    const idx = [];
+    for (let i = 0; i < SEG; i++) {
+      for (let j = 0; j < RAD; j++) {
+        const a = i * RAD + j;
+        const b = i * RAD + ((j + 1) % RAD);
+        idx.push(a, a + RAD, b, b, a + RAD, b + RAD);
+      }
+    }
+    geo.setIndex(idx);
+  }
+  const tube = new THREE.Mesh(geo, material);
+  tube.frustumCulled = false;
+  scene.add(tube);
 
   // Medidas del mundo visible en el plano z = 0 (se recalculan al redimensionar)
   let W = 1;
@@ -176,6 +201,8 @@ export function createHeroRibbon(
   };
 
   const pts = Array.from({ length: N }, () => new THREE.Vector3());
+  const P = new THREE.Vector3();
+  const ANCHO = 1.15; // cuánto más ancho que el tubo de antes (×2.15). Con 1.5 tapaba demasiado titular al cruzar por delante
   const a = new THREE.Vector3();
   const b = new THREE.Vector3();
 
@@ -190,11 +217,14 @@ export function createHeroRibbon(
     const nextCenterPage = next.top + next.height / 2 + sy;
     const travel = Math.max(1, nextCenterPage - vh / 2 - releaseY); // scroll para centrarlo
     const p = clamp01((sy - releaseY) / travel);
+    // Progreso del escenario fijo (0…1): el telón empieza a prepararse en su último 10%
+    const qh = clamp01(-hero.top / Math.max(1, hero.height - vh));
     // Nacimiento: 0 mientras las partículas siguen siendo letras, 1 ya sólida
     const q = progresoApertura(openEl, vh);
     const born = q === null ? 1 : fase(q, RELEVO.cruce);
     return {
       p,
+      qh,
       born,
       // A se queda fija al centro de la pantalla: acompaña al scroll mientras sale
       anchorA: toWorldY(vh / 2),
@@ -203,20 +233,37 @@ export function createHeroRibbon(
 
   let born = 1;
   let bornCss = '';
-  let grosor = radius;
+  let medioA = radius; // medio ancho de la sección
+  let medioC = radius; // medio canto
+  let satin = 0; // 0 = cromo pulido (hero) … 1 = satinado (telón: reflejos anchos y suaves)
+  let liston = 1; // 1 = listón plano que se retuerce, 0 = sin giro (telón)
+  let tiempo = 0;
+  // Cuánto va retorcido el listón en el punto s (lo usan la malla y el destino de las partículas)
+  const giroEn = (s) => (s * 7.5 + tiempo * 0.32) * liston;
   const shape = (t) => {
+    tiempo = t;
     const m = measure();
     const { p, anchorA } = m;
     born = m.born;
-    // Fases del telón sobre p (0 = el hero se suelta, 1 = título de Servicios
-    // centrado): se endereza → engorda hasta tapar → sube y destapa
-    // (tapa ANTES de que asome el título de Servicios por abajo, ~p 0.2)
-    const e = smooth(clamp01(p / 0.16)); // de serpiente a banda
-    const crece = smooth(clamp01((p - 0.1) / 0.18)); // ya casi recta: 0.10 → 0.28 tapa todo
-    const sube = smooth(clamp01((p - 0.5) / 0.38)); // 0.50 → 0.88 se va
+    // TELÓN (rehecho 11-nov: "salta de la nada"). Ya no arranca al soltarse el
+    // hero: se PREPARA en el último 10% del escenario, mientras el titular se va.
+    // τ = ese tramo (0 → 0.2) + p (0 = el hero se suelta, 1 = título de Servicios
+    // centrado). Sobre τ: la serpiente se estira en banda diagonal → deja de
+    // retorcerse → ENSANCHA hasta tapar (sigue tapando antes de que asome el
+    // título de Servicios, p ≈ 0.26) → sube y destapa. Todo con arranque y
+    // llegada suaves (suave5), para que sea un solo gesto.
+    const tau = smooth(clamp01((m.qh - 0.9) / 0.1)) * 0.2 + p;
+    const e = suave5(clamp01(tau / 0.24)); // de serpiente a banda
+    const crece = suave5(clamp01((tau - 0.14) / 0.32)); // ensancha: tapa todo en τ 0.46
+    const sube = suave5(clamp01((p - 0.5) / 0.4)); // 0.50 → 0.90 se va
     const ha = medioAncho();
     const rMax = ha * 1.12;
-    grosor = radius + (rMax - radius) * crece;
+    liston = 1 - suave5(clamp01((tau - 0.06) / 0.26)); // deja de retorcerse mientras ensancha
+    // Sección: listón (ancho × canto) → al tapar, un óvalo gordo (no un tubo redondo:
+    // sus reflejos son más anchos y tranquilos)
+    medioA = radius * (1 + liston * ANCHO) + (rMax - radius) * crece;
+    medioC = radius * (1 - liston * 0.72) + (rMax * 0.55 - radius) * crece;
+    satin = crece;
     const o = sube * (ha + rMax) * 1.15;
     for (let i = 0; i < N; i++) {
       const s = i / (N - 1);
@@ -252,17 +299,80 @@ export function createHeroRibbon(
       return;
     }
     const curve = new THREE.CatmullRomCurve3(pts);
-    // Celular: menos segmentos (la cinta se ve igual de lisa a ese tamaño y
-    // esta geometría se rehace en CADA cuadro)
-    const geo = movil
-      ? new THREE.TubeGeometry(curve, 120, grosor, 18, false)
-      : new THREE.TubeGeometry(curve, 200, grosor, 28, false);
-    tube.geometry.dispose();
-    tube.geometry = geo;
-    capHead.position.copy(pts[0]);
-    capTail.position.copy(pts[N - 1]);
-    capHead.scale.setScalar(grosor);
-    capTail.scale.setScalar(grosor);
+    // Centros de cada anillo (parámetro uniforme: los puntos ya van parejos)
+    for (let i = 0; i <= SEG; i++) {
+      curve.getPoint(i / SEG, P);
+      centros[i * 3] = P.x;
+      centros[i * 3 + 1] = P.y;
+      centros[i * 3 + 2] = P.z;
+    }
+    // MARCOS PROPIOS (11-nov): antes `computeFrenetFrames`, que elige su normal
+    // inicial según la componente más chica de la primera tangente; cuando esa
+    // componente cambiaba, TODA la cinta giraba de golpe (los "saltos"). Ahora
+    // cada anillo saca su marco de una referencia fija (el eje Z, hacia la
+    // cámara): lado ancho = perpendicular a la tangente dentro de la pantalla.
+    for (let i = 0; i <= SEG; i++) {
+      const s = i / SEG;
+      const i0 = Math.max(0, i - 1) * 3;
+      const i1 = Math.min(SEG, i + 1) * 3;
+      let tx = centros[i1] - centros[i0];
+      let ty = centros[i1 + 1] - centros[i0 + 1];
+      let tz = centros[i1 + 2] - centros[i0 + 2];
+      const tl = Math.hypot(tx, ty, tz) || 1;
+      tx /= tl;
+      ty /= tl;
+      tz /= tl;
+      // V = Z sin su parte a lo largo de la tangente (el canto, hacia la cámara)
+      let vx = -tz * tx;
+      let vy = -tz * ty;
+      let vz = 1 - tz * tz;
+      const vl = Math.hypot(vx, vy, vz) || 1;
+      vx /= vl;
+      vy /= vl;
+      vz /= vl;
+      // U = T × V (el ancho, dentro de la pantalla)
+      const ux = ty * vz - tz * vy;
+      const uy = tz * vx - tx * vz;
+      const uz = tx * vy - ty * vx;
+      // Puntas redondeadas (antes eran dos esferas); en el telón no se ven
+      const borde = Math.max(0, (Math.abs(s * 2 - 1) - 0.94) / 0.06);
+      const punta = Math.sqrt(Math.max(0, 1 - borde * borde));
+      const giro = giroEn(s);
+      const cg = Math.cos(giro);
+      const sg = Math.sin(giro);
+      const cx = centros[i * 3];
+      const cy = centros[i * 3 + 1];
+      const cz = centros[i * 3 + 2];
+      for (let j = 0; j < RAD; j++) {
+        const x = COS[j] * medioA * punta;
+        const y = SEN[j] * medioC * punta;
+        const a2 = x * cg - y * sg;
+        const b2 = x * sg + y * cg;
+        const k = (i * RAD + j) * 3;
+        posA[k] = cx + ux * a2 + vx * b2;
+        posA[k + 1] = cy + uy * a2 + vy * b2;
+        posA[k + 2] = cz + uz * a2 + vz * b2;
+        // Normal de la elipse, girada igual (sin recalcular toda la malla en cada cuadro)
+        const nx0 = COS[j] / medioA;
+        const ny0 = SEN[j] / medioC;
+        const na = nx0 * cg - ny0 * sg;
+        const nb = nx0 * sg + ny0 * cg;
+        let nx = ux * na + vx * nb;
+        let ny = uy * na + vy * nb;
+        let nz = uz * na + vz * nb;
+        const nl = Math.hypot(nx, ny, nz) || 1;
+        norA[k] = nx / nl;
+        norA[k + 1] = ny / nl;
+        norA[k + 2] = nz / nl;
+      }
+    }
+    geo.attributes.position.needsUpdate = true;
+    geo.attributes.normal.needsUpdate = true;
+    // Telón: de cromo pulido a satinado (los filos duros de luz se vuelven degradados)
+    material.roughness = baseRough + satin * 0.24;
+    material.clearcoatRoughness = 0.08 + satin * 0.34;
+    // La luz recorre el metal: el estudio gira con el tiempo y con el scroll
+    scene.environmentRotation.set(0, tiempo * 0.22 + window.scrollY * 0.0022, 0);
     publicar();
   };
 
@@ -280,7 +390,12 @@ export function createHeroRibbon(
       cinta.pts[i * 3] = ((proy.x + 1) / 2) * vw;
       cinta.pts[i * 3 + 1] = ((1 - proy.y) / 2) * vh;
       // Perspectiva: más cerca de la cámara (z mayor) se ve más gruesa
-      cinta.pts[i * 3 + 2] = radius * pxPorUnidad * (CAM_Z / (CAM_Z - pts[i].z));
+      // Medio ancho QUE SE VE del listón en ese punto: ancho de cara, angosto de canto
+      // (antes se publicaba el radio del tubo viejo y las partículas armaban un tubo
+      // antes de volverse listón)
+      const g = giroEn(i / (N - 1));
+      const visto = Math.hypot(medioA * Math.cos(g), medioC * Math.sin(g));
+      cinta.pts[i * 3 + 2] = visto * pxPorUnidad * (CAM_Z / (CAM_Z - pts[i].z));
     }
     cinta.n = N;
     cinta.listo = true;
@@ -370,8 +485,7 @@ export function createHeroRibbon(
       window.removeEventListener('scroll', onScroll);
       quitarResize();
       document.removeEventListener('visibilitychange', onVisibility);
-      tube.geometry.dispose();
-      capGeo.dispose();
+      geo.dispose();
       material.dispose();
       for (const { renderer, env } of layers) {
         env.dispose();

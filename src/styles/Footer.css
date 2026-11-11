@@ -9,6 +9,48 @@
   padding-bottom: var(--section-pad-y);
 }
 
+/* ── La losa de mármol vivo (Footer.jsx → Losa): la cabecera de Contacto ── */
+.footer-losa {
+  position: relative;
+  margin-bottom: var(--spacing-16);
+  border-radius: 30px;
+  border: 1px solid var(--border-color);
+  /* respaldo sin WebGL: un degradado quieto */
+  background: linear-gradient(135deg, var(--tint-3), var(--tint-1) 60%, var(--tint-2));
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.45);
+}
+.footer-losa-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.footer-losa.is-viva .footer-losa-canvas {
+  opacity: 1;
+}
+.footer-losa-in {
+  position: relative;
+  padding: clamp(7rem, 16vh, 11rem) clamp(1.4rem, 4.5vw, 4rem) clamp(2rem, 6vh, 3.6rem);
+}
+.footer-losa .sh {
+  margin-bottom: 0;
+}
+.footer-losa .sh-rule {
+  border-bottom-color: var(--border-strong);
+}
+@media (max-width: 768px) {
+  .footer-losa {
+    border-radius: 22px;
+  }
+  .footer-losa-in {
+    padding-top: 4.5rem;
+  }
+}
+
 .footer-grid {
   display: grid;
   grid-template-columns: 1fr 1.4fr;

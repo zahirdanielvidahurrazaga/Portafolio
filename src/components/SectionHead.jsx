@@ -12,6 +12,8 @@ export default function SectionHead({ num, label, lede, children, className = ''
   const { lang } = useLang();
   return (
     <header className={`sh ${className}`.trim()}>
+      {/* El lugar de Kai (lib/kai.js): al llegar a cada capítulo se para aquí y dice su línea */}
+      <span className="kai-lugar" data-kai={num} aria-hidden="true" />
       <div className="sh-rule">
         <span>{label}</span>
         <span>{lang === 'en' ? 'No.' : 'Nº'} {num}</span>

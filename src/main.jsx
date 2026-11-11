@@ -5,7 +5,7 @@ import App from './App.jsx'
 import Legal from './components/Legal.jsx'
 import { ThemeProvider } from './lib/ThemeContext.jsx'
 import { LangProvider } from './lib/LangContext.jsx'
-import { cargado } from './lib/carga.js'
+import { cargado, precargar } from './lib/carga.js'
 
 // Sin router: el sitio es una sola página y las legales son dos rutas fijas.
 // (Cloudflare Pages sirve index.html en cualquier ruta, así que llegan aquí.)
@@ -18,6 +18,12 @@ const pagina =
 if (pagina.type === App) {
   import('./lib/nube');
   import('./lib/heroRibbon');
+  import('./lib/kai');
+  // …y lo de más abajo (capturas, portadas, escenas 3D): la pantalla de carga lo espera
+  precargar();
+} else {
+  // Páginas legales: no hay nada de esto que esperar
+  ['kai', 'resto', 'medios'].forEach(cargado);
 }
 // Fuentes: la hoja de Google ya no bloquea el pintado (index.html), así que
 // document.fonts.ready solo no basta (resolvería antes de que llegue la hoja).

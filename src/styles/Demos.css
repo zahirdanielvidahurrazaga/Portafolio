@@ -73,6 +73,22 @@
   display: grid;
   place-items: center;
 }
+/* Teléfono de cromo (lib/telefono.js): un lienzo 3D sobre la caja; con él, el de CSS se esconde */
+.dm-tel3d {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+  z-index: 1;
+}
+.dm-stage--3d .dm-tel3d {
+  display: block;
+}
+.dm-stage--3d .dm-tel {
+  visibility: hidden;
+}
 /* Teléfono: marco oscuro en los dos temas, la pantalla adentro */
 .dm-tel {
   height: 100%;
@@ -441,3 +457,71 @@
     animation: none;
   }
 }
+
+/* ── EL ELENCO (lib/elenco.js): las demos que se reacomodan. Solo escritorio con WebGL;
+   si no, queda la rejilla de tarjetas de abajo ── */
+.el-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 5; }
+/* Para lectores de pantalla y teclado: las mismas demos como enlaces */
+.el-accesible { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.el-accesible:focus-within { position: absolute; z-index: 7; left: var(--spacing-4); bottom: var(--spacing-4); width: auto; height: auto; clip-path: none; display: flex; gap: 1rem; padding: 0.6rem 1rem; border-radius: 12px; background: var(--card-bg); }
+.el-pista { position: relative; height: 640vh; }
+.el-escena { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.el-txt {
+  position: absolute;
+  z-index: 6;
+  left: max(var(--spacing-4), calc((100vw - 1280px) / 2 + var(--spacing-4)));
+  top: 50%;
+  width: min(23rem, 30vw);
+  transform: translateY(-50%);
+  transition: top 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.8s;
+}
+.el-n { margin: 0 0 1rem; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); }
+.el-titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 3.3vw, 3.2rem);
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  color: var(--text-strong);
+}
+.el-titulo em { color: var(--text-muted); }
+.el-sub { margin: 1rem 0 0; font-size: 0.98rem; line-height: 1.5; color: var(--text-muted); }
+.el-entra .el-n, .el-entra .el-titulo, .el-entra .el-sub { animation: elEntra 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.el-entra .el-titulo { animation-delay: 0.04s; }
+.el-entra .el-sub { animation-delay: 0.1s; }
+@keyframes elEntra { from { opacity: 0; transform: translateY(16px); filter: blur(6px); } }
+/* Marcas del anillo: en qué giro vas */
+.el-ticks { display: flex; gap: 6px; margin-top: 1.6rem; opacity: 0; transition: opacity 0.4s; }
+.el-escena--anillo .el-ticks { opacity: 1; }
+.el-ticks i { width: 14px; height: 2px; border-radius: 2px; background: var(--border-strong); transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.4s; }
+.el-ticks i.on { width: 38px; background: var(--text-strong); }
+/* En la fila el texto sube: las tarjetas ocupan todo el ancho */
+.el-escena--fila .el-txt { top: clamp(6.4rem, 15vh, 8.5rem); transform: none; width: min(46rem, 80vw); }
+.el-escena--fila .el-sub { margin-top: 0.6rem; }
+.el-etqs { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+.el-etq {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.5s;
+  will-change: transform;
+}
+.el-etq { text-shadow: 0 0 14px var(--bg-color), 0 0 4px var(--bg-color); }
+.el-etq b { font: 600 0.8rem var(--font-family); letter-spacing: -0.005em; color: var(--text-strong); }
+.el-etq small { font-size: 0.72rem; color: var(--text-muted); transition: opacity 0.3s; }
+.el-etq u { position: absolute; top: 1.25rem; font-size: 0.72rem; font-weight: 600; text-decoration: none; color: var(--text-strong); opacity: 0; transform: translateY(4px); transition: opacity 0.3s, transform 0.3s; }
+.el-etq.on small { opacity: 0; }
+.el-etq.on u { opacity: 1; transform: none; }
+@media (max-width: 820px) {
+  .el-txt, .el-escena--fila .el-txt { top: 5.5rem; transform: none; width: calc(100vw - 2rem); }
+  .el-etq small, .el-etq u { display: none; }
+  .el-etq b { font-size: 0.6rem; }
+}
+

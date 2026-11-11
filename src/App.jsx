@@ -7,7 +7,7 @@ import FloatingWhatsApp from './components/FloatingWhatsApp';
 import BarraScroll from './components/BarraScroll';
 import HeroRibbon from './components/HeroRibbon';
 import Nube from './components/Nube';
-import Hilo from './components/Hilo';
+import Kai from './components/Kai';
 import { useSmoothScroll } from './lib/useSmoothScroll';
 import { useLang } from './lib/LangContext';
 
@@ -35,8 +35,8 @@ function App() {
       <HeroRibbon />
       {/* La nube de partículas: toma el relevo de la cinta y se arma en cada Interludio */}
       <Nube />
-      {/* El hilo: lo que queda de la cinta tras el telón; recorre la página hasta la Κ */}
-      <Hilo />
+      {/* (El HILO que recorría la página se quitó el 11-nov-2026 a pedido de Zahir; Hilo.jsx
+          queda en el repo sin montar. La Κ del cierre se arma del polvo, como los demás interludios.) */}
       
       {/* Background Effect */}
       <motion.div 
@@ -66,6 +66,8 @@ function App() {
       <Suspense fallback={null}>
         <Pie />
       </Suspense>
+      {/* Kai, el guía: aparece al entrar Servicios y acompaña hasta Contacto */}
+      <Kai />
       <FloatingWhatsApp />
       <BarraScroll />
     </div>

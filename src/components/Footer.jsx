@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import SectionHead from './SectionHead';
 import { WHATSAPP, WHATSAPP_VISIBLE, CORREO, REDES } from '../data/contacto';
 import { useLang } from '../lib/LangContext';
+import { useTheme } from '../lib/ThemeContext';
 import '../styles/Footer.css';
 
 // Las opciones siguen a las 7 líneas de "Lo que hacemos" (Servicios.jsx): si
@@ -18,6 +20,46 @@ const TIPO_LABEL = {
   demo: { es: 'Ver una demo', en: 'See a demo' },
   otro: { es: 'Otra cosa', en: 'Something else' },
 };
+
+/*
+ * LA LOSA (2026-11-11): la cabecera de Contacto va sobre una losa de mármol
+ * VIVO (lib/marmol.js: fluye y se deja empujar con el cursor). Es el único
+ * lugar del sitio con mármol —Zahir lo quiso como acento, no como fondo— y por
+ * eso pesa: es donde se cierra el trato. El formulario queda abajo, en limpio.
+ * Sin WebGL, o con prefers-reduced-motion, queda el degradado quieto del CSS.
+ */
+function Losa({ children }) {
+  const zona = useRef(null);
+  const canvas = useRef(null);
+  const inst = useRef(null);
+  const { theme } = useTheme();
+  const themeRef = useRef(theme);
+  const reduced = useReducedMotion();
+  useEffect(() => {
+    if (reduced) return undefined;
+    let cancelado = false;
+    import('../lib/marmol').then(({ crearMarmol }) => {
+      if (cancelado || !zona.current) return;
+      inst.current = crearMarmol(zona.current, canvas.current, { theme: themeRef.current });
+      if (inst.current) zona.current.classList.add('is-viva');
+    });
+    return () => {
+      cancelado = true;
+      inst.current?.destroy();
+      inst.current = null;
+    };
+  }, [reduced]);
+  useEffect(() => {
+    themeRef.current = theme;
+    inst.current?.setTheme(theme);
+  }, [theme]);
+  return (
+    <div ref={zona} className="footer-losa">
+      <canvas ref={canvas} className="footer-losa-canvas" aria-hidden="true" />
+      <div className="footer-losa-in">{children}</div>
+    </div>
+  );
+}
 
 const Footer = () => {
   const { lang, t } = useLang();
@@ -74,6 +116,7 @@ const Footer = () => {
     <footer id="contact" className="footer-section">
 
       <div className="section-container footer-contact">
+        <Losa>
         <SectionHead
           num="09"
           label={t({ es: 'Contacto', en: 'Contact' })}
@@ -84,6 +127,7 @@ const Footer = () => {
         >
           {t({ es: <>¿Tienes un proyecto <em>en mente?</em></>, en: <>Have a project <em>in mind?</em></> })}
         </SectionHead>
+        </Losa>
 
         <div className="footer-grid">
           {/* Columna izquierda: contacto directo */}

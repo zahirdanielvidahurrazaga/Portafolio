@@ -98,13 +98,11 @@
   text-transform: uppercase;
   color: var(--text-muted);
 }
-/* La ranura del centro (columna de 9rem) es por donde baja el hilo: no poner nada ahí */
+/* (La columna central de 9rem era la ranura por donde bajaba el hilo; sin hilo, un hueco normal) */
 .nos-mitades {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 9rem minmax(0, 1fr);
-}
-.nos-mitad:nth-child(2) {
-  grid-column: 3;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 6rem);
 }
 .nos-mitad {
   padding-top: var(--spacing-6);

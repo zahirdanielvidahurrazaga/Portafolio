@@ -27,6 +27,8 @@ const TESTIMONIOS = [
     video: '/testimonios/befit-testimonio.mp4',
     poster: '/testimonios/befit-poster.jpg',
     videoDuracion: '0:52',
+    // Quién habla en el video (va junto a la vista previa)
+    voz: { es: <>Lo cuentan <em>las dueñas</em>, en su estudio.</>, en: <>Told by <em>the owners</em>, in their studio.</> },
     proyecto: 'befit',
     // "Qué cambió": sale del `result` REAL de Be Fit Lab en projects.js, en corto
     cambio: {
@@ -35,14 +37,18 @@ const TESTIMONIOS = [
     },
   },
   {
-    quote: {
-      es: 'Digitalizamos toda la tienda con su sistema de punto de venta. Ahora controlamos el inventario y vendemos desde el celular sin complicaciones. Quedó justo como lo necesitábamos.',
-      en: 'We digitized the whole store with their point of sale system. Now we control inventory and sell from our phones with no hassle. It turned out exactly how we needed it.',
-    },
+    // 11-nov-2026: llegó su testimonio en VIDEO (WhatsApp, 44 s; comprimido a 576×1024 con
+    // faststart, póster del segundo 3). Igual que con Be Fit Lab, el video ES el testimonio:
+    // se quitó la cita escrita que había antes ("Digitalizamos toda la tienda con su sistema
+    // de punto de venta…"), que no venía de este video.
+    quote: null,
     name: 'Carlos Carbajal',
     business: { es: 'Plásticos y Jarciería Tito', en: 'Plásticos y Jarciería Tito' },
     logo: '/logos/tito.png',
-    video: null,
+    video: '/testimonios/tito-testimonio.mp4',
+    poster: '/testimonios/tito-poster.jpg',
+    videoDuracion: '0:44',
+    voz: { es: <>Lo cuenta <em>Carlos</em>, a cámara.</>, en: <>Told by <em>Carlos</em>, on camera.</> },
     proyecto: 'pos',
     // Del `result` REAL del POS en projects.js
     cambio: {
@@ -122,7 +128,7 @@ function CasoVideo({ t, n, total, onAbrir }) {
         type="button"
         className="testimonio-video-btn caso-video"
         onClick={() => onAbrir(t)}
-        aria-label={tr({ es: `Ver el testimonio en video de ${tr(t.business)}`, en: `Watch ${t.name}'s video testimonial` })}
+        aria-label={tr({ es: `Ver el testimonio en video de ${t.name}`, en: `Watch ${t.name}'s video testimonial` })}
       >
         <img src={t.poster} alt="" loading="lazy" aria-hidden="true" />
         {/* Vista previa muda: solo se monta (y descarga) con la tarjeta en pantalla */}
@@ -136,9 +142,7 @@ function CasoVideo({ t, n, total, onAbrir }) {
       </button>
       <div className="caso-cuerpo">
         <p className="caso-cuenta">{n} / {total}</p>
-        <p className="caso-voz">
-          {tr({ es: <>Lo cuentan <em>las dueñas</em>, en su estudio.</>, en: <>Told by <em>the owners</em>, in their studio.</> })}
-        </p>
+        <p className="caso-voz">{tr(t.voz)}</p>
         <button type="button" className="caso-play" onClick={() => onAbrir(t)}>
           <Play size={14} fill="currentColor" strokeWidth={0} />
           {tr({ es: 'Ver su experiencia', en: 'Watch their story' })} · {t.videoDuracion}

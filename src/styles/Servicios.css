@@ -22,9 +22,10 @@
   margin: 0 auto;
   padding: 72px var(--spacing-4) 0; /* arriba: la barra */
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.05fr) minmax(0, 0.85fr);
+  /* La hélice manda: su columna es la más ancha (11-nov; antes 0.8 / 1.05 / 0.85 y no lucía) */
+  grid-template-columns: minmax(0, 0.62fr) minmax(0, 0.9fr) minmax(0, 1.38fr);
   align-items: center;
-  gap: clamp(1.5rem, 3.5vw, 4rem);
+  gap: clamp(1.2rem, 2.6vw, 3rem);
 }
 
 /* ── Índice: 3 necesidades, 7 servicios ── */
@@ -81,7 +82,7 @@
 .srv-nombre {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.05rem, min(1.7vw, 3.4vh), 1.55rem);
+  font-size: clamp(0.98rem, min(1.4vw, 3.2vh), 1.35rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
   color: var(--text-color);
@@ -123,7 +124,7 @@
   margin: 0 0 1rem;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.7rem, min(3.1vw, 6.2vh), 3.1rem);
+  font-size: clamp(1.6rem, min(2.7vw, 6vh), 2.8rem);
   line-height: 1.02;
   letter-spacing: -0.04em;
   color: var(--text-strong);
@@ -197,16 +198,40 @@
 
 /* Caja de la escena del resultado */
 .srv-forma {
-  justify-self: center;
+  justify-self: stretch;
   width: 100%;
-  max-width: 380px;
-  min-height: min(62vh, 470px);
+  min-height: min(70vh, 560px);
   display: grid;
   align-items: center;
 }
-.srv-forma-in {
-  display: grid;
-  justify-items: center;
+/* La hélice: las 7 escenas en espiral (Servicios.jsx → Helice) */
+.srv-forma {
+  perspective: 1300px;
+}
+.srv-helice {
+  position: relative;
+  width: 100%;
+  height: min(70vh, 560px);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* El texto que vende va por encima de las tarjetas que pasan */
+.srv-indice,
+.srv-ficha {
+  position: relative;
+  z-index: 2;
+}
+.srv-helice-carta {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  will-change: transform, opacity;
+}
+.srv-helice-carta .esc {
+  width: min(100%, 360px);
 }
 
 /* Copia de la escena dentro de la ficha: solo en celular (y en la lista sin animación) */

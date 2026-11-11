@@ -163,6 +163,206 @@ Vidahurrázaga" a **KaiZen**. Logo y tipografía AÚN se están diseñando → n
       Descartados: túnel de colores y stickers 3D (no van con mármol / pesan mucho).
 - [x] ~~Nombre en `<title>`, metas, Sobre mí, footer, favicon/logo e imagen OG~~ — hecho (OG v3, 2026-10-05).
 
+## Laboratorio Awwwards (10-nov-2026) — `tools/lab/`, ESPERANDO QUE ZAHIR ELIJA
+Pidió subir la experiencia ("animaciones, 3D") viendo los nominados de Awwwards. Revisados en Chrome: Wiro (entras por
+una ventana a otro mundo), Hanusek (objeto 3D con líneas que señalan sus partes), Disrupt (imágenes flotando en
+profundidad), BR& (texto en curva), Cius Labs, Douglus (tinta), Adam Perlis (cromo líquido), Matchball, Digital of
+Things. Diagnóstico: hero/cinta/telón ya están a ese nivel; de Servicios para abajo todo es plano.
+Se armaron 4 prototipos VIVOS en una página aparte — `http://localhost:5173/tools/lab/index.html` (solo con el
+servidor de desarrollo; no entra al build ni se publica; vanilla JS + three, sin tocar `src/`):
+- **A · `telefono.js`** — teléfono 3D del mismo cromo que la cinta (`TONOS` copiados de heroRibbon) con las capturas de
+  `public/demos` como pantalla; todo f(scroll): entra → cada vuelta trae otro giro (se cambia de aparato cuando da la
+  espalda, que lleva la Κ grabada) → líneas que señalan "Tu marca / Tu catálogo / Tres vistas" → abanico de 5 giros.
+  Iría en Demos en lugar del teléfono plano de CSS.
+- **B · `tela.js`** — mockup de Proyectos como plano WebGL: se comba con la velocidad del cursor, separa canales y
+  barre de una imagen a otra. Vive en la mitad derecha para no tapar el nombre.
+- **C · `marmol.js`** — mármol generado en shader (fbm deformado + vetas), fluye y se deja empujar con el cursor
+  (textura de flujo 256² en ping-pong). Pensado para Contacto / portadas de capítulo.
+- **D · `detalles.js`** — cursor con etiqueta, botón con imán, letras que ruedan, tarjetas que se inclinan, cinta de
+  texto gigante ligada al scroll y sonido opcional (WebAudio sintetizado, apagado por defecto).
+Revisado en Chrome a 1440 en claro y oscuro, sin errores de consola. **NO revisado en celular** (la ventana de la
+extensión no se dejó achicar). Lo que no elija se borra con todo y la carpeta.
+**Respuesta de Zahir (11-nov): le gustan A y C.** B y D quedaron sin elegir (no borrados aún).
+
+### Propuesta 2 (11-nov) — `http://localhost:5173/tools/lab/dos.html`, ESPERANDO RESPUESTA
+Pidió revisar a fondo 4 sitios y otra propuesta. Lo que hace cada uno (visto con scroll real):
+- **madetodisrupt.com** — la "escalera" de servicios es CSS 3D puro (`.ss3d-ring`): cada tarjeta a 95° y ~176px más
+  abajo que la anterior; el scroll gira y sube la hélice. El hero son tarjetas flotando en un canvas.
+- **errormade.tech/?view=gallery** — un canvas a pantalla completa redibuja las imágenes; los bordes de arriba y
+  abajo las doblan como vidrio curvo.
+- **adamperlis.com** (Astro) — "Buddy": gota de cromo líquido con ojos (canvas 560²). Aparece al inicio de cada
+  sección, dice UNA línea con humor que se lee palabra por palabra, se guarda en la barra, cambia de atuendo al
+  tocarlo, tiene voz y se despide al final. Lo que le voló la cabeza a Zahir: el avatar que acompaña.
+- **premotio.com** — un solo `<canvas class="story-scene">` fijo durante 37,000px: las MISMAS tarjetas se
+  reacomodan por capítulo (nube → anillo → muro → cinta → rollo → abanico). "Le encantó todo".
+Idea común: pocas cosas que nunca se van y se transforman. Propuesta = **un escenario, un elenco y un guía**:
+- **Escenario** = el mármol (C) como fondo fijo de todo el sitio (`crearMarmol(zona, { global: true, fuerza })`).
+- **E · Hélice de Servicios** (`dos.jsx`, React): las 7 `Escena` REALES de `ServiciosEscenas.jsx` en espiral CSS 3D
+  (95° y 0.3·vh por tarjeta); índice y ficha se quedan. La activa se re-monta para que entren sus renglones.
+- **F · Lente** (`lente.js`): casillas vacías en el DOM + un canvas fijo que dibuja cada imagen en su lugar; cerca de
+  los bordes se enrolla sobre un "tambor" y con la velocidad del scroll el centro se atrasa.
+- **G · Kai** (`kai.js`): el guía. NO es la gota de Buddy: es una PIEDRA en bruto con ojos (esfera recortada contra
+  ~19 planos) que se pule con el avance hasta quedar mármol con veta (el shader del fondo, horneado a textura).
+  Cada capítulo le reserva un hueco `.kai-lugar[data-kai="frase"]`; sin hueco a la vista espera abajo a la derecha.
+  Mira al cursor, parpadea, brinca al hablar; al tocarlo dice una ocurrencia. Frases = BORRADOR para Zahir y Karime.
+  Gotcha: blanco puro + barniz quemaba la veta → color tope `#f1eee7`, clearcoat 0.65, luz 0.95.
+- La página termina con el recorrido completo del sitio (qué cambia y qué se queda por capítulo).
+Revisado en Chrome a 1440, claro y oscuro, sin errores. No revisado en celular. `dos.jsx` monta una sola vez: ante
+un cambio en caliente recarga la página sola.
+
+### Propuesta 3 (11-nov) — `http://localhost:5173/tools/lab/tres.html`, ESPERANDO RESPUESTA
+**Respuesta de Zahir a la Propuesta 2** (reglas de dirección, valen para todo lo que siga):
+- El mármol le gusta **pero NO como fondo de todo el sitio**. El sitio sigue **futurista y minimalista, estilo Apple**
+  (fondo limpio). El mármol queda como acento en UN lugar.
+- Sintió que solo se usaban 2 de las 4 referencias → cada una debe tener un efecto visible y su lugar.
+- Kai (el guía) sí, pero **con un estilo que vaya con el sitio**: la piedra→mármol quedó DESCARTADA.
+- Partículas y cinta le gustan; quiere **potenciarlas**, no cambiarlas.
+Lo armado (todo en `tools/lab/`, `src/` sin tocar; `helice.jsx` se separó de `dos.jsx` para compartirla):
+- **`cromo.js`** — `TONOS` de la cinta + `entornoEstudio(renderer, { frente, relleno })`: entorno propio de cajas de
+  luz largas (foto de producto) en vez de `RoomEnvironment`. Lo usan la cinta, Kai y debería usarlo el teléfono 3D.
+- **H · `apertura.js`** (capítulo 01) con comparador "Hoy / Potenciada":
+  `crearParticulas` = ΚΛΙΖΣΝ con profundidad (capas, bokeh, paralaje con el cursor), tacto (estela de 10 huellas que
+  aparta los puntos; el empuje va TOPADO, si no el cursor quieto abría un hoyo enorme) y destellos.
+  `crearCinta` = misma serpiente del hero pero con malla propia: sección elíptica que se aplana y se RETUERCE
+  (listón), entorno de estudio y `scene.environmentRotation` ligado a tiempo + scroll (la luz la recorre).
+- **E · hélice** (Disrupt) igual que en la Propuesta 2, sobre fondo limpio.
+- **I · `elenco.js`** (Premotio + Errormade; iría en Demos): un canvas fijo, las 6 demos como planos que se mezclan
+  entre 4 formaciones f(scroll) — nube → anillo (dice el giro de la que queda al frente) → abanico → muro — con el
+  "tambor" de la lente en el shader de vértices (al entrar/salir de pantalla se enrollan) y atraso + separación de
+  color con la velocidad. Tramos quietos en la constante `T`. Por detrás se ve la misma captura, apagada.
+- **G · `kai2.js`** — Kai v2: nube de PARTÍCULAS alrededor de una cuenta de cromo que, con el avance, se vuelve una
+  PERLA del cromo de la cinta con un ARO (tramo de cinta que lo orbita; botón para quitarlo). Cara = visor de vidrio
+  negro (pintado en la textura; el barniz se baja ahí con `clearcoatMap`) + dos ojos de luz en píldora. Al cambiar de
+  capítulo se deshace, viaja y se arma. Gotchas: giros de cabeza cortos (pasado ~35° el visor refleja las luces y
+  se pierde un ojo); entorno sin luz de frente (se reflejaba como un cuadro en el visor).
+- **C · mármol** solo en Contacto: una losa con esquinas redondeadas (`crearMarmol` sin `global`).
+Revisado en Chrome a 1440, claro y oscuro, sin errores al cargar. **No revisado en celular.** Decisiones abiertas:
+qué entra, Kai con o sin aro, tono de las frases (borrador). B, D, la piedra (`kai.js`) y `dos.*` siguen sin borrar.
+
+### INTEGRACIÓN AL SITIO REAL (11-nov, EN CURSO, sin commit) — Zahir: "me encantó todo, vamos con eso, poténcialo al mil"
+Aprobó la Propuesta 3 completa. Lo único que pidió pulir fue **el elenco** (mandó captura del anillo) → rehecho (v2).
+También pidió que Kai tenga VOZ (como el Buddy de Adam Perlis; sugirió ElevenLabs).
+**Ya en `src/` (verificado en Chrome a 1440, oscuro; falta claro completo, inglés y CELULAR):**
+- `src/lib/cromo.js` — tonos del cromo + `entornoEstudio()` (cajas de luz). Lo usan cinta y Kai.
+- **Cinta = LISTÓN** (`heroRibbon.js`): malla propia (SEG×RAD, sin TubeGeometry ni esferas en las puntas), sección
+  elíptica que se retuerce, entorno de estudio, `scene.environmentRotation` con tiempo + scroll. `ANCHO = 1.15` (con
+  1.5 tapaba demasiado titular). En el telón `liston → 0` (vuelve redonda: tapa la pantalla igual que antes).
+- **Partículas** (`nube.js`): atributos `aCapa`/`aSeed` + uniforms `uTime/uFx/uPar/uEstela`: profundidad con bokeh y
+  paralaje, tacto (estela de 10 huellas, empuje topado) y destellos. `uFx` se apaga camino a la cinta. Sin cursor
+  (táctil) no hay tacto ni paralaje. Las semillas nuevas salen de OTRO generador (no cambian las figuras de hoy).
+- **KAI** — `src/lib/kai.js` + `components/Kai.jsx` + `styles/Kai.css` + `src/data/kai.js` (frases {es,en} por "Nº" de
+  capítulo y ocurrencias; **BORRADOR**, las deciden Zahir y Karime). `SectionHead` trae `.kai-lugar[data-kai=Nº]`
+  (absoluto, en el aire sobre la cabecera: no mueve el layout; `.sh` ahora es `position: relative`). Sin lugar a la
+  vista se guarda arriba del botón de WhatsApp; en celular nunca deja la esquina y habla 5 s al cambiar de capítulo.
+  Nace al entrar Servicios; se forma de 0 a 1 entre el primer y el último capítulo. Botones de texto en el globo:
+  "Callar" (se guarda en `kai-callado`; tocarlo lo despierta) y voz.
+  **VOZ:** audios pregrabados, `public/kai/<es|en>/<llave>.mp3` + índice `public/kai/voz.json`; sin índice no hay
+  botón de voz. Apagada por defecto (`kai-voz`). Los ojos laten con el volumen real (AnalyserNode). Se graban con
+  `ELEVENLABS_API_KEY=… KAI_VOZ=<voice id> node tools/kai/voz.mjs` (lo corre Zahir; AÚN NO SE HA CORRIDO → hoy Kai
+  solo escribe). Si cambia una frase: `--todo` o borrar su mp3.
+- **ELENCO v2** — `src/lib/elenco.js` (copia pulida de `tools/lab/elenco.js`) dentro de `Demos.jsx` (`<Elenco>`), en
+  lugar de la rejilla de tarjetas, SOLO con `(min-width: 900px) and (pointer: fine)`, sin reduced-motion y con
+  WebGL; si no, queda la rejilla de siempre. Formaciones: nube (con foco: desenfoque por mipmaps) → anillo sobre
+  piso con reflejo (grupo espejo con scale.y −1), avanza giro por giro → abanico → FILA con nombre debajo, tocable
+  (se levanta, apaga las demás, abre el mismo WhatsApp de "Pedir acceso"). Textos {es,en} en `FORMACIONES` y
+  `titulo`/`que` de `GIROS` (`que` = BORRADOR leyendo las capturas: confirmar). Enlaces reales en `.el-accesible`.
+  Pista de 640vh; tramos en `T`. Texturas SIN colorSpace (con sRGB salían oscuras).
+- **HÉLICE en Servicios** (`Servicios.jsx` → `Helice`, CSS 3D): las 7 `Escena` en espiral dentro de la 3ª columna
+  (`.srv-forma`); índice y ficha intactos. `PASO = 78°` + `backface-visibility: hidden` (con 95° las vecinas se
+  veían con el texto en espejo), `RADIO = 170px` (columna angosta). La que se va (arriba-izquierda, hacia la ficha)
+  se apaga rápido. Mismo ritmo del texto (gira en el último 38% del tramo). En celular sigue la escena dentro de la
+  ficha (sin hélice).
+- **LOSA DE MÁRMOL en Contacto** (`Footer.jsx` → `Losa` + `src/lib/marmol.js`): solo la cabecera (SectionHead Nº 09)
+  va sobre el mármol vivo; el formulario queda abajo en limpio. Sin WebGL queda un degradado. Único mármol del sitio.
+Revisado en Chrome a 1440: oscuro, claro e inglés (hero, Servicios, Demos, Contacto, Kai), sin errores de consola.
+**NO revisado: CELULAR** (la ventana de la extensión no se deja achicar) ni Safari.
+**FALTA / por decidir con Zahir:**
+- ~~Teléfono 3D (A)~~ → HECHO como Zahir eligió ("en los 3 pasos"): `src/lib/telefono.js` + `Demos.jsx` (`Motion`).
+  El teléfono de cromo sustituye al de CSS en escritorio con WebGL (`.dm-stage--3d`; el de CSS queda de respaldo y
+  en celular). Su pantalla es un lienzo 2D que pinta lo mismo según el scroll (nombre que se escribe → boceto →
+  demo real que barre → "Pedido nuevo"); da UNA vuelta mientras "lo armamos" y gira hacia el pase al final.
+- **Lente en Proyectos:** en escritorio los mockups de Proyectos flotan con el cursor (no pasan por las orillas), así
+  que la lente ahí casi no tendría qué doblar; hoy vive en el elenco (entrada y salida). No se integró.
+- **VOZ DE KAI GRABADA (11-nov):** 24 audios en `public/kai/{es,en}/` + `voz.json` (1 MB en total), voz "Brian -
+  Social Media". Zahir generó en la web de ElevenLabs un audio por idioma con las 12 frases de corrido; los
+  `<break>` NO hicieron pausa (todas < 0.5 s), así que se cortó con la TRANSCRIPCIÓN con tiempos por palabra de
+  ElevenLabs (`POST /v1/speech-to-text`, `scribe_v1`): coincidió 117/117 y 123/123 palabras con `src/data/kai.js`.
+  Márgenes: hasta 0.10 s antes y 0.22 s después, con fundido. Si cambia una frase: regenerar y volver a cortar así
+  (los originales quedaron en ~/Downloads, `ElevenLabs_2026-11-11T17_20_29…` = es, `…17_21_45…` = en).
+  Probado: el botón "Escuchar a Kai" aparece y pide `/kai/es/02.mp3`. Pendiente que Zahir escuche los cortes.
+- (historial) Voz de Kai, intento por API: la llave de ElevenLabs de Zahir está en el llavero (`security
+  find-generic-password -s ElevenLabs -w`). Su cuenta es GRATUITA (10,000 caracteres/mes): por API solo deja las
+  voces "premade"; las de biblioteca (Isaac es-MX, "Kai" en) piden plan de pago (402). Se grabaron 4 muestras de la
+  frase 02 (Will, Liam, Callum, Jessica) para que elija; falta su respuesta y correr
+  `ELEVENLABS_API_KEY=$(security find-generic-password -s ElevenLabs -w) KAI_VOZ=<id> node tools/kai/voz.mjs`.
+  Ids: Will bIHbv24MWmeRgasZH58o · Liam TX3LPaxmHKxFdv7VOQHJ · Callum N2lVS1w4EtoT3dr4eOWO · Jessica cgSgspJ2msm6clMCkdW9.
+  **Plan actual (idea de Zahir):** él genera en la WEB de ElevenLabs UN audio por idioma con las 12 frases de corrido
+  (voz elegida: "Brian - Social Media", `U9TSK9KHMlMU2qkeXlQP`; modelo Multilingual v2; frases separadas por
+  `<break time="2.0s" />`, en el orden de `src/data/kai.js`: 02…09, toque-1…4) y Claude lo corta con ffmpeg
+  (`silencedetect`) en `public/kai/<idioma>/<llave>.mp3` y escribe `public/kai/voz.json`. Ojo: plan gratuito =
+  revisar licencia comercial.
+- **Frases de Kai v2 APROBADAS por Zahir (11-nov)** — ya en `src/data/kai.js`. Faltan confirmar los `que` de las demos.
+- **Testimonio en video de Carlos (Tito), 11-nov:** `public/testimonios/tito-testimonio.mp4` (44 s, 576×1024, crf 24,
+  faststart, 3.7 MB) + `tito-poster.jpg`, sacados de `~/Downloads/WhatsApp Video 2026-11-10 at 17.24.51.mp4`. Su
+  tarjeta pasó de cita a video (`quote: null`; la cita escrita anterior se quitó, quedó anotada en el código). El
+  texto junto al video ahora es por testimonio (`voz`). Los 2 errores de lint de Testimonios.jsx ya estaban.
+- Antes del commit: `/codex:review`; revisar celular; borrar de `tools/lab` lo descartado (B, D, piedra, `dos.*`).
+- `Footer.jsx` ya traía un error de lint (`React` sin usar): no es de esta tanda.
+Contextos WebGL vivos: nube, cinta ×2, vidrio líquido, Kai, elenco, mármol: cuidar el tope en iOS.
+
+### Segunda tanda de cambios de Zahir (11-nov, tarde) — hecha en local, sin commit
+Pidió: logo y Kai desde la pantalla de carga · ΚΛΙΖΣΝ más legible · que no asome "la cinta vieja" al formarse ·
+que la cinta no dé saltos · telón que no "salte de la nada" · Kai con más peso (no solo acompañar) · quitar el hilo.
+- **Saltos de la cinta = `computeFrenetFrames`** (elige su normal inicial por la componente más chica de la primera
+  tangente; al cambiar, toda la cinta giraba de golpe). Ahora `heroRibbon.js` saca el marco de cada anillo de una
+  referencia fija (eje Z): U = ancho dentro de la pantalla, V = canto hacia la cámara. Normales ANALÍTICAS de la
+  elipse (ya no `computeVertexNormals` por cuadro) y `getPoint` uniforme. NO volver a `computeFrenetFrames`.
+- **Partículas → listón:** `cinta.pts[i*3+2]` ya no es el radio del tubo viejo sino el medio ancho QUE SE VE del
+  listón retorcido en ese punto (`giroEn(s)` compartido): las partículas arman el listón, no un tubo.
+- **ΚΛΙΖΣΝ más legible:** profundidad de las partículas a la mitad (tamaño, alfa, bokeh y paralaje) en `nube.js`.
+- **Telón rehecho:** se prepara en el último 10% del escenario del hero (mientras el titular se va): τ = ese tramo
+  (0→0.2) + p. Estira a banda (τ 0→0.24), deja de retorcerse (0.06→0.32), ensancha (0.14→0.46, sigue tapando antes
+  de que asome Servicios), sube (p 0.5→0.9); todo con `suave5`. Al tapar la sección es un óvalo (canto 0.55) y el
+  material pasa a SATINADO (`satin`: roughness +0.24, clearcoatRoughness +0.34) para reflejos anchos.
+- **HILO QUITADO** (`<Hilo />` fuera de App; `Hilo.jsx`/`Hilo.css`/`hiloPuente.js` quedan sin montar). La Κ del
+  cierre se arma del polvo. Nosotros: la ranura central de 9rem pasó a un hueco normal. Los números de Proceso ya
+  no se "encienden" (era CSS del hilo).
+- **KAI CON MÁS PESO:** lienzo 176 px (antes 132); nace con la página. Pantalla de carga (`index.html`): ΚΛΙΖΣΝ
+  que se dibuja + un Kai de CSS encaramado en su esquina + riel. Paradas nuevas (`.kai-lugar` sin número):
+  hero encaramado en la Ν de ΚΛΙΖΣΝ (`--marca`) y junto a los botones (`--botones`), que Hero.jsx enciende con
+  `display` según p; Servicios junto a la hélice (`--escena`, `data-kai="srv-<forma>"`, talla 0.72) con UNA LÍNEA
+  POR SERVICIO (`KAI_SERVICIOS` en `src/data/kai.js`: BORRADOR, sin voz grabada → solo texto). Cabeceras: Kai va a
+  la DERECHA del titular y su globo DEBAJO (`kai--abajo`; de lado tapaba titulares largos). FAQ: arriba de su
+  columna. Reglas de "a la vista": capítulo = top entre 76 px y 70% del alto; parada = que quepa en pantalla.
+  Lo formado sale solo de los lugares de capítulo (`CAPITULO = /^\d+$/`).
+Revisado en Chrome a 1440×614, tema claro. Falta: oscuro de esta tanda, celular, y que Zahir confirme en movimiento
+que la cinta ya no salta.
+
+### Tercera tanda (11-nov, tarde) — hecha en local, sin commit
+- **Pantalla de carga que SÍ espera** (`src/lib/carga.js`): piezas `nube · cinta · fuentes · kai · resto · medios`
+  + MÍNIMO 2.6 s en pantalla + tope 9 s. `precargar()` (main.jsx) pide y DECODIFICA capturas de demos, portadas de
+  video y logos, e importa elenco/teléfono (solo escritorio) y mármol. `Resto.jsx` y `Kai.jsx` avisan con
+  `cargado()`. Al cerrar pone `html.cargado`: el Kai de verdad espera esa clase (antes se veía encima de la carga).
+  El logo se dibuja UNA vez, letra por letra (ya no en bucle). ⚠️ Pieza nueva que no avise = 9 s de espera.
+- **Scroll en pausa mientras Kai habla** (`src/lib/bloqueoScroll.js`, lo llama `Kai.jsx` en `hablar`): ignora
+  rueda/dedo/teclas en captura (sin tocar overflow ni `lenis.stop()`), corta la inercia con
+  `window.__lenis.scrollTo(scrollY, { immediate })`. Con voz: hasta `ended` (tope 9 s); sin voz: lo que tarda en
+  leerse (0.25 + 0.075·palabras + 0.9 s). No frena con las ocurrencias (`toque-*`) ni con modal; "Callar" lo suelta.
+  Probado: 5 golpes de rueda hablando = 0 px; después, normal.
+- **Servicios: la hélice ahora manda.** Columnas 0.62 / 0.9 / 1.38 (antes 0.8 / 1.05 / 0.85), radio
+  `min(300, 19vw)`, PASO 95°, vecinas visibles (opacidad mínima 0.2, sin esconder las de espaldas) y el cursor
+  inclina la espiral: es la versión del laboratorio que Zahir aprobó. Índice y ficha con letra un poco menor.
+
+### Revisión de Codex antes de subir (11-nov) — 4 hallazgos, los 4 reales y corregidos
+1. En celular los `.kai-lugar` iban con `display:none` → medían 0 y Kai nunca decía la línea del capítulo. Ahora
+   van con `visibility:hidden` (siguen midiéndose); solo las paradas (marca, botones, escena) se quitan.
+2. El freno de teclas (`bloqueoScroll.js`) también se comía espacios/flechas en el formulario y en botones → ahora
+   ignora inputs, textarea, select, botones, links y contenteditable.
+3. Elenco: el clic global abría WhatsApp con la última tarjeta señalada aunque el clic fuera en otra cosa → ahora
+   exige que el clic caiga sobre la tarjeta y no en un control; fuera de pantalla `sobre = -1`.
+4. La losa de mármol se animaba aun con `prefers-reduced-motion` → ahora no se crea (queda el degradado).
+`tools/lab/` NO se subió: está ignorado solo en esta Mac (`.git/info/exclude`).
+
 ## Rendimiento al cargar (8-nov-2026)
 Zahir: "en teléfonos se traba el hero" / "tarda demasiado en cargar". Medido con la build servida (`vite preview`) y
 `long-animation-frame` en Chrome; resultado en la Mac: primer pintado 0.06 s, 3D listo 0.20 s (antes 0.37), se puede

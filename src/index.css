@@ -368,6 +368,7 @@ a:hover {
 /* ---- Apertura editorial de sección (SectionHead.jsx, 2026-10-05) ----
    Mismo lenguaje que .hero-masthead + h1 del hero, a menor escala. */
 .sh {
+  position: relative;
   margin-bottom: var(--spacing-16);
 }
 .sh-rule {

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import SectionHead from './SectionHead';
@@ -186,6 +186,88 @@ function Ficha({ s, i }) {
   );
 }
 
+/*
+ * LA HÉLICE (2026-11-11, de la escalera de tarjetas de madetodisrupt.com): las
+ * 7 escenas del resultado viven sobre una espiral — cada una a 95° y un tramo
+ * más abajo que la anterior — y el scroll la gira y la sube: la escena ya no
+ * aparece y desaparece, sube girando y trae a la siguiente. CSS 3D puro.
+ * Mismo ritmo que el texto: cada servicio se sostiene y gira al siguiente en
+ * el último 38% de su tramo (el texto cambia a media vuelta, u + 0.19).
+ * 2ª versión, mismo día: la 1ª iba apretada en una columna angosta (radio 170,
+ * vecinas casi escondidas) y Zahir: "no luce el efecto". Ahora es la del
+ * laboratorio que aprobó: la columna es la más ancha de la escena, radio
+ * grande, las vecinas SE VEN (la que se va arriba a la izquierda, la que
+ * viene abajo a la derecha, y las de atrás como vidrio) y el cursor inclina
+ * toda la espiral.
+ */
+const PASO = 95; // grados entre una escena y la siguiente
+const acota = (v, a, b) => Math.max(a, Math.min(b, v));
+
+function Helice({ progreso, activo }) {
+  const anillo = useRef(null);
+  const cartas = useRef([]);
+  const poner = useCallback((v) => {
+    const u = acota(v, 0, 1) * N * 0.99999;
+    const k = Math.min(N - 1, Math.floor(u));
+    const f = k < N - 1 ? acota((u - k - 0.62) / 0.38, 0, 1) : 0;
+    const a = k + f * f * (3 - 2 * f);
+    const radio = Math.min(300, window.innerWidth * 0.19);
+    const dy = window.innerHeight * 0.3;
+    cartas.current.forEach((el, i) => {
+      if (!el) return;
+      const rel = i - a;
+      const lejos = Math.abs(rel);
+      if (lejos > 2.4) {
+        el.style.visibility = 'hidden';
+        return;
+      }
+      el.style.visibility = '';
+      el.style.transform = `translate(-50%, -50%) translateZ(${-radio}px) rotateY(${rel * PASO}deg) translateZ(${radio}px) translateY(${rel * dy}px)`;
+      el.style.opacity = acota(1 - lejos * 0.6, 0.2, 1);
+      el.style.pointerEvents = lejos < 0.3 ? '' : 'none';
+    });
+  }, []);
+  useMotionValueEvent(progreso, 'change', poner);
+  useEffect(() => {
+    const on = () => poner(progreso.get());
+    on();
+    window.addEventListener('resize', on);
+    // El cursor inclina la espiral (solo mientras se mueve: sin bucle permanente)
+    let raf = 0;
+    let mx = 0;
+    let my = 0;
+    let cx = 0;
+    let cy = 0;
+    const paso = () => {
+      mx += (cx - mx) * 0.08;
+      my += (cy - my) * 0.08;
+      if (anillo.current) anillo.current.style.transform = `rotateX(${(-my * 4).toFixed(2)}deg) rotateY(${(mx * 7).toFixed(2)}deg)`;
+      raf = Math.abs(cx - mx) + Math.abs(cy - my) > 0.002 ? requestAnimationFrame(paso) : 0;
+    };
+    const mover = (e) => {
+      cx = (e.clientX / window.innerWidth) * 2 - 1;
+      cy = (e.clientY / window.innerHeight) * 2 - 1;
+      if (!raf) raf = requestAnimationFrame(paso);
+    };
+    window.addEventListener('pointermove', mover, { passive: true });
+    return () => {
+      window.removeEventListener('resize', on);
+      window.removeEventListener('pointermove', mover);
+      cancelAnimationFrame(raf);
+    };
+  }, [poner, progreso]);
+  return (
+    <div ref={anillo} className="srv-helice">
+      {SERVICIOS.map((x, i) => (
+        <div key={x.forma} ref={(el) => { cartas.current[i] = el; }} className="srv-helice-carta" aria-hidden={i !== activo}>
+          {/* Al quedar de frente se vuelve a montar: sus renglones entran en cascada */}
+          <Escena key={i === activo ? 'on' : 'off'} forma={x.forma} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /**
  * SERVICIOS v2 (2026-11-06) — "Índice · Ficha · Nube". Sigue siendo una escena
  * fija con un tramo de scroll por servicio, pero ahora en TRES columnas:
@@ -194,6 +276,7 @@ function Ficha({ s, i }) {
  *    lleva al formulario con el servicio ya elegido.
  *  - Escena del resultado (ServiciosEscenas.jsx): una mini pantalla con lo que el
  *    cliente VA A VER en su negocio. Sin íconos (Zahir, 6-nov: "no quiero íconos").
+ *    Desde el 11-nov las 7 van en HÉLICE (ver arriba), no una que aparece y se va.
  *    (Hasta el 6-nov era la nube de partículas en modo "secuencia": por eso el
  *    cambio va en u + 0.19, a la mitad de lo que era su morph.)
  * Antes la descripción vivía DENTRO del índice (un párrafo gris de 2 renglones)
@@ -292,16 +375,9 @@ export default function Servicios() {
           </div>
 
           <div className="srv-forma">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={s.forma}
-                className="srv-forma-in"
-                exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
-                transition={{ duration: 0.22 }}
-              >
-                <Escena forma={s.forma} />
-              </motion.div>
-            </AnimatePresence>
+            {/* Parada de Kai: presenta cada servicio (su línea cambia con el activo) */}
+            <span className="kai-lugar kai-lugar--escena" data-kai={`srv-${s.forma}`} data-kai-talla="0.72" aria-hidden="true" />
+            <Helice progreso={scrollYProgress} activo={activo} />
           </div>
         </div>
       </div>

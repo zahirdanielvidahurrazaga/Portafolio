@@ -103,6 +103,10 @@ const Hero = () => {
   // Fuera de su rango los botones no deben poder tocarse
   const accionesEventos = useTransform(acciones, (o) => (o > 0.5 ? 'auto' : 'none'));
   const kicker = useTransform(p, (v) => rango(v, RELEVO.texto, [1, 0]));
+  // Paradas de Kai (lib/kai.js) en el hero: encaramado en ΚΛΙΖΣΝ mientras son letras, y
+  // junto a los botones cuando ya está el titular. Fuera de su tramo no existen (display).
+  const kaiMarca = useTransform(p, (v) => (v < RELEVO.flujo[0] + 0.02 ? 'block' : 'none'));
+  const kaiBotones = useTransform(p, (v) => (v > 0.76 && v < SALIDA[0] + 0.02 ? 'block' : 'none'));
 
   if (reduced) {
     return (
@@ -139,6 +143,7 @@ const Hero = () => {
             改善 · Kaizen
           </motion.p>
           <div className="interludio-forma">
+            <motion.span className="kai-lugar kai-lugar--marca" data-kai="hero" style={{ display: kaiMarca }} aria-hidden="true" />
             <div className="interludio-fallback">
               <KaizenWordmark />
             </div>
@@ -191,6 +196,7 @@ const Hero = () => {
           >
             <a href="#contact" className="btn-metallic btn-large">{boton1}</a>
             <a href="#demos" className="btn-secondary btn-large">{boton2}</a>
+            <motion.span className="kai-lugar kai-lugar--botones" data-kai="hero-2" data-kai-talla="0.8" style={{ display: kaiBotones }} aria-hidden="true" />
           </motion.div>
         </div>
       </div>

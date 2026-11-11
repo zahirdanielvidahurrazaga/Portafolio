@@ -9,6 +9,7 @@ import Faq from './Faq';
 import Interludio from './Interludio';
 import Footer from './Footer';
 import { useLang } from '../lib/LangContext';
+import { cargado } from '../lib/carga';
 
 /**
  * TODO LO QUE VA DEBAJO DE SERVICIOS, en su propio archivo (App lo carga con
@@ -31,6 +32,10 @@ export default function Resto() {
   const { t } = useLang();
   // Si se llegó con #seccion, el navegador buscó el ancla antes de que esto
   // existiera: se lleva ahí en cuanto está pintado.
+  // La pantalla de carga espera a que todo esto ya esté montado
+  useEffect(() => {
+    cargado('resto');
+  }, []);
   useEffect(() => {
     let id = window.location.hash.slice(1);
     try { id = decodeURIComponent(id); } catch { /* ancla mal escrita (#%): se busca tal cual */ }
