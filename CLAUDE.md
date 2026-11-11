@@ -353,6 +353,18 @@ que la cinta ya no salta.
   `min(300, 19vw)`, PASO 95°, vecinas visibles (opacidad mínima 0.2, sin esconder las de espaldas) y el cursor
   inclina la espiral: es la versión del laboratorio que Zahir aprobó. Índice y ficha con letra un poco menor.
 
+### Cuarta tanda (11-nov, noche) — Kai sin evolución y freno de scroll afinado
+- **Kai YA NO EVOLUCIONA:** sale con su aspecto final (perla + aro) desde el hero; solo se deshace en partículas
+  al viajar entre lugares. El Kai de CSS de la pantalla de carga también es ya perla + aro. No volver a ligar su
+  forma al scroll (`formado`/`caps` se quitaron de `lib/kai.js`).
+- **"Se queda trabado"** — medido con rueda simulada: 8 frenos seguidos en Servicios (uno por servicio) y en cada
+  capítulo la página se congelaba con Kai al fondo y el globo cortado. Reglas nuevas (`Kai.jsx` decide,
+  `bloqueoScroll.js` es solo el mecanismo):
+  frena SOLO la línea de un capítulo, la PRIMERA vez y si venía bajando con rueda/teclas (`vieneDeScroll`, se
+  anula con cualquier clic → menú o barra no frenan). NO frenan: líneas de servicio, repetir capítulo, ocurrencias,
+  celular (touchmove ya no se frena). Al frenar, la página se DESLIZA a `lectura(lugar)` (Kai a 30% del alto,
+  titular nunca bajo la barra) y ahí espera. En celular el globo espera a que acabe la voz (`sonando`).
+
 ### Revisión de Codex antes de subir (11-nov) — 4 hallazgos, los 4 reales y corregidos
 1. En celular los `.kai-lugar` iban con `display:none` → medían 0 y Kai nunca decía la línea del capítulo. Ahora
    van con `visibility:hidden` (siguen midiéndose); solo las paradas (marca, botones, escena) se quitan.

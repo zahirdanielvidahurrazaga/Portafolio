@@ -4,19 +4,20 @@ import { tonoCromo, entornoEstudio } from './cromo';
 /**
  * KAI, EL GUÍA (2026-11-11). La idea viene del "Buddy" de adamperlis.com —
  * alguien te habla mientras bajas— con forma propia, hecha de las dos materias
- * de la apertura:
- *  · nace como una nube de PARTÍCULAS alrededor de una cuenta de cromo, y
- *  · con el avance se le pegan hasta quedar una PERLA del cromo de la cinta,
- *    con su ARO (un tramo de cinta que lo orbita).
+ * de la apertura: una PERLA del cromo de la cinta con su ARO (un tramo de cinta
+ * que lo orbita), que al cambiar de lugar se deshace en PARTÍCULAS, viaja y se
+ * vuelve a armar.
  * Cara: un visor de vidrio negro con dos ojos de luz. Sin boca ni brazos: se
- * expresa con los ojos, la inclinación y los brincos. Kaizen: de idea suelta a
- * pieza terminada, capítulo por capítulo.
+ * expresa con los ojos, la inclinación y los brincos.
+ * ⚠️ YA NO EVOLUCIONA (11-nov, pedido de Zahir): antes nacía como nube de
+ * partículas y se iba formando con el avance; ahora tiene su aspecto final
+ * desde que aparece. No volver a ligar su forma al scroll.
  *
  * DÓNDE VIVE: en los `.kai-lugar` (cajas absolutas de 176 px que NO mueven el
  * layout). Con uno a la vista, Kai se para ahí; si no, espera chico arriba del
  * botón de WhatsApp. Hay de dos tipos:
  *  · de CAPÍTULO (`data-kai="Nº"`, los pone SectionHead a la derecha del
- *    titular): dice la línea del capítulo, y de ellos sale cuánto va formado;
+ *    titular): dice la línea del capítulo;
  *  · PARADAS (hero: encaramado en ΚΛΙΖΣΝ y junto a los botones; Servicios:
  *    junto a la hélice, con una línea por servicio — `data-kai` cambia y él lo
  *    nota). `data-kai-talla` lo achica en esa parada. Sin frase, solo está.
@@ -25,9 +26,10 @@ import { tonoCromo, entornoEstudio } from './cromo';
  * nunca deja la esquina: solo habla unos segundos al cambiar de capítulo. Se
  * esconde con un modal abierto.
  *
- * Este archivo no sabe de idiomas ni de audio: pide el texto con `frase(id)` y
- * avisa con `alDecir(id)`; el componente (Kai.jsx) pone la voz y devuelve su
- * volumen con `voz(a)` para que los ojos se muevan al hablar.
+ * Este archivo no sabe de idiomas, de audio ni del freno del scroll: pide el
+ * texto con `frase(id)` y avisa con `alDecir(id, lugar, pedida)`; el componente
+ * (Kai.jsx) pone la voz, decide si la página se detiene y devuelve el volumen
+ * con `voz(a)` para que los ojos se muevan al hablar.
  *
  * Gotchas: giros de cabeza cortos (pasado ~35° el visor refleja las cajas de
  * luz y se pierde un ojo); entorno SIN luz de frente (se reflejaba como un
@@ -48,9 +50,12 @@ const smooth = (x) => x * x * (3 - 2 * x);
  * @param opts.theme 'dark' | 'light'
  * @param opts.frase(id)  → texto del capítulo o de la ocurrencia (en el idioma actual)
  * @param opts.ocurrencias  lista de ids de ocurrencias (al tocarlo)
- * @param opts.alDecir(id | null)  empezó a decir esa frase (null = se calló)
+ * @param opts.alDecir(id | null, lugar, pedida)  empezó a decir esa frase (null = se calló).
+ *        `lugar` = el .kai-lugar donde está parado (null en la esquina / celular);
+ *        `pedida` = la repite porque el visitante lo pidió (cambió idioma o prendió la voz)
+ * @param opts.sonando()  ¿su voz sigue sonando? (para no quitar el globo a media frase)
  */
-export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrencias = [], alDecir } = {}) {
+export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrencias = [], alDecir, sonando } = {}) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -151,7 +156,7 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
       uColor: { value: new THREE.Color('#efeae0') },
       uPR: { value: PR },
       uTime: { value: 0 },
-      uF: { value: 0 },
+      uF: { value: 1 }, // 1 = partículas pegadas a la perla (solo se sueltan con uViaje)
       uCab: { value: 0.4 },
       uViaje: { value: 0 },
     },
@@ -206,15 +211,21 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   let brinco = -1e6;
   let callado = false;
   let dicho = null; // id de lo que está diciendo (para repetirlo si cambia el idioma)
-  const callar = (espera = 0) => {
+  // `paciente`: si al cumplirse el plazo su voz sigue sonando, espera a que acabe
+  // (en celular el globo dura unos segundos y la frase más larga dura más que eso)
+  const callar = (espera = 0, paciente = false) => {
     clearTimeout(ocultar);
     ocultar = setTimeout(() => {
+      if (paciente && sonando?.()) {
+        callar(300, true);
+        return;
+      }
       caja.classList.remove('kai--habla');
       dicho = null;
       alDecir?.(null);
     }, espera);
   };
-  const decir = (id, dura = 0) => {
+  const decir = (id, dura = 0, pedida = false) => {
     const texto = frase?.(id);
     if (!texto || callado) return;
     dicho = id;
@@ -228,8 +239,8 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     caja.classList.add('kai--habla');
     brinco = performance.now();
     clearTimeout(ocultar);
-    if (dura) callar(dura);
-    alDecir?.(id);
+    if (dura) callar(dura, true);
+    alDecir?.(id, lugar, pedida);
   };
 
   // ── Estado ──
@@ -245,7 +256,6 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   let cx = vw / 2;
   let cy = vh / 2;
   let lugares = [];
-  let caps = []; // los lugares de capítulo, en orden
   let lugar = null; // el lugar donde está parado (solo escritorio)
   let lugarId = ''; // su data-kai (en Servicios cambia sin cambiar de lugar)
   let capitulo = null; // el último capítulo que empezó
@@ -253,7 +263,6 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   let giro = -1e6;
   let viaje = -1e6;
   let parpadeo = performance.now() + 2500;
-  let formado = 0;
   let volumen = 0;
   let nOcurrencia = 0;
   let nCuadro = 0;
@@ -285,10 +294,7 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     vh = window.innerHeight;
     const chico = vw < 820;
     // Los capítulos de abajo se montan después (Resto.jsx): se vuelven a buscar cada tanto
-    if (nCuadro++ % 40 === 0) {
-      lugares = [...document.querySelectorAll('.kai-lugar[data-kai]')];
-      caps = lugares.filter((el) => CAPITULO.test(el.dataset.kai));
-    }
+    if (nCuadro++ % 40 === 0) lugares = [...document.querySelectorAll('.kai-lugar[data-kai]')];
     if (!lugares.length) return;
 
     // ¿En qué capítulo vamos y hay un lugar a la vista?
@@ -348,26 +354,18 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     // En una cabecera (a la derecha del titular) el globo va DEBAJO: de lado taparía el titular
     caja.classList.toggle('kai--abajo', !!lugar && derecha && CAPITULO.test(lugarId));
 
-    // Cuánto está formado: 0 al entrar el primer capítulo, 1 al llegar al último
-    let meta = 0;
-    if (caps.length > 1) {
-      const r0 = caps[0].getBoundingClientRect().top;
-      const r1 = caps[caps.length - 1].getBoundingClientRect().top;
-      meta = clamp01((vh * 0.66 - r0) / Math.max(1, r1 - r0));
-    }
-    formado += (meta - formado) * 0.12;
-    const f = smooth(formado);
+    // Siempre con su aspecto final (perla + aro). Lo único que lo deshace es el VIAJE
+    // entre lugares: se suelta en partículas, llega y se vuelve a armar.
     const tv = (ahora - viaje) / 1000;
     const va = tv < 0.7 ? Math.sin((tv / 0.7) * Math.PI) : 0;
-    const esc = lerp(0.4, 1, f) * (1 - va * 0.55);
+    const esc = 1 - va * 0.55;
     cabeza.scale.setScalar(esc);
-    matP.uniforms.uF.value = f;
     matP.uniforms.uCab.value = esc;
     matP.uniforms.uViaje.value = va;
     matP.uniforms.uTime.value = t;
 
-    // El aro aparece cuando ya hay perla que orbitar
-    const a = smooth(clamp01((f - 0.45) / 0.45)) * (1 - va);
+    // El aro se recoge mientras viaja
+    const a = smooth(1 - va);
     ejeAro.visible = a > 0.01;
     ejeAro.scale.setScalar(esc * lerp(1.5, 1, a));
     aro.scale.y = a;
@@ -416,9 +414,9 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
       if (v) callar(0);
       else if (lugar && frase?.(lugar.dataset.kai)) decir(lugar.dataset.kai);
     },
-    /** Cambió el idioma: repite lo que estaba diciendo */
+    /** Cambió el idioma o prendieron la voz: repite lo que estaba diciendo */
     repetir: () => {
-      if (dicho) decir(dicho);
+      if (dicho) decir(dicho, 0, true);
     },
     destroy() {
       cancelAnimationFrame(raf);

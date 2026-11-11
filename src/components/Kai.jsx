@@ -4,7 +4,7 @@ import { useTheme } from '../lib/ThemeContext';
 import { useLang } from '../lib/LangContext';
 import { KAI_FRASES, KAI_OCURRENCIAS, KAI_SERVICIOS } from '../data/kai';
 import { cargado } from '../lib/carga';
-import { bloquearScroll, soltarScroll } from '../lib/bloqueoScroll';
+import { alargarBloqueo, bloquearScroll, soltarScroll, vieneDeScroll, vigilarScroll } from '../lib/bloqueoScroll';
 import '../styles/Kai.css';
 
 /**
@@ -18,15 +18,35 @@ import '../styles/Kai.css';
  * bloquea el audio hasta que el visitante toca algo) y la elección se guarda.
  * Con voz, sus ojos laten con el volumen real del audio (AnalyserNode).
  *
- * MIENTRAS HABLA NO SE PUEDE BAJAR (lib/bloqueoScroll.js; pedido de Zahir: si se
- * sigue bajando, la frase se corta). Con voz, hasta que termina el audio; sin
- * voz, lo que tarda en leerse. Las ocurrencias de cuando lo tocan no frenan
- * nada, y "Callar" suelta el scroll de inmediato.
+ * MIENTRAS PRESENTA UN CAPÍTULO LA PÁGINA SE DETIENE (lib/bloqueoScroll.js; pedido
+ * de Zahir: si se sigue bajando, la frase se corta). Con voz, hasta que termina
+ * el audio; sin voz, lo que tarda en leerse. "Callar" la suelta de inmediato.
+ * Afinado el 11-nov ("en algunas partes se queda trabado"; medido: 8 frenos
+ * seguidos en Servicios y, en cada capítulo, Kai al fondo con el globo cortado):
+ *  · frena SOLO la línea de un capítulo, la PRIMERA vez y si el visitante venía
+ *    bajando con rueda o teclas. No frenan: las líneas por servicio (van dentro
+ *    de un tramo que ya avanza con el scroll), volver a pasar por un capítulo,
+ *    llegar por un link del menú, las ocurrencias, ni nada en celular;
+ *  · al frenar, la página se desliza hasta dejar la cabecera bien puesta
+ *    (`lectura`), no se congela donde caiga;
+ *  · al volver a pasar por un capítulo la línea solo se lee (sin voz: sin freno
+ *    se cortaría). Si llegó sin freno (menú), la voz espera un momento para no
+ *    sonar a pedazos mientras la página cruza capítulos.
  *
  * "Callar" lo deja de compañía sin hablar; tocarlo lo despierta.
  * Con prefers-reduced-motion no se monta.
  */
 const TODAS = { ...KAI_FRASES, ...KAI_OCURRENCIAS, ...KAI_SERVICIOS };
+const CAPITULO = /^\d+$/; // las líneas de capítulo llevan su "Nº" (igual que en lib/kai.js)
+// Dónde se detiene la página para escuchar un capítulo: Kai a un tercio de la pantalla
+// (la cabecera entera y su globo, que abre hacia abajo, caben), sin meter el titular
+// debajo de la barra.
+const lectura = (lugar) => {
+  let y = lugar.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.3;
+  const cabecera = lugar.closest('.sh');
+  if (cabecera) y = Math.min(y, cabecera.getBoundingClientRect().top + window.scrollY - 96);
+  return Math.max(0, y);
+};
 const OCURRENCIAS = Object.keys(KAI_OCURRENCIAS);
 const guardado = (k) => {
   try {
@@ -56,6 +76,8 @@ export default function Kai() {
   const indiceRef = useRef(null); // { es: [llaves], en: [llaves] }
   const audioRef = useRef(null);
   const analizaRef = useRef(null);
+  const dichasRef = useRef(new Set()); // líneas que ya dijo en esta visita
+  const esperaRef = useRef(0);
   const [hayVoz, setHayVoz] = useState(false);
   const [voz, setVoz] = useState(() => guardado('kai-voz'));
   const [callado, setCallado] = useState(() => guardado('kai-callado'));
@@ -79,8 +101,10 @@ export default function Kai() {
     };
   }, [reduced]);
 
-  // Dice (o deja de decir) una frase en voz alta (solo lee refs: no cambia entre renders)
-  const hablar = useCallback((id) => {
+  // Dice (o deja de decir) una frase (solo lee refs: no cambia entre renders).
+  // `lugar` = donde está parado; `pedida` = el visitante pidió oírla (idioma o voz).
+  const hablar = useCallback((id, lugar, pedida) => {
+    clearTimeout(esperaRef.current);
     const audio = audioRef.current;
     if (audio) {
       audio.onended = null;
@@ -91,26 +115,48 @@ export default function Kai() {
       return;
     }
     const l = langRef.current;
+    const dichas = dichasRef.current;
+    const toque = id.startsWith('toque-');
+    const nueva = !dichas.has(id);
+    const frena = CAPITULO.test(id) && nueva && !!lugar && !pedida && vieneDeScroll();
+    const conVoz = vozRef.current && !!indiceRef.current?.[l]?.includes(id);
     // Lo que tarda en leerse: las palabras van apareciendo (0.075 s c/u) + un respiro
     const texto = TODAS[id]?.[l] ?? TODAS[id]?.es ?? '';
     const leer = (0.25 + texto.split(' ').length * 0.075 + 0.9) * 1000;
-    const frena = !id.startsWith('toque-'); // las ocurrencias (lo tocaron) no frenan el scroll
-    if (frena) bloquearScroll(leer);
-    if (!vozRef.current || !indiceRef.current?.[l]?.includes(id)) return;
-    const a = audio || (audioRef.current = new Audio());
-    a.src = `/kai/${l}/${id}.mp3`;
+    const sonar = () => {
+      const a = audioRef.current || (audioRef.current = new Audio());
+      a.src = `/kai/${l}/${id}.mp3`;
+      if (frena) {
+        alargarBloqueo(9000); // con voz: hasta que termine de hablar (tope de seguridad)
+        a.onended = () => alargarBloqueo(250);
+      }
+      a.play().catch(() => {
+        /* el navegador aún no deja sonar: se queda en texto (y con su freno de texto) */
+        if (frena) alargarBloqueo(leer);
+      });
+    };
     if (frena) {
-      bloquearScroll(9000); // con voz: hasta que termine de hablar (tope de seguridad)
-      a.onended = () => bloquearScroll(250);
+      dichas.add(id);
+      bloquearScroll(leer, lectura(lugar));
+      if (conVoz) sonar();
+      return;
     }
-    a.play().catch(() => {
-      /* el navegador aún no deja sonar: se queda en texto (y con su freno de texto) */
-      if (frena) bloquearScroll(leer);
-    });
+    if (toque || pedida) {
+      if (conVoz) sonar();
+      return;
+    }
+    if (!nueva) return; // ya la dijo: solo se lee
+    // Primera vez pero sin freno (link del menú, celular, lo despertaron): cuenta como
+    // dicha, y suena, solo si se queda ahí un momento
+    esperaRef.current = setTimeout(() => {
+      dichas.add(id);
+      if (conVoz) sonar();
+    }, 450);
   }, []);
 
   useEffect(() => {
     if (reduced) return undefined;
+    vigilarScroll();
     let cancelado = false;
     // Desde el arranque: Kai ya está cuando se va la pantalla de carga (three.js ya
     // viene en camino por la nube y la cinta)
@@ -122,6 +168,7 @@ export default function Kai() {
           frase: (id) => TODAS[id]?.[langRef.current] ?? TODAS[id]?.es,
           ocurrencias: OCURRENCIAS,
           alDecir: hablar,
+          sonando: () => !!audioRef.current && !audioRef.current.paused && !audioRef.current.ended,
         });
         instRef.current?.callar(calladoRef.current);
         cargado('kai');
@@ -150,6 +197,8 @@ export default function Kai() {
     return () => {
       cancelado = true;
       cancelAnimationFrame(raf);
+      clearTimeout(esperaRef.current);
+      soltarScroll();
       audioRef.current?.pause();
       instRef.current?.destroy();
       instRef.current = null;
@@ -178,6 +227,7 @@ export default function Kai() {
     guardar('kai-voz', v);
     if (!v) {
       audioRef.current?.pause();
+      alargarBloqueo(600); // el freno esperaba el final del audio: ya no va a llegar
       return;
     }
     // Este clic es el permiso del navegador para sonar: se arma el audio aquí
