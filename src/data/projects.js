@@ -18,6 +18,35 @@
 
 const allProjects = [
   {
+    // 13-nov-2026: primer caso SOLO SITIO WEB. Es una vitrina, no una tienda: el pedido
+    // se arma en la página y se manda por WhatsApp. Sin testimonio todavía (ver CLAUDE.md).
+    id: 'natural',
+    category: 'Sitio Web & Marca',
+    title: 'Somos Natural',
+    tagline: 'Catorce aguas de sabor, cada una con su propio mundo.',
+    description:
+      'Sitio web inmersivo para una marca poblana de aguas de sabor: botella 3D que acompaña el recorrido, un mundo ilustrado por cada sabor, identidad visual renovada y pedidos armados directo a WhatsApp.',
+    result:
+      'Los 14 sabores, cómo se hacen y dónde comprarlos, en un sitio propio con la identidad renovada de la marca y un pedido que llega armado a su WhatsApp.',
+    tags: ['Three.js', 'Vite', 'Ilustración vectorial', 'Cloudflare'],
+    type: 'desktop',
+    slides: ['/screenshots/natural-web.webp'],
+    glow: '140, 102, 187',
+    accent: '#8C66BB',
+    website: 'https://somos-natural.pages.dev',
+    platforms: ['Web'],
+    heroImage: null,
+    // Sin `app`: es solo sitio web. `natural-mac.webp` = captura pegada en el MISMO
+    // marco de MacBook que Be Fit Lab (pantalla x158–1589, y23–944, muesca respetada).
+    mockups: {
+      web: {
+        src: '/mockups/natural-mac.webp',
+        fallback: '/screenshots/natural-web.webp',
+        caption: 'Cada sabor cambia el mundo entero: fondo, flores y la gotita de la marca.',
+      },
+    },
+  },
+  {
     id: 'befit',
     category: 'Fitness & Wellness',
     title: 'Be Fit Lab',
@@ -535,7 +564,7 @@ const allProjects = [
 // (mejor pocos y fuertes que muchos a medias → más eficaz para convertir).
 // Para volver a mostrar uno, agrega su id a esta lista (en el orden deseado).
 // Archivados por ahora: 'carperfit', 'dental', 'santuario'.
-const VISIBLES = ['befit', 'pos', 'boda'];
+const VISIBLES = ['natural', 'befit', 'pos', 'boda'];
 
 export const projects = VISIBLES
   .map((id) => allProjects.find((p) => p.id === id))
@@ -549,6 +578,17 @@ export const allProjectsCatalog = allProjects;
    se queda en español (nombres propios, tecnologías). `walkthrough` no se
    renderiza, por eso no se traduce. */
 const EN = {
+  natural: {
+    category: 'Website & Brand',
+    tagline: 'Fourteen flavored waters, each with its own world.',
+    description:
+      'Immersive website for a flavored-water brand from Puebla: a 3D bottle that travels with the page, an illustrated world for every flavor, a refreshed visual identity and orders sent straight to WhatsApp.',
+    result:
+      'All 14 flavors, how they are made and where to buy them, on its own site with the brand’s refreshed identity and an order that arrives ready on their WhatsApp.',
+    captions: {
+      web: 'Every flavor changes the whole world: background, flowers and the brand’s little drop.',
+    },
+  },
   befit: {
     tagline: 'The pilates studio, in your clients’ pockets.',
     description:
