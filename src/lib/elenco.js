@@ -137,6 +137,10 @@ export function crearElenco(pista, { demos: DEMOS, textos, alElegir } = {}) {
   const N = DEMOS.length;
   const escena = pista.querySelector('.el-escena');
   const elTxt = pista.querySelector('.el-txt');
+  // Kai ANFITRIÓN (14-nov): en el anillo se para junto al texto y presenta la demo del
+  // frente (su `data-kai` = "demo-" + id → la línea de KAI_DEMOS); fuera del anillo se va.
+  const kaiPildora = pista.querySelector('.kai-pildora--demos');
+  const kaiLugar = kaiPildora?.querySelector('.kai-lugar');
   const elN = pista.querySelector('.el-n');
   const elTitulo = pista.querySelector('.el-titulo');
   const elSub = pista.querySelector('.el-sub');
@@ -459,9 +463,15 @@ export function crearElenco(pista, { demos: DEMOS, textos, alElegir } = {}) {
       const d = tx.giros[alFrente];
       escribir(`${version}-1-${alFrente}`, `${tx.giro} ${String(alFrente + 1).padStart(2, '0')} / ${String(N).padStart(2, '0')}`, d.titulo, d.sub);
       ticks.forEach((el, i) => el.classList.toggle('on', i === alFrente));
+      if (kaiLugar) {
+        kaiLugar.dataset.kai = `demo-${DEMOS[alFrente].id}`;
+        kaiLugar.dataset.kaiCel = DEMOS[alFrente].img; // la demo, en su mini celular
+        kaiPildora.style.display = '';
+      }
     } else {
       const x = tx.formaciones[kT];
       escribir(`${version}-${kT}`, x[0], x[1], x[2]);
+      if (kaiPildora) kaiPildora.style.display = 'none';
     }
     // Etiquetas de la fila: debajo de cada tarjeta
     const verEtq = k === 3 ? 1 : 0;

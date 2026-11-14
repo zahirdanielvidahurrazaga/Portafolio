@@ -375,6 +375,123 @@ que la cinta ya no salta.
 4. La losa de mármol se animaba aun con `prefers-reduced-motion` → ahora no se crea (queda el degradado).
 `tools/lab/` NO se subió: está ignorado solo en esta Mac (`.git/info/exclude`).
 
+### Quinta tanda (12-nov) — Servicios con menos texto y Kai encaramado; celular revisado (sin commit)
+- **Hélice:** de espaldas las tarjetas mostraban el texto en espejo → `is-dorso` (cos del ángulo < 0.05) les pone
+  una capa de vidrio (`.esc::after`; NO opacity en los renglones: su animación de entrada la pisa).
+- **Menos texto (Zahir: "tenemos mucho texto… cuidar el minimalismo"):** fuera el "04 / 07" y el párrafo; entregables
+  en 3 renglones grises sin viñetas; el índice solo abre el grupo activo. Kai SUSTITUYE texto en vez de sumarlo.
+- **Kai protagonista:** se trepa en la esquina de arriba a la derecha de la tarjeta del frente (`.kai-lugar--percha`
+  dentro de `.srv-helice`, Helice pone `--w/--h`), talla 0.5, frase suelta a su izquierda (Familjen 600, sin
+  tarjeta, estilo Buddy de adamperlis.com: texto en un hueco vacío, nunca encima del contenido). Paradas con
+  `data-kai-linea` → clase `kai--linea`. "Escuchar · Callar" solo al pasar el cursor. Hélice más grande (columnas
+  0.62/0.8/1.58, tarjeta 400, radio min(360, 23vw), vecinas opacidad ≥0.32 con desenfoque). Publicación de Redes
+  en 2.2:1 (en 4:3 la tarjeta casi llenaba la pantalla y Kai no cabía). Las paradas ahora miden lo que SE VE de Kai
+  (según su talla), no su caja de 176.
+  Descartados (no reproponer): globo de vidrio sobre la hélice, Kai en renglón propio de la ficha, Kai en lugar del
+  "04 / 07", Kai mudo como puntero del índice.
+- **Celular (simulado a 390 en iframe):** la página medía 434 px por `.dm-pase` → `.dm-stage { overflow-x: clip }`
+  en ≤900. Rayitas de `BarraScroll` ocultas en ≤768 (se encimaban con el texto). Globo de Kai: se guarda al seguir
+  deslizando (>140 px tras 1.4 s, salvo voz sonando), tocar a Kai repite la línea cortada, y el globo ya NO se come
+  los toques (tapaba los botones del formulario de Contacto).
+- **Celular, misma idea (Zahir: "pierde protagonismo Kai y ya no está el efecto"):** la hélice YA va en celular
+  (filas: números · titular · hélice · botón; `.srv-forma` con `overflow: clip`, tarjeta 50%+34px, escala por
+  transform `escalaCarta()` = min(0.82, vh/860) — NO zoom: Kai necesita la medida real). Kai se trepa igual: las
+  paradas con `data-kai-movil` sí cuentan en celular; ahí no se calla al deslizar ni dice la línea del capítulo.
+  En celular fuera kicker y entregables (los cuenta la tarjeta). `Acciones` se repite debajo de la hélice
+  (`.srv-acciones-movil`, oculto ≥901).
+- **Pulido de espacios en celular:** filas `números · aire 1fr · titular · hélice · botón · aire 1.4fr` (el bloque va
+  junto y centrado). La caja de la hélice mide `--kai-aire` (92 px) + la tarjeta MÁS alta (`--h-max`): el botón no
+  brinca. Tarjetas alineadas arriba (`top: aire + h/2`). Escala = (alto − 455) / tarjeta más alta, entre 0.55 y 0.85.
+- **Fluidez (medido con rAF + long-animation-frame):** Servicios a 60 fps tras quitar el `filter: blur` por cuadro de
+  las vecinas y el `backdrop-filter` de las caras traseras (NO volver a ponerlos: se repintan en cada scroll).
+  Testimonios iba a ~30 fps por las 2 vistas previas en video → se pausan mientras deslizas y siguen 220 ms después.
+  Demos tiene tirones sueltos al entrar (carga de elenco/teléfono 3D), sin tocar. OJO al medir: Chrome con ahorro de
+  energía (laptop en batería) limita TODO a 30 fps y las mediciones no sirven.
+- **Demos en celular = CARRUSEL** (`Demos.jsx → Carrusel`, sin `ESCRITORIO` y sin reduced-motion; en escritorio
+  sigue el elenco): escena fija ligada al scroll (pista 100vh + 6×55vh), las 6 capturas en carrusel CSS 3D (vecinas
+  corridas ~0.95 del ancho, rotateY 38°, sin blur), Kai trepado en la del frente (`.kai-lugar--demo`, `--fw/--fh`)
+  con `KAI_DEMOS` ("demo-" + id, BORRADOR sin voz), abajo el giro (`titulo`), el nombre y UN botón "Pedir acceso".
+  Tamaño: alto disponible − 380 px. La frase suelta de Kai a su izquierda ya no pasa de la orilla: lib/kai.js
+  escribe `--kai-tope` (= x + 16 px) y el globo lo usa de max-width.
+- PENDIENTE de Zahir/Karime: la frase de Contacto ("Llegué hecho partículas y ya estoy completo") ya no es cierta
+  (Kai ya no evoluciona) → cambiarla y regrabar es/en. Falta prueba en iPhone real (Safari).
+
+## Pantalla de carga "KAI IMPRIME EL LOGO" (13-nov-2026, local, sin commit)
+Zahir pidió una carga "más animada y premium", que el logo terminara EN LA BARRA y CONSERVAR la explosión de
+partículas que forma la palabra. Descartado en el camino (NO reproponer): 3 cargas sueltas (cromo con contador,
+columnas que suben, Kai de CSS al centro); Kai de CSS armando el logo con 15 piezas de puntas redondas (la
+tipografía no era la del logo y cambiaba de golpe al final, y el Kai de CSS no tenía el realismo del 3D); el logo
+volando a la barra dejando solo una "huella" de partículas (perdía la explosión).
+- **index.html** (`#carga` + script en línea, sale antes de cualquier JS): el logo EXACTO (las 6 rutas de
+  KaizenWordmark) se revela con `mask-image` hasta `--a` (borde suave de 22 px). El **Kai 3D de verdad** lo imprime:
+  entra volando desde arriba a la izquierda y pasa sobre el logo con un HAZ (polígono SVG de su panza al logo) y
+  un CABEZAL de luz en el borde. Lo impreso nunca pasa de lo que la carga "pagó" (`carga.js` → `__carga.progreso`),
+  a lo más 1/2 del logo por segundo. Mientras llega Kai, el cabezal late al inicio. Sin Kai en 2.6 s (sin WebGL),
+  imprime solo con el haz. El logo nace en el lugar y tamaño EXACTO del ΚΛΙΖΣΝ de partículas
+  (`.hero-kaizen .interludio-forma`). Al terminar, Kai brinca al centro de `.kai-lugar--marca` y ahí se abre.
+- **Kai DIRIGIDO** (`lib/kai.js`): `window.__kaiDirector = { x, y, mira, talla }` → va exacto ahí (sin resorte),
+  mira a `mira`, no habla (`decir` sale si hay director), no se encoge en la esquina, `talla` 0.58 en celular. En
+  null sigue su vida desde ese punto (sin el impulso del último cuadro). `Kai.jsx` avisa `__carga.kai(ok)`.
+  `html.kai-dirigido` lo muestra aunque siga html.intro. La carga va en z 880 (bajo Kai, 900).
+- **Salida = EXPLOTA Y SE REARMA:** `#carga.is-sale` (sus estilos NO dependen de html.intro: al quitarla se iba
+  todo de golpe — bug visto), `cerrar()` (html.cargado), el director se suelta, el logo sólido se desvanece en
+  0.26 s y lo releva la nube.
+- **nube.js con `html.carga-armada`** (tiempos en `HE`): las partículas NACEN sobre el logo sólido (`a = 1`),
+  EXPLOTAN por toda la pantalla (`e`, 0.04→0.66 s, el mismo estallido de las estaciones) y se REARMAN en ΚΛΙΖΣΝ
+  (`a`, 0.8→1.95 s). 1 de cada `BANDADA` (11) vuela al logo de la barra (`medirNav()` muestrea 'kaizen' en el rect
+  de `.nav-logo svg`) y se funde con él: nube quita `html.logo-viaja` en HE.nav − 0.3 y el SVG entra en 0.35 s; ya
+  invisibles, regresan a ΚΛΙΖΣΝ. `intro` se quita en HE.re0 + 0.55 (barra y frase entran con la palabra casi
+  formada). Respaldo en index.html: a los 4.5 s se quitan solas.
+- Revisado en Chrome: claro, oscuro y celular (iframe de 390), sin errores. Falta: Safari/iPhone real.
+
+## Kai con un PAPEL EN CADA ESCENA + barra mínima (14-nov-2026, local, sin commit)
+Zahir: "que Kai tenga un lugar en cada escena, en sintonía, como el sitio de donde lo sacamos" (adamperlis.com:
+Buddy es narrador en renglón propio, aguja del dial, puntero de lectura, subtítulo fijo, se guarda en la barra).
+- **BARRA MÍNIMA SIEMPRE** (elegida por Zahir): `Navbar.jsx` = logo · `.kai-dock` · sonido (solo si hay voz) · menú ·
+  Cotizar. Los capítulos (02–09, con Contacto), idioma y tema viven en el MENÚ A PANTALLA COMPLETA (`.menu-pleno`,
+  z 999 bajo la barra; Escape/clic fuera cierra; rueda y dedo frenados por listeners, sin overflow:hidden; numeración
+  i+2). Cápsula al bajar 760 px. Se fueron nav-links, hamburguesa y mobile-menu.
+- **Sonido:** `src/lib/kaiVoz.js` (store con useSyncExternalStore): Kai.jsx publica `hay`/`voz` y registra
+  `alternarVoz` (el clic ES el permiso del navegador: la llamada va directa). El "Escuchar a Kai" del globo se quitó.
+- **Kai GUARDADO EN LA BARRA:** sin lugar a la vista, `lib/kai.js` va al `.kai-dock` (antes: esquina sobre WhatsApp;
+  sin barra —legales— sigue la esquina). `.kai--barra`: z 1001, canvas 0.27, brinco/flote ×0.3, globo DEBAJO; en
+  celular el globo se ancla a la pantalla con `--kai-x` (colgado de Kai se salía por la izquierda). Con el menú
+  abierto no muestra globo.
+- **Herramientas nuevas de las paradas (lib/kai.js):** `data-kai-mira` ("" = mira a su contenedor, "centro" = a
+  media pantalla, "foco" = al campo enfocado de su sección), `data-kai-globo="debajo"` (globo abajo-izquierda),
+  evento `kai:gira` (da una vuelta), lugares releídos cada 10 cuadros (paradas que aparecen al hover/abrir).
+- **Papeles** (paradas en `Kai.css`, frases BORRADOR de Claude en `KAI_ESCENAS`, SIN VOZ):
+  Testimonios → trepado en la esquina del video, mirándolo (`caso-<proyecto>`, también en celular) ·
+  Demos escritorio → ANFITRIÓN del anillo: `lib/elenco.js` enciende `.kai-lugar--anfitrion` en el anillo con
+  `demo-<id>` (reusa KAI_DEMOS), debajo del texto con globo abajo (a la derecha tapaba las tarjetas) ·
+  Proyectos → trepado en el mockup que sigue al cursor, sin hablar · Nosotros → sentado sobre la línea entre las
+  dos mitades, sin hablar · Proceso → marcador: se para junto al paso que cruza el 55% de la pantalla (`paso-0N`,
+  una línea por paso; solo escritorio) · FAQ → al margen de la pregunta abierta, mirando la respuesta, sin hablar ·
+  Contacto → en la esquina del formulario mirando el campo que llenas; al enviar da una vuelta y dice
+  `contacto-listo`. Hero y Servicios ya tenían su papel.
+- Revisado en Chrome (escritorio y celular simulado), sin errores. PENDIENTE de Zahir/Karime: aprobar las frases
+  nuevas y grabarlas; sigue pendiente cambiar la frase 09 ("Llegué hecho partículas…", ya no es cierta).
+
+### Segunda vuelta de Kai (14-nov, tarde) — píldora, outfits, mini celular y despedida (local, sin commit)
+Zahir revisó adamperlis.com conmigo (Buddy: píldora con su frase, outfits al tocarlo, "That's the tour!").
+- **Sin partículas al viajar** (las pidió quitar): `va = 0` en lib/kai.js; viaja completo.
+- **Testimonios:** globo `data-kai-globo="abajo-angosto"` (cae sobre el video; antes tapaba el título).
+- **PÍLDORA** (`components/KaiPildora.jsx`): cápsula de vidrio con Kai asomado a la izquierda (talla 0.5) y la frase
+  DENTRO (`.kai-pildora-texto`; lib/kai.js escribe ahí cuando la parada trae `data-kai-pildora`, sin globo).
+  Demos escritorio: sustituye al anfitrión; `lib/elenco.js` la enciende en el anillo y le pone `demo-<id>` +
+  `data-kai-cel` = la captura. Proyectos: `position: sticky; bottom: 28px` al final de la sección, frase del proyecto
+  señalado (`proyecto-<id>`, o `proyectos` sin hover); oculta sin mouse / <900 px. Kai ya NO trepa el mockup.
+- **OUTFITS al tocarlo** (lib/kai.js `OUTFITS`, en la cabeza): casco amarillo → lentes de ESPEJO (negros se perdían
+  sobre el cromo oscuro del tema claro) → gala (copa + moño) → audífonos → como vino. Cambia a la mitad de la vuelta
+  con rebote; dice `outfit-<nombre>`. Las ocurrencias `toque-*` ya no se usan al tocar (siguen en KAI_OCURRENCIAS
+  porque tienen voz grabada).
+- **MINI CELULAR** (`data-kai-cel` en la parada: una imagen o "whatsapp", que se dibuja en canvas): flota a su lado
+  con rebote. Demos (la demo del frente) y Contacto (chat de WhatsApp).
+- **DESPEDIDA:** parada en `.footer-bottom` con `data-kai-gana` (si se ve, manda sobre las demás) y
+  `data-kai-mira=".floating-whatsapp"` (selector nuevo de mira): "Fin del recorrido. Yo me quedo aquí cuidando el botón
+  de WhatsApp."
+- Frases nuevas (proyectos, outfits, despedida) = BORRADOR sin voz. Revisado en Chrome (claro), sin errores.
+
 ## Rendimiento al cargar (8-nov-2026)
 Zahir: "en teléfonos se traba el hero" / "tarda demasiado en cargar". Medido con la build servida (`vite preview`) y
 `long-animation-frame` en Chrome; resultado en la Mac: primer pintado 0.06 s, 3D listo 0.20 s (antes 0.37), se puede

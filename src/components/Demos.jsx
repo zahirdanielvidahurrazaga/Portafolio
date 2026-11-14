@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import KaiPildora from './KaiPildora';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import SectionHead from './SectionHead';
@@ -295,6 +296,9 @@ function Elenco({ alFallar }) {
             ))}
           </div>
         </div>
+        {/* Kai, anfitrión del anillo, en su píldora: presenta la demo del frente y la saca
+            en su mini celular (lib/elenco.js enciende la píldora y le cambia demo e imagen) */}
+        <KaiPildora className="kai-pildora--demos" kai="demo-alma" cel="/demos/alma.webp" style={{ display: 'none' }} />
         <div className="el-etqs" aria-hidden="true">
           {GIROS.map((g) => (
             <span key={g.id} className="el-etq">
@@ -318,6 +322,122 @@ function Elenco({ alFallar }) {
   );
 }
 
+/*
+ * CARRUSEL (celular, 12-nov): la misma fórmula que Servicios ("efecto + Kai
+ * protagonista"). Escena fija ligada al scroll: las 6 demos en un carrusel 3D
+ * (la del frente grande, las vecinas giradas a los lados) y Kai trepado en la
+ * del frente diciendo su línea (KAI_DEMOS, "demo-" + id). Abajo, el giro y UN
+ * botón. Cada demo se sostiene y gira a la siguiente en el último 40% de su tramo.
+ * Solo transform/opacity (nada de blur: se repinta en cada scroll).
+ */
+const ND = GIROS.length;
+function Carrusel() {
+  const { t } = useLang();
+  const pista = useRef(null);
+  const escena = useRef(null);
+  const cartas = useRef([]);
+  const [activo, setActivo] = useState(0);
+  const { scrollYProgress } = useScroll({ target: pista, offset: ['start start', 'end end'] });
+
+  // Tamaño de la tarjeta según el alto que sobra (barra, cabecera, aire de Kai, giro y botón ≈ 380 px)
+  const ancho = useRef(240);
+  useLayoutEffect(() => {
+    const medir = () => {
+      const el = escena.current;
+      if (!el) return;
+      const h = Math.max(250, Math.min(480, window.innerHeight - 380));
+      const w = Math.min(window.innerWidth * 0.6, (h * 390) / 600);
+      ancho.current = w;
+      el.style.setProperty('--cw', `${w}px`);
+      el.style.setProperty('--ch', `${(w * 600) / 390}px`);
+      el.style.setProperty('--aw', `${Math.min(window.innerWidth * 0.86, w * 1.55)}px`);
+    };
+    medir();
+    window.addEventListener('resize', medir);
+    return () => window.removeEventListener('resize', medir);
+  }, []);
+
+  const poner = useCallback((v) => {
+    const u = Math.min(1, Math.max(0, v)) * ND * 0.99999;
+    const k = Math.min(ND - 1, Math.floor(u));
+    const f = k < ND - 1 ? Math.min(1, Math.max(0, (u - k - 0.6) / 0.4)) : 0;
+    const a = k + f * f * (3 - 2 * f);
+    const vw = window.innerWidth;
+    cartas.current.forEach((el, i) => {
+      if (!el) return;
+      const rel = i - a;
+      const lejos = Math.abs(rel);
+      if (lejos > 2.2) {
+        el.style.visibility = 'hidden';
+        return;
+      }
+      el.style.visibility = '';
+      // La vecina asoma a un lado: corrida ~el ancho de la tarjeta (sin taparle media cara)
+      const x = Math.sign(rel) * Math.min(lejos, 1.6) * Math.min(vw * 0.42, ancho.current * 0.95);
+      el.style.transform = `translate(-50%, -50%) translateX(${x}px) translateZ(${-lejos * 140}px) rotateY(${-Math.max(-1.4, Math.min(1.4, rel)) * 38}deg)`;
+      el.style.opacity = Math.max(0, 1 - lejos * 0.45);
+      el.style.zIndex = String(10 - Math.round(lejos * 3));
+      el.style.pointerEvents = lejos < 0.3 ? '' : 'none';
+    });
+    const nuevo = Math.min(ND - 1, Math.round(a));
+    setActivo((x) => (x === nuevo ? x : nuevo));
+  }, []);
+  useMotionValueEvent(scrollYProgress, 'change', poner);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => poner(scrollYProgress.get()));
+    return () => cancelAnimationFrame(id);
+  }, [poner, scrollYProgress]);
+
+  // La percha de Kai sigue a la tarjeta del frente (la del punto de venta es apaisada)
+  useLayoutEffect(() => {
+    const el = escena.current;
+    const c = cartas.current[activo];
+    if (!el || !c) return;
+    el.style.setProperty('--fw', `${c.offsetWidth}px`);
+    el.style.setProperty('--fh', `${c.offsetHeight}px`);
+  }, [activo]);
+
+  const g = GIROS[activo];
+  return (
+    <div ref={pista} className="dm-carr-pista">
+      <div ref={escena} className="dm-carr-escena">
+        <div className="dm-carr-head">
+          <h3>{t({ es: <>Mira la demo de <em>tu giro</em></>, en: <>See the demo for <em>your industry</em></> })}</h3>
+          <p className="dm-carr-n">
+            {String(activo + 1).padStart(2, '0')} / {String(ND).padStart(2, '0')}
+          </p>
+        </div>
+        <div className="dm-carr-stage">
+          <span className="kai-lugar kai-lugar--demo" data-kai={`demo-${g.id}`} data-kai-talla="0.5" data-kai-linea data-kai-movil aria-hidden="true" />
+          {GIROS.map((x, i) => (
+            <a
+              key={x.id}
+              ref={(el) => {
+                cartas.current[i] = el;
+              }}
+              className={`dm-carr-carta${x.ancho ? ' dm-carr-carta--ancha' : ''}`}
+              href={pedir(t, x)}
+              target="_blank"
+              rel="noopener noreferrer"
+              tabIndex={i === activo ? 0 : -1}
+              aria-hidden={i !== activo}
+            >
+              <img src={x.img} alt={`${t({ es: 'Demo de', en: 'Demo for' })} ${t(x.giro)}: ${x.nombre}`} loading="lazy" />
+            </a>
+          ))}
+        </div>
+        <div className="dm-carr-pie">
+          <p key={g.id} className="dm-carr-giro" dangerouslySetInnerHTML={{ __html: t(g.titulo) }} />
+          <p className="dm-carr-nombre">{g.nombre}</p>
+          <a className="btn-metallic dm-carr-cta" href={pedir(t, g)} target="_blank" rel="noopener noreferrer">
+            {t({ es: 'Pedir acceso', en: 'Request access' })} <ArrowUpRight size={16} />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Demos() {
   const { t } = useLang();
   const reduced = useReducedMotion();
@@ -332,6 +452,8 @@ export default function Demos() {
     return () => mq.removeEventListener('change', on);
   }, []);
   const conElenco = elenco && !reduced && !sinWebgl;
+  // Celular / pantalla táctil: el carrusel con Kai (sin WebGL: solo CSS 3D)
+  const conCarrusel = !elenco && !reduced;
   return (
     <section id="demos" className="demos-section">
       <div className="section-container demos-head">
@@ -351,8 +473,10 @@ export default function Demos() {
 
       {conElenco && <Elenco alFallar={fallar} />}
 
+      {conCarrusel && <Carrusel />}
+
       <div className="section-container dm-galeria-wrap">
-        {!conElenco && (
+        {!conElenco && !conCarrusel && (
         <>
         <div className="dm-galeria-head">
           <h3>{t({ es: <>Mira la demo de <em>tu giro</em></>, en: <>See the demo for <em>your industry</em></> })}</h3>

@@ -233,8 +233,35 @@
 .srv-helice-carta .esc {
   width: min(100%, 360px);
 }
+/* De espaldas: una capa de vidrio esmerilado tapa el contenido (que se vería en
+   espejo). Es capa y no opacity en los renglones porque su animación de entrada la pisa. */
+.srv-helice-carta .esc {
+  position: relative;
+}
+.srv-helice-carta .esc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  /* sin backdrop-filter: en tarjetas 3D que se mueven con el scroll se repinta cada cuadro */
+  background: linear-gradient(180deg, var(--tint-3), var(--tint-1)), var(--bg-color-elevated);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.srv-helice-carta.is-dorso .esc::after {
+  opacity: 1;
+}
 
-/* Copia de la escena dentro de la ficha: solo en celular (y en la lista sin animación) */
+/* Botón de celular (debajo de la hélice): solo en celular */
+@media (min-width: 901px) {
+  .srv-acciones-movil {
+    display: none !important;
+  }
+}
+
+/* Copia de la escena dentro de la ficha: solo en la lista sin animación */
 .srv-ficha-escena {
   display: none;
 }
@@ -248,6 +275,62 @@
   display: grid;
   gap: var(--spacing-12);
   padding-top: var(--spacing-12);
+}
+
+/* Menos texto (12-nov, Zahir: "tenemos mucho texto"): Kai SUSTITUYE texto en vez de sumarlo.
+   - El índice solo abre los servicios del grupo activo (10 renglones → 5).
+   - Fuera el párrafo: el "por qué" ya lo dice Kai en su renglón.
+   - Los entregables en gris, sin viñetas ni filetes. */
+@media (min-width: 901px) {
+  .srv-escena .srv-indice ol {
+    max-height: 7rem;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  }
+  .srv-escena .srv-grupo:not(.is-active) ol {
+    max-height: 0;
+    opacity: 0;
+  }
+  .srv-escena .srv-grupo:not(.is-active) .srv-grupo-titulo {
+    border-color: transparent;
+  }
+  .srv-escena .srv-grupo-titulo {
+    cursor: default;
+  }
+  .srv-escena .srv-ficha-desc {
+    display: none;
+  }
+  /* Entregables: 3 renglones cortos en gris, sin viñetas ni filetes */
+  .srv-escena .srv-ficha-lista {
+    margin: 0 0 1.7rem;
+    border: 0;
+  }
+  .srv-escena .srv-ficha-lista li {
+    padding: 0.12rem 0;
+    border: 0;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .srv-escena .srv-ficha-lista li::before {
+    display: none;
+  }
+  /* El "07 / 07" lo dice el índice: fuera */
+  .srv-escena .srv-ficha-kicker {
+    display: none;
+  }
+  /* La hélice manda todavía más: columna más ancha y tarjeta más grande */
+  .srv-escena {
+    grid-template-columns: minmax(0, 0.62fr) minmax(0, 0.8fr) minmax(0, 1.58fr);
+  }
+  .srv-escena .srv-helice-carta .esc {
+    width: min(100%, 400px);
+    font-size: 0.92rem;
+  }
+  /* la publicación de Redes en 4:3 hacía la tarjeta casi del alto de la pantalla y Kai
+     no cabía encima: más apaisada */
+  .srv-escena .srv-helice-carta .esc-post {
+    aspect-ratio: 2.2 / 1;
+  }
 }
 
 /* Laptops bajas: menos aire para que la ficha completa quepa */
@@ -269,9 +352,57 @@
     gap: var(--spacing-4);
     padding-top: 96px;
   }
-  /* En celular no cabe con la ficha: manda la ficha (resultado + botón) */
+  /* Celular (12-nov): también aquí la HÉLICE con Kai encaramado (Zahir: "pierde
+     protagonismo Kai y ya no está el efecto"). Filas: números · titular y entregables ·
+     hélice (lo que sobre) · botón. Las vecinas se asoman recortadas por la caja. */
+  /* Pulido (12-nov): titular → Kai y tarjeta → botón van JUNTOS y con aire parejo; el
+     bloque se centra en lo que queda bajo los números (filas 2 y 6 = aire). La caja de la
+     hélice mide lo de la tarjeta más alta: el botón no brinca al cambiar de servicio. */
+  .srv-escena {
+    grid-template-rows: auto minmax(0, 1fr) auto auto auto minmax(0, 1.4fr);
+    row-gap: 0;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  }
+  .srv-indice {
+    grid-row: 1;
+  }
+  .srv-escena .srv-ficha {
+    grid-row: 3;
+  }
+  .srv-escena .srv-ficha-gancho {
+    margin: 0;
+  }
   .srv-forma {
+    --kai-aire: 92px; /* arriba de la tarjeta: Kai y su frase */
+    grid-row: 4;
+    min-height: 0;
+    height: calc(var(--kai-aire) + var(--h-max, 300px));
+    margin-top: 0.4rem;
+    overflow: clip;
+    overflow-clip-margin: 0;
+  }
+  .srv-helice {
+    height: 100%;
+  }
+  .srv-helice-carta {
+    top: calc(var(--kai-aire) + var(--h, 300px) / 2);
+  }
+  .srv-helice-carta .esc {
+    width: 340px;
+  }
+  .srv-helice-carta .esc-post {
+    aspect-ratio: 2.2 / 1;
+  }
+  /* Minimalismo en celular: los entregables los cuenta la tarjeta; queda el titular */
+  .srv-escena .srv-ficha-lista,
+  .srv-escena .srv-ficha-escena,
+  .srv-escena .srv-ficha .srv-ficha-acciones,
+  .srv-escena .srv-ficha-kicker {
     display: none;
+  }
+  .srv-acciones-movil {
+    grid-row: 5;
+    margin-top: 1.6rem;
   }
   .srv-indice {
     order: 0;

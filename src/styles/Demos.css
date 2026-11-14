@@ -427,6 +427,9 @@
   }
   .dm-stage {
     height: min(62vh, 560px);
+    /* El pase entra desde 60px a la derecha: sin esto la página medía 434px en un
+       iPhone de 390 y se deslizaba de lado (Safari no hace caso al overflow del body) */
+    overflow-x: clip;
   }
   .dm-pase {
     width: 58%;
@@ -525,3 +528,125 @@
   .el-etq b { font-size: 0.6rem; }
 }
 
+
+/* ════════ Carrusel de demos (celular, Demos.jsx → Carrusel, 12-nov) ════════ */
+.dm-carr-pista {
+  position: relative;
+  height: calc(100vh + 6 * 55vh);
+}
+.dm-carr-escena {
+  --dm-aire: 92px; /* arriba de la demo del frente: Kai y su frase */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 92px var(--spacing-4) calc(env(safe-area-inset-bottom) + 1.2rem);
+  overflow: clip;
+}
+.dm-carr-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.dm-carr-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.45rem, 6.4vw, 2rem);
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+}
+.dm-carr-head h3 em {
+  font-style: italic;
+  color: var(--text-muted);
+}
+.dm-carr-n {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dm-carr-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+.dm-carr-carta {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--dm-aire) / 2);
+  width: var(--cw, 240px);
+  height: var(--ch, 370px);
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: var(--tint-2);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.55);
+  will-change: transform, opacity;
+}
+.dm-carr-carta img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.dm-carr-carta--ancha {
+  width: var(--aw, 330px);
+  height: calc(var(--aw, 330px) * 805 / 1440);
+}
+.dm-carr-carta--ancha img {
+  object-position: left top;
+}
+.dm-carr-pie {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 0.2rem 1rem;
+}
+.dm-carr-giro {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 6vw, 1.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+  animation: dmCarrIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dm-carr-giro em {
+  font-style: italic;
+  color: var(--text-muted);
+}
+.dm-carr-nombre {
+  margin: 0 0 0.9rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.dm-carr-cta {
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.75rem 1.4rem;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+@keyframes dmCarrIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

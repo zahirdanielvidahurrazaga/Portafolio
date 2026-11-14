@@ -97,6 +97,8 @@ function Mitades() {
   const { t, lang } = useLang();
   return (
     <div className="nos-mitades">
+      {/* Kai, sentado en medio de las dos mitades: él es la unión */}
+      <span className="kai-lugar kai-lugar--union" data-kai="nosotros" data-kai-talla="0.6" aria-hidden="true" />
       {MITADES.map((m, i) => (
         <motion.div key={m.num} className="nos-mitad" {...entra(i)}>
           <span className="nos-mitad-num">{m.num}</span>

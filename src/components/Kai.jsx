@@ -1,8 +1,9 @@
+import { fijarVoz, registrarAlternar } from '../lib/kaiVoz';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { useTheme } from '../lib/ThemeContext';
 import { useLang } from '../lib/LangContext';
-import { KAI_FRASES, KAI_OCURRENCIAS, KAI_SERVICIOS } from '../data/kai';
+import { KAI_FRASES, KAI_OCURRENCIAS, KAI_SERVICIOS, KAI_DEMOS, KAI_ESCENAS } from '../data/kai';
 import { cargado } from '../lib/carga';
 import { alargarBloqueo, bloquearScroll, soltarScroll, vieneDeScroll, vigilarScroll } from '../lib/bloqueoScroll';
 import '../styles/Kai.css';
@@ -36,7 +37,7 @@ import '../styles/Kai.css';
  * "Callar" lo deja de compañía sin hablar; tocarlo lo despierta.
  * Con prefers-reduced-motion no se monta.
  */
-const TODAS = { ...KAI_FRASES, ...KAI_OCURRENCIAS, ...KAI_SERVICIOS };
+const TODAS = { ...KAI_FRASES, ...KAI_OCURRENCIAS, ...KAI_SERVICIOS, ...KAI_DEMOS, ...KAI_ESCENAS };
 const CAPITULO = /^\d+$/; // las líneas de capítulo llevan su "Nº" (igual que en lib/kai.js)
 // Dónde se detiene la página para escuchar un capítulo: Kai a un tercio de la pantalla
 // (la cabecera entera y su globo, que abre hacia abajo, caben), sin meter el titular
@@ -47,7 +48,6 @@ const lectura = (lugar) => {
   if (cabecera) y = Math.min(y, cabecera.getBoundingClientRect().top + window.scrollY - 96);
   return Math.max(0, y);
 };
-const OCURRENCIAS = Object.keys(KAI_OCURRENCIAS);
 const guardado = (k) => {
   try {
     return localStorage.getItem(k) === '1';
@@ -78,7 +78,6 @@ export default function Kai() {
   const analizaRef = useRef(null);
   const dichasRef = useRef(new Set()); // líneas que ya dijo en esta visita
   const esperaRef = useRef(0);
-  const [hayVoz, setHayVoz] = useState(false);
   const [voz, setVoz] = useState(() => guardado('kai-voz'));
   const [callado, setCallado] = useState(() => guardado('kai-callado'));
   const vozRef = useRef(voz);
@@ -93,7 +92,8 @@ export default function Kai() {
       .then((j) => {
         if (!vivo || !j) return;
         indiceRef.current = j;
-        setHayVoz(Object.values(j).some((l) => Array.isArray(l) && l.length > 0));
+        const hay = Object.values(j).some((l) => Array.isArray(l) && l.length > 0);
+        fijarVoz({ hay });
       })
       .catch(() => {});
     return () => {
@@ -166,13 +166,17 @@ export default function Kai() {
         instRef.current = createKai(cajaRef.current, canvasRef.current, globoRef.current, {
           theme: themeRef.current,
           frase: (id) => TODAS[id]?.[langRef.current] ?? TODAS[id]?.es,
-          ocurrencias: OCURRENCIAS,
           alDecir: hablar,
           sonando: () => !!audioRef.current && !audioRef.current.paused && !audioRef.current.ended,
         });
         instRef.current?.callar(calladoRef.current);
+        // la pantalla de carga lo dirige ("Kai imprime el logo") en cuanto existe
+        window.__carga?.kai?.(!!instRef.current);
         cargado('kai');
-      }, () => cargado('kai'));
+      }, () => {
+        window.__carga?.kai?.(false);
+        cargado('kai');
+      });
     arrancar();
     // Los ojos siguen el volumen de la voz
     let raf = 0;
@@ -221,9 +225,10 @@ export default function Kai() {
   }, [callado]);
 
   const cambiarVoz = () => {
-    const v = !voz;
+    const v = !vozRef.current;
     vozRef.current = v;
     setVoz(v);
+    fijarVoz({ voz: v });
     guardar('kai-voz', v);
     if (!v) {
       audioRef.current?.pause();
@@ -248,6 +253,13 @@ export default function Kai() {
     instRef.current?.repetir();
   };
 
+  // El botón de sonido vive en la barra (Navbar.jsx); aquí solo se registra quién la cambia
+  useEffect(() => {
+    fijarVoz({ voz: vozRef.current });
+    registrarAlternar(cambiarVoz);
+    return () => registrarAlternar(null);
+  });
+
   if (reduced) return null;
   return (
     <div ref={cajaRef} className="kai">
@@ -262,11 +274,6 @@ export default function Kai() {
       <div className="kai-globo">
         <p ref={globoRef} className="kai-frase" role="status" />
         <div className="kai-acciones">
-          {hayVoz && (
-            <button type="button" onClick={cambiarVoz}>
-              {voz ? t({ es: 'Quitar voz', en: 'Voice off' }) : t({ es: 'Escuchar a Kai', en: 'Hear Kai' })}
-            </button>
-          )}
           <button type="button" onClick={() => setCallado(true)}>
             {t({ es: 'Callar', en: 'Mute' })}
           </button>

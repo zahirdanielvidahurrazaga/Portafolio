@@ -607,8 +607,9 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
         // Se arma sola al cargar (por tiempo); luego manda el scroll
         mejor = {
           st,
-          a: smooth(clamp01((t - inicioArmado) / duracionArmado)),
-          e: 0,
+          // Con la carga nueva (Kai arma el logo): nace EN el logo sólido, explota y se rearma
+          a: huella ? (t < HE.re0 ? 1 : smooth(clamp01((t - HE.re0) / HE.re))) : smooth(clamp01((t - inicioArmado) / duracionArmado)),
+          e: huella && t < HE.re0 ? smooth(clamp01((t - HE.exp0) / HE.exp)) : 0,
           // Lineal: cada partícula le aplica su propio retraso (ola) y suavizado
           flujo: clamp01((q - RELEVO.flujo[0]) / (RELEVO.flujo[1] - RELEVO.flujo[0])),
           cruce: fase(q, RELEVO.cruce),
@@ -659,6 +660,24 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
   const inicioArmado = conIntro ? INTRO.nube : 0.1;
   const duracionArmado = conIntro ? INTRO.armado : 1.2;
   let introPendiente = conIntro;
+  // CARGA "KAI ARMA EL LOGO" (13-nov-2026, index.html → html.carga-armada): las
+  // partículas nacen sobre el logo sólido que armó Kai, EXPLOTAN por toda la
+  // pantalla y se rearman en ΚΛΙΖΣΝ; un puñado (1 de cada BANDADA) vuela a la barra
+  // y forma ahí el logo chico, que aparece cuando llegan. Tiempos en s (HE).
+  const huella = conIntro && document.documentElement.classList.contains('carga-armada');
+  const HE = { exp0: 0.04, exp: 0.62, re0: 0.8, re: 1.15, nav: 1.9 };
+  const BANDADA = 11;
+  let navForma = null; // { pts, cx, cy } del logo de la barra, medido al empezar el rearmado
+  const medirNav = () => {
+    const el = document.querySelector('.nav-logo svg');
+    const r = el && el.getBoundingClientRect();
+    if (!r || r.width < 4) return null;
+    return {
+      pts: muestrear('kaizen', r.width, r.height, temaActual),
+      cx: r.left + r.width / 2 - vw / 2,
+      cy: vh / 2 - (r.top + r.height / 2),
+    };
+  };
   let limpio = false; // ya se borró el canvas (no hay nada que dibujar)
 
   // Cursor (px desde el centro, y hacia arriba). En táctil no hay: sin tacto ni paralaje.
@@ -710,7 +729,12 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     if (document.hidden || !cargaLista()) return;
     if (t0 === null) t0 = now;
     const t = (now - t0) / 1000;
-    if (introPendiente && t >= INTRO.listo) {
+    if (huella && t >= HE.nav - 0.3 && document.documentElement.classList.contains('logo-viaja')) {
+      document.documentElement.classList.remove('logo-viaja'); // llegó la bandada: el logo de la barra aparece
+    }
+    if (huella && !navForma && t >= HE.re0 - 0.05) navForma = medirNav();
+    // (con huella, barra y textos entran cuando la palabra ya casi está: no sobre el polvo)
+    if (introPendiente && t >= (huella ? HE.re0 + 0.55 : INTRO.listo)) {
       introPendiente = false;
       document.documentElement.classList.remove('intro');
     }
@@ -733,7 +757,10 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     efectos(t, est.st.apertura ? 1 - smooth(clamp01(est.flujo / 0.25)) : 1);
     const H = vh * 1.3;
     // Partículas sueltas de la pantalla de carga (solo antes de que se arme ΚΛΙΖΣΝ)
-    const nubeAl = 0.85 * smooth(clamp01(t / 0.8));
+    // (con huella el polvo se ve desde el primer instante: es el logo que explotó)
+    const nubeAl = 0.85 * smooth(clamp01(t / (huella ? 0.12 : 0.8)));
+    const conBandada = huella && navForma && navForma.pts.length > 1 && t < HE.nav + 1.3;
+    const NB = conBandada ? navForma.pts.length / 2 : 0;
 
     for (let i = 0; i < N; i++) {
       const d = dep[i];
@@ -769,8 +796,21 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
           py += dy * est.m + dx * g;
         }
         // Punto destino en la forma (+ un temblor mínimo, como si respirara)
-        const fx = est.cx + px + jx[i] + Math.sin(t * 1.3 + ph[i]) * 0.9;
-        const fy = est.cy - py + jy[i] + Math.cos(t * 1.1 + ph[i]) * 0.9;
+        let fx = est.cx + px + jx[i] + Math.sin(t * 1.3 + ph[i]) * 0.9;
+        let fy = est.cy - py + jy[i] + Math.cos(t * 1.1 + ph[i]) * 0.9;
+        // La bandada: al rearmarse, 1 de cada BANDADA va al logo de la barra. Al
+        // llegar se apaga (aparece el SVG) y, ya invisible, regresa a su lugar en
+        // ΚΛΙΖΣΝ y se vuelve a encender.
+        let bandAl = 1;
+        if (conBandada && est.st.apertura && i % BANDADA === 0 && t >= HE.re0) {
+          const kb = Math.floor(((i / BANDADA) * NB) / Math.ceil(N / BANDADA)) * 2;
+          if (t < HE.nav + 0.1) {
+            fx = navForma.cx + navForma.pts[kb];
+            fy = navForma.cy - navForma.pts[kb + 1];
+            // se funden con el logo de la barra mientras este aparece (sin "manchita")
+            bandAl = 1 - smooth(clamp01((t - (HE.nav - 0.42)) / 0.42));
+          } else bandAl = smooth(clamp01((t - HE.nav - 0.1) / 1));
+        }
         const { a, e } = est;
         if (e > 0) {
           // Explosión: de la forma hacia el polvo, empujada hacia afuera del centro
@@ -818,6 +858,7 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
           // Se encienden ya cerca de la forma (a²): de lejos casi no se ven
           al = al + (0.92 - al) * a * a;
         }
+        al *= bandAl;
         // Apertura: de las letras a la superficie de la cinta, y se apagan
         // mientras la cinta aparece
         if (est.st.apertura) {

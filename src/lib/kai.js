@@ -42,6 +42,16 @@ const NP = 620;
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 const smooth = (x) => x * x * (3 - 2 * x);
+// sale con un rebote (sobrepasa un poco y regresa)
+const rebote = (x) => 1 + 2.70158 * Math.pow(x - 1, 3) + 1.70158 * Math.pow(x - 1, 2);
+/**
+ * DIRIGIDO (13-nov-2026): la pantalla de carga (index.html) lo pone a actuar —
+ * "Kai imprime el logo"— escribiendo `window.__kaiDirector = { x, y, mira, talla }`
+ * (centro de Kai y punto al que mira, en px de pantalla). Mientras exista: va
+ * exactamente ahí (sin resorte), mira a `mira`, no habla y no se encoge en la
+ * esquina. Al volverlo null sigue su vida normal desde ese punto.
+ */
+const director = () => (typeof window !== 'undefined' ? window.__kaiDirector : null) || null;
 
 /**
  * @param caja    contenedor fijo (.kai)
@@ -49,13 +59,12 @@ const smooth = (x) => x * x * (3 - 2 * x);
  * @param globo   <p> donde se escribe la frase
  * @param opts.theme 'dark' | 'light'
  * @param opts.frase(id)  → texto del capítulo o de la ocurrencia (en el idioma actual)
- * @param opts.ocurrencias  lista de ids de ocurrencias (al tocarlo)
  * @param opts.alDecir(id | null, lugar, pedida)  empezó a decir esa frase (null = se calló).
  *        `lugar` = el .kai-lugar donde está parado (null en la esquina / celular);
  *        `pedida` = la repite porque el visitante lo pidió (cambió idioma o prendió la voz)
  * @param opts.sonando()  ¿su voz sigue sonando? (para no quitar el globo a media frase)
  */
-export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrencias = [], alDecir, sonando } = {}) {
+export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir, sonando } = {}) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -197,6 +206,155 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   nube.frustumCulled = false;
   scene.add(nube);
 
+  // ── OUTFITS (14-nov, como Buddy de adamperlis.com: cada toque, un accesorio) ──
+  // Van en la cabeza (giran con ella). Aparecen con un rebote a la mitad de su vuelta.
+  const plastico = (color, rough = 0.42) => new THREE.MeshPhysicalMaterial({ color, roughness: rough, clearcoat: 0.6, clearcoatRoughness: 0.25 });
+  const matNegro = plastico(0x111111, 0.3);
+  const matAmarillo = plastico(0xf2b705, 0.38);
+  const matGris = plastico(0x2a2a2a, 0.55);
+  // lentes de ESPEJO: reflejan las cajas de luz (negros mate se perdían sobre el cromo oscuro)
+  const matEspejo = new THREE.MeshPhysicalMaterial({ color: 0x8a8f99, metalness: 1, roughness: 0.06, clearcoat: 1 });
+  const geosOutfit = [];
+  const g = (geo) => (geosOutfit.push(geo), geo);
+  const OUTFITS = {
+    casco: (() => {
+      const o = new THREE.Group();
+      const domo = new THREE.Mesh(g(new THREE.SphereGeometry(1.07, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2)), matAmarillo);
+      domo.scale.y = 0.82;
+      domo.position.y = 0.12;
+      const ala = new THREE.Mesh(g(new THREE.CylinderGeometry(1.26, 1.3, 0.06, 64)), matAmarillo);
+      ala.position.set(0, 0.16, 0.08);
+      const cresta = new THREE.Mesh(g(new THREE.TorusGeometry(1.0, 0.07, 10, 48, Math.PI)), matAmarillo);
+      cresta.rotation.y = Math.PI / 2;
+      cresta.position.y = 0.12;
+      cresta.scale.y = 0.85;
+      o.add(domo, ala, cresta);
+      o.rotation.x = -0.12;
+      return o;
+    })(),
+    lentes: (() => {
+      const o = new THREE.Group();
+      [-1, 1].forEach((lado) => {
+        const d = new THREE.Vector3(Math.sin(lado * 0.3), 0.19, Math.cos(lado * 0.3)).normalize();
+        const lente = new THREE.Mesh(g(new THREE.CylinderGeometry(0.27, 0.27, 0.05, 40)), matEspejo);
+        lente.scale.set(1.15, 1, 0.85);
+        lente.position.copy(d).multiplyScalar(1.07);
+        lente.lookAt(d.clone().multiplyScalar(3));
+        lente.rotateX(Math.PI / 2);
+        o.add(lente);
+      });
+      const puente = new THREE.Mesh(g(new THREE.BoxGeometry(0.2, 0.05, 0.05)), matNegro);
+      puente.position.set(0, 0.24, 1.04);
+      o.add(puente);
+      return o;
+    })(),
+    gala: (() => {
+      const o = new THREE.Group();
+      const copa = new THREE.Mesh(g(new THREE.CylinderGeometry(0.5, 0.55, 0.78, 40)), matNegro);
+      copa.position.y = 1.32;
+      const cinta = new THREE.Mesh(g(new THREE.CylinderGeometry(0.56, 0.56, 0.13, 40)), matGris);
+      cinta.position.y = 1.0;
+      const ala = new THREE.Mesh(g(new THREE.CylinderGeometry(0.9, 0.9, 0.05, 48)), matNegro);
+      ala.position.y = 0.93;
+      const sombrero = new THREE.Group();
+      sombrero.add(copa, cinta, ala);
+      sombrero.rotation.z = -0.18;
+      sombrero.position.x = 0.1;
+      // moño bajo la "barbilla"
+      const mono = new THREE.Group();
+      [-1, 1].forEach((lado) => {
+        const ala2 = new THREE.Mesh(g(new THREE.ConeGeometry(0.17, 0.3, 4)), matNegro);
+        ala2.rotation.z = (lado * Math.PI) / 2;
+        ala2.position.x = lado * 0.16;
+        mono.add(ala2);
+      });
+      const nudo = new THREE.Mesh(g(new THREE.SphereGeometry(0.07, 16, 12)), matNegro);
+      mono.add(nudo);
+      mono.position.set(0, -0.98, 0.42);
+      mono.rotation.x = -0.5;
+      o.add(sombrero, mono);
+      return o;
+    })(),
+    audifonos: (() => {
+      const o = new THREE.Group();
+      const diadema = new THREE.Mesh(g(new THREE.TorusGeometry(1.1, 0.07, 12, 48, Math.PI)), matNegro);
+      o.add(diadema);
+      [-1, 1].forEach((lado) => {
+        const copa = new THREE.Mesh(g(new THREE.CylinderGeometry(0.34, 0.34, 0.24, 32)), matNegro);
+        copa.rotation.z = Math.PI / 2;
+        copa.position.set(lado * 1.06, -0.02, 0);
+        const cojin = new THREE.Mesh(g(new THREE.TorusGeometry(0.26, 0.07, 10, 24)), matGris);
+        cojin.rotation.y = Math.PI / 2;
+        cojin.position.set(lado * 0.96, -0.02, 0);
+        o.add(copa, cojin);
+      });
+      return o;
+    })(),
+  };
+  const ORDEN_OUTFITS = ['casco', 'lentes', 'gala', 'audifonos', null];
+  Object.values(OUTFITS).forEach((o) => {
+    o.visible = false;
+    cabeza.add(o);
+  });
+  let outfit = null;
+  let outfitPrevio = null;
+  let nOutfit = 0;
+  let tOutfit = -1e6;
+
+  // ── EL MINI CELULAR: en algunas paradas (`data-kai-cel`) saca un teléfono chiquito
+  // que flota a su lado. Pantalla = una imagen (la demo del frente) o "whatsapp". ──
+  const cel = new THREE.Group();
+  const geoCel = new THREE.BoxGeometry(0.62, 1.18, 0.07);
+  const celCuerpo = new THREE.Mesh(geoCel, matNegro);
+  const geoPantalla = new THREE.PlaneGeometry(0.54, 1.08);
+  const matPantalla = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+  const pantalla = new THREE.Mesh(geoPantalla, matPantalla);
+  pantalla.position.z = 0.037;
+  cel.add(celCuerpo, pantalla);
+  cel.visible = false;
+  scene.add(cel);
+  const texturas = {};
+  const pantallaDe = (src) => {
+    if (texturas[src]) return texturas[src];
+    let t;
+    if (src === 'whatsapp') {
+      // un chat de WhatsApp dibujado: cabecera, el mensaje que se está armando
+      const c = document.createElement('canvas');
+      c.width = 270;
+      c.height = 540;
+      const x = c.getContext('2d');
+      x.fillStyle = '#0b141a';
+      x.fillRect(0, 0, 270, 540);
+      x.fillStyle = '#1f2c34';
+      x.fillRect(0, 0, 270, 74);
+      x.fillStyle = '#25d366';
+      x.beginPath();
+      x.arc(36, 44, 16, 0, Math.PI * 2);
+      x.fill();
+      x.fillStyle = '#e9edef';
+      x.font = '600 19px sans-serif';
+      x.fillText('KaiZen', 62, 51);
+      x.fillStyle = '#005c4b';
+      x.beginPath();
+      x.roundRect(60, 360, 190, 96, 14);
+      x.fill();
+      x.fillStyle = '#e9edef';
+      x.font = '17px sans-serif';
+      ['Hola, equipo KaiZen.', 'Me interesa una', 'app para mi negocio'].forEach((l, i) => x.fillText(l, 74, 390 + i * 24));
+      x.fillStyle = '#1f2c34';
+      x.beginPath();
+      x.roundRect(14, 476, 242, 46, 23);
+      x.fill();
+      t = new THREE.CanvasTexture(c);
+    } else {
+      t = new THREE.TextureLoader().load(src);
+    }
+    t.colorSpace = THREE.SRGBColorSpace;
+    return (texturas[src] = t);
+  };
+  let celSrc = '';
+  let tCel = -1e6;
+
   const setTheme = (t) => {
     const tema = t === 'light' ? 'light' : 'dark';
     tonoCromo(matCuerpo, tema);
@@ -208,6 +366,9 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   // ── Hablar ──
   let ocultar = 0;
   let relevo = 0;
+  let yDijo = 0; // dónde iba la página cuando empezó a hablar (celular: seguir bajando lo calla)
+  let topeFrase = '';
+  let cortada = null; // la línea que se guardó al deslizar: tocarlo la repite
   let brinco = -1e6;
   let callado = false;
   let dicho = null; // id de lo que está diciendo (para repetirlo si cambia el idioma)
@@ -227,17 +388,22 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   };
   const decir = (id, dura = 0, pedida = false) => {
     const texto = frase?.(id);
-    if (!texto || callado) return;
+    if (!texto || callado || director()) return;
     dicho = id;
-    globo.textContent = '';
+    // En una píldora (KaiPildora.jsx) la frase va DENTRO de la cápsula, no en su globo
+    const enPildora = lugar && 'kaiPildora' in lugar.dataset ? lugar.parentElement.querySelector('.kai-pildora-texto') : null;
+    const destino = enPildora || globo;
+    destino.textContent = '';
     texto.split(' ').forEach((palabra, i) => {
       const s = document.createElement('span');
       s.textContent = `${palabra} `;
       s.style.animationDelay = `${0.25 + i * 0.075}s`;
-      globo.appendChild(s);
+      destino.appendChild(s);
     });
-    caja.classList.add('kai--habla');
+    if (!enPildora) caja.classList.add('kai--habla');
+    else caja.classList.remove('kai--habla');
     brinco = performance.now();
+    yDijo = window.scrollY;
     clearTimeout(ocultar);
     if (dura) callar(dura, true);
     alDecir?.(id, lugar, pedida);
@@ -247,8 +413,22 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   let vw = window.innerWidth;
   let vh = window.innerHeight;
   // Esquina: el lienzo va a 0.6 → su centro queda sobre el botón de WhatsApp
-  const esquinaX = () => vw - 60 - TAM / 2;
-  const esquinaY = () => vh - 152 - TAM / 2;
+  // Sin lugar a la vista se GUARDA EN LA BARRA (14-nov, como Buddy de adamperlis.com):
+  // el hueco `.kai-dock` de Navbar.jsx. Sin barra (páginas legales), la esquina de siempre.
+  let dock = null;
+  const enBarra = () => {
+    if (!dock || !dock.isConnected) dock = document.querySelector('.kai-dock');
+    const r = dock && dock.getBoundingClientRect();
+    return r && r.width > 0 ? r : null;
+  };
+  const esquinaX = () => {
+    const r = enBarra();
+    return r ? r.left + r.width / 2 - TAM / 2 : vw - 60 - TAM / 2;
+  };
+  const esquinaY = () => {
+    const r = enBarra();
+    return r ? r.top + r.height / 2 - TAM / 2 : vh - 152 - TAM / 2;
+  };
   let x = esquinaX();
   let y = esquinaY();
   let vx = 0;
@@ -261,10 +441,11 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
   let capitulo = null; // el último capítulo que empezó
   let nacido = false;
   let giro = -1e6;
-  let viaje = -1e6;
+  let dirigido = false;
+  let tallaDirigida = '';
+  let kaiXCss = '';
   let parpadeo = performance.now() + 2500;
   let volumen = 0;
-  let nOcurrencia = 0;
   let nCuadro = 0;
   let raf = 0;
   let antes = performance.now();
@@ -273,16 +454,48 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     cy = e.clientY;
   };
   window.addEventListener('pointermove', alMover, { passive: true });
+  // Tocarlo: da una vuelta y sale con OTRO OUTFIT (casco → lentes → gala → audífonos →
+  // como vino), diciendo su chiste. La línea cortada del celular sigue teniendo prioridad.
   const alTocar = () => {
-    giro = performance.now();
+    const ahora = performance.now();
+    giro = ahora;
+    if (cortada && !lugar && !callado) {
+      decir(cortada, 5200);
+      cortada = null;
+      return;
+    }
+    outfitPrevio = outfit;
+    outfit = ORDEN_OUTFITS[nOutfit++ % ORDEN_OUTFITS.length];
+    tOutfit = ahora + 380; // a la mitad de la vuelta
     if (callado) return;
-    if (!ocurrencias.length) return;
     clearTimeout(relevo);
-    decir(ocurrencias[nOcurrencia++ % ocurrencias.length], lugar ? 0 : 4600);
-    // parado en un capítulo, después de la ocurrencia vuelve a su línea
+    decir(`outfit-${outfit || 'normal'}`, lugar ? 0 : 4600);
+    // parado en un capítulo, después del chiste vuelve a su línea
     if (lugar) relevo = setTimeout(() => lugar && frase?.(lugar.dataset.kai) && decir(lugar.dataset.kai), 4200);
   };
   canvas.addEventListener('click', alTocar);
+  // Una escena le pide una vuelta (Contacto: al enviar el formulario)
+  const alGirar = () => {
+    giro = performance.now();
+    brinco = performance.now();
+  };
+  window.addEventListener('kai:gira', alGirar);
+  // ¿A dónde mira en esta parada? (ver data-kai-mira)
+  const miraDe = (el) => {
+    if (el.dataset.kaiMira === 'centro') return [vw / 2, vh / 2];
+    // un selector: mira a ese elemento de la página (la despedida mira al botón de WhatsApp)
+    if (/^[.#]/.test(el.dataset.kaiMira)) {
+      const r = document.querySelector(el.dataset.kaiMira)?.getBoundingClientRect();
+      return r && r.width > 0 ? [r.left + r.width / 2, r.top + r.height / 2] : null;
+    }
+    let obj = el.parentElement;
+    if (el.dataset.kaiMira === 'foco') {
+      const a = document.activeElement;
+      obj = a && a !== document.body && el.closest('section, footer')?.contains(a) ? a : null;
+    }
+    const r = obj && obj.getBoundingClientRect();
+    return r && r.width > 0 ? [r.left + r.width / 2, r.top + r.height / 2] : null;
+  };
 
   const cuadro = (ahora) => {
     raf = requestAnimationFrame(cuadro);
@@ -294,7 +507,8 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     vh = window.innerHeight;
     const chico = vw < 820;
     // Los capítulos de abajo se montan después (Resto.jsx): se vuelven a buscar cada tanto
-    if (nCuadro++ % 40 === 0) lugares = [...document.querySelectorAll('.kai-lugar[data-kai]')];
+    // (cada 10 cuadros: hay paradas que aparecen al pasar el cursor —Proyectos— o al abrir una pregunta)
+    if (nCuadro++ % 10 === 0) lugares = [...document.querySelectorAll('.kai-lugar[data-kai]')];
     if (!lugares.length) return;
 
     // ¿En qué capítulo vamos y hay un lugar a la vista?
@@ -307,8 +521,16 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
       if (esCap && r.height > 0 && r.top < vh * 0.66) nuevoCap = el;
       // Capítulo: mientras su cabecera entra (bajo la barra y en los dos tercios de arriba).
       // Parada: mientras quepa en pantalla.
-      const aLaVista = esCap ? r.top > 76 && r.top < vh * 0.7 : r.top > 50 && r.top + r.height * 0.72 < vh;
-      if (!chico && !nuevoLugar && r.height > 0 && aLaVista) nuevoLugar = el;
+      // (la parada mide 176 aunque Kai se vea más chico: se mide lo que SE VE, según su talla)
+      const medio = (r.height / 2) * (Number(el.dataset.kaiTalla) || 1);
+      const centro = r.top + r.height / 2;
+      const aLaVista = esCap ? r.top > 76 && r.top < vh * 0.7 : centro - medio > 50 && centro + medio * 0.44 < vh;
+      // En celular solo cuentan las paradas marcadas `data-kai-movil` (la de la hélice)
+      if ((!chico || 'kaiMovil' in el.dataset) && r.height > 0 && aLaVista) {
+        if (!nuevoLugar) nuevoLugar = el;
+        // `data-kai-gana`: si se ve, manda sobre las demás (la despedida, al final)
+        else if ('kaiGana' in el.dataset) nuevoLugar = el;
+      }
     }
     if (!nacido) {
       nacido = true;
@@ -318,8 +540,10 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     if (nuevoLugar !== lugar) {
       lugar = nuevoLugar;
       lugarId = nuevoId;
-      viaje = ahora; // se deshace en partículas, viaja y se vuelve a armar
       caja.style.setProperty('--kai-talla', lugar?.dataset.kaiTalla || '1');
+      // `data-kai-linea`: la parada le reserva su hueco → la frase va suelta a su lado,
+      // sin tarjeta (como Buddy de adamperlis.com), en vez de flotar sobre el contenido
+      caja.classList.toggle('kai--linea', !!lugar && 'kaiLinea' in lugar.dataset);
       if (lugar && frase?.(lugarId)) decir(lugarId);
       else callar(lugar ? 0 : 1200);
     } else if (lugar && nuevoId !== lugarId) {
@@ -331,7 +555,21 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     if (nuevoCap !== capitulo) {
       capitulo = nuevoCap;
       // celular: no hay lugares; dice la línea unos segundos al empezar el capítulo
-      if (chico && capitulo) decir(capitulo.dataset.kai, 5200);
+      if (chico && capitulo && !lugar) decir(capitulo.dataset.kai, 5200);
+    }
+    // Celular (12-nov): el globo no tiene dónde pararse y tapaba lo que estás viendo → en
+    // cuanto sigues deslizando (tras 1.4 s para alcanzar a leerlo) se guarda. Si su voz
+    // está sonando no: la prendiste para oírlo.
+    if (
+      chico &&
+      !lugar &&
+      caja.classList.contains('kai--habla') &&
+      ahora - brinco > 1400 &&
+      Math.abs(window.scrollY - yDijo) > 140 &&
+      !sonando?.()
+    ) {
+      callar(0);
+      cortada = capitulo?.dataset.kai || null;
     }
     let tx = esquinaX();
     let ty = esquinaY();
@@ -340,24 +578,66 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
       tx = r.left;
       ty = r.top;
     }
-    vx += ((tx - x) * 60 - vx * 13) * dt;
-    vy += ((ty - y) * 60 - vy * 13) * dt;
-    x += vx * dt;
-    y += vy * dt;
+    const dirige = director();
+    if (dirige) {
+      const nx = dirige.x - TAM / 2;
+      const ny = dirige.y - TAM / 2;
+      vx = (nx - x) / dt;
+      vy = (ny - y) / dt;
+      x = nx;
+      y = ny;
+      if (dirige.mira) {
+        cx = dirige.mira[0];
+        cy = dirige.mira[1];
+      }
+      // `talla`: su tamaño mientras actúa (en celular, más chico que en el hero)
+      const td = String(dirige.talla || 1);
+      if (td !== tallaDirigida) caja.style.setProperty('--kai-talla', (tallaDirigida = td));
+      dirigido = true;
+    } else {
+      if (dirigido) {
+        // lo acaban de soltar: sin el impulso del último cuadro dirigido
+        dirigido = false;
+        vx = 0;
+        vy = 0;
+        tallaDirigida = '';
+        caja.style.setProperty('--kai-talla', lugar?.dataset.kaiTalla || '1');
+      }
+      vx += ((tx - x) * 60 - vx * 13) * dt;
+      vy += ((ty - y) * 60 - vy * 13) * dt;
+      x += vx * dt;
+      y += vy * dt;
+    }
     const tb = (ahora - brinco) / 1000;
-    const salto = tb < 0.5 ? Math.sin((tb / 0.5) * Math.PI) * 14 : 0;
-    caja.style.transform = `translate(${x.toFixed(1)}px, ${(y - salto + Math.sin(ahora / 620) * 3).toFixed(1)}px)`;
-    caja.classList.toggle('kai--esquina', !lugar);
+    // guardado en la barra se ve chiquito: brinca y flota en proporción
+    const k = !lugar && !dirige && enBarra() ? 0.3 : 1;
+    const salto = tb < 0.5 ? Math.sin((tb / 0.5) * Math.PI) * 14 * k : 0;
+    caja.style.transform = `translate(${x.toFixed(1)}px, ${(y - salto + Math.sin(ahora / 620) * 3 * k).toFixed(1)}px)`;
+    caja.classList.toggle('kai--esquina', !lugar && !dirige);
+    caja.classList.toggle('kai--pildora', !!lugar && 'kaiPildora' in lugar.dataset);
+    caja.classList.toggle('kai--barra', !lugar && !dirige && !!enBarra());
     // el globo abre hacia donde hay espacio
     const derecha = x + TAM / 2 > vw / 2;
     caja.classList.toggle('kai--izq', derecha);
+    // Frase suelta a su izquierda: que nunca pase de la orilla (16 px), aunque Kai quede cerca
+    const tope = `${Math.max(120, Math.round((x + 16) / 4) * 4)}px`;
+    // (celular, guardado en la barra: el globo se ancla a la pantalla con esto, no a Kai)
+    const kxCss = `${Math.round(x)}px`;
+    if (kxCss !== kaiXCss) caja.style.setProperty('--kai-x', (kaiXCss = kxCss));
+    if (tope !== topeFrase) caja.style.setProperty('--kai-tope', (topeFrase = tope));
     // En una cabecera (a la derecha del titular) el globo va DEBAJO: de lado taparía el titular
-    caja.classList.toggle('kai--abajo', !!lugar && derecha && CAPITULO.test(lugarId));
+    const globoParada = lugar?.dataset.kaiGlobo || '';
+    caja.classList.toggle('kai--abajo', !!lugar && ((derecha && CAPITULO.test(lugarId)) || globoParada.startsWith('abajo')));
+    // `abajo-angosto`: abajo y hacia la izquierda, sobre su propia escena (el video), sin taparle el título
+    caja.classList.toggle('kai--angosto', globoParada === 'abajo-angosto');
+    // `data-kai-globo="debajo"`: la escena le deja espacio abajo (no a los lados)
+    caja.classList.toggle('kai--debajo', !!lugar && lugar.dataset.kaiGlobo === 'debajo');
 
     // Siempre con su aspecto final (perla + aro). Lo único que lo deshace es el VIAJE
     // entre lugares: se suelta en partículas, llega y se vuelve a armar.
-    const tv = (ahora - viaje) / 1000;
-    const va = tv < 0.7 ? Math.sin((tv / 0.7) * Math.PI) : 0;
+    // 14-nov: YA NO se deshace en partículas al viajar (Zahir no las quiso detrás de él):
+    // viaja completo, perla y aro (antes: `va` = sin(π·t/0.7) durante 0.7 s al cambiar de lugar).
+    const va = 0;
     const esc = 1 - va * 0.55;
     cabeza.scale.setScalar(esc);
     matP.uniforms.uCab.value = esc;
@@ -371,10 +651,20 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     aro.scale.y = a;
     ejeAro.rotation.set(0.36 + Math.sin(t * 0.7) * 0.09, 0, 0.3 + Math.cos(t * 0.55) * 0.12);
 
-    // Mira al cursor (o hacia donde va, si viaja rápido)
-    const rapido = Math.hypot(vx, vy) > 260;
-    const mx = rapido ? Math.sign(vx) * 0.7 : clamp01((cx - (x + TAM / 2)) / 520 + 0.5) * 2 - 1;
-    const my = rapido ? Math.sign(vy) * 0.5 : clamp01((cy - (y + TAM / 2)) / 420 + 0.5) * 2 - 1;
+    // Mira al cursor (o hacia donde va, si viaja rápido). En una parada con
+    // `data-kai-mira` mira a la ESCENA en vez del cursor: "" = a su contenedor (el video
+    // del testimonio, la demo del frente…), "foco" = al campo que estás llenando.
+    let miraX = cx;
+    let miraY = cy;
+    const mira = lugar && !dirige && 'kaiMira' in lugar.dataset ? miraDe(lugar) : null;
+    if (mira) {
+      miraX = mira[0];
+      miraY = mira[1];
+    }
+    // (dirigido con `mira`, o mirando la escena: ve a donde le dicen aunque vaya rápido)
+    const rapido = !dirige?.mira && !mira && Math.hypot(vx, vy) > 260;
+    const mx = rapido ? Math.sign(vx) * 0.7 : clamp01((miraX - (x + TAM / 2)) / 520 + 0.5) * 2 - 1;
+    const my = rapido ? Math.sign(vy) * 0.5 : clamp01((miraY - (y + TAM / 2)) / 420 + 0.5) * 2 - 1;
     const tg = (ahora - giro) / 1000;
     const vuelta = tg < 0.8 ? (1 - Math.pow(1 - tg / 0.8, 3)) * Math.PI * 2 : 0;
     cabeza.rotation.y = lerp(cabeza.rotation.y, mx * 0.22 + vuelta, 0.18);
@@ -396,6 +686,34 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
     ojos.forEach((o) =>
       o.scale.set(1 + habla * 0.25 + volumen * 0.2, Math.max(0.1, abre) * (1 - habla * 0.42) * (1 + volumen * 0.55), 1)
     );
+
+    // Outfit: cambia a la mitad de la vuelta y entra con un rebote
+    const puesto = ahora >= tOutfit ? outfit : outfitPrevio;
+    const pop = ahora >= tOutfit ? rebote(clamp01((ahora - tOutfit) / 380)) : 1;
+    for (const k in OUTFITS) {
+      const o = OUTFITS[k];
+      o.visible = k === puesto;
+      if (o.visible) o.scale.setScalar(Math.max(0.001, pop));
+    }
+
+    // Mini celular: sale en las paradas con `data-kai-cel` y flota a su lado
+    const quiereCel = lugar && !dirige ? lugar.dataset.kaiCel || '' : '';
+    if (quiereCel !== celSrc) {
+      celSrc = quiereCel;
+      tCel = ahora;
+      if (celSrc) {
+        matPantalla.map = pantallaDe(celSrc);
+        matPantalla.needsUpdate = true;
+      }
+    }
+    const tc = clamp01((ahora - tCel) / 420);
+    const celEsc = celSrc ? rebote(tc) : 1 - smooth(tc);
+    cel.visible = celEsc > 0.01;
+    if (cel.visible) {
+      cel.scale.setScalar(celEsc * 0.86);
+      cel.position.set(1.12, -0.48 + Math.sin(t * 1.6) * 0.04, 0.75);
+      cel.rotation.set(-0.08, -0.38 + Math.sin(t * 0.9) * 0.05, 0.1);
+    }
 
     renderer.render(scene, camera);
   };
@@ -424,8 +742,10 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, ocurrenc
       clearTimeout(relevo);
       window.removeEventListener('pointermove', alMover);
       canvas.removeEventListener('click', alTocar);
-      for (const g of [geoCuerpo, geoOjo, geoAro, geoP]) g.dispose();
-      for (const m of [matCuerpo, matAro, matOjo, matHalo, matP]) m.dispose();
+      window.removeEventListener('kai:gira', alGirar);
+      for (const geo of [geoCuerpo, geoOjo, geoAro, geoP, geoCel, geoPantalla, ...geosOutfit]) geo.dispose();
+      for (const m of [matCuerpo, matAro, matOjo, matHalo, matP, matNegro, matAmarillo, matGris, matEspejo, matPantalla]) m.dispose();
+      Object.values(texturas).forEach((tx) => tx.dispose());
       visor.dispose();
       barniz.dispose();
       env.dispose();

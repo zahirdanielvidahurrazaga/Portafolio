@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import SectionHead from './SectionHead';
@@ -150,6 +150,23 @@ const irAContacto = (tipo) => {
 };
 const abrirCaso = (id) => window.dispatchEvent(new CustomEvent('kaizen:proyecto', { detail: { id } }));
 
+/** "Cotizar X" y el caso real. En celular la escena los repite debajo de la hélice */
+function Acciones({ s, className = '' }) {
+  const { t } = useLang();
+  return (
+    <div className={`srv-ficha-acciones ${className}`}>
+      <button type="button" className="btn-metallic srv-ficha-cta" onClick={() => irAContacto(s.tipo)}>
+        {t({ es: 'Cotizar', en: 'Get a quote for' })} {t(s.title).toLowerCase()} <ArrowRight size={16} />
+      </button>
+      {s.caso && (
+        <button type="button" className="srv-ficha-caso" onClick={() => abrirCaso(s.caso.id)}>
+          {t({ es: 'Ver caso real', en: 'See real case' })}: {s.caso.nombre} <ArrowUpRight size={14} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** La ficha del servicio: el resultado, qué incluye, la prueba y el botón */
 function Ficha({ s, i }) {
   const { t, lang } = useLang();
@@ -172,16 +189,7 @@ function Ficha({ s, i }) {
       <div className="srv-ficha-escena">
         <Escena forma={s.forma} />
       </div>
-      <div className="srv-ficha-acciones">
-        <button type="button" className="btn-metallic srv-ficha-cta" onClick={() => irAContacto(s.tipo)}>
-          {t({ es: 'Cotizar', en: 'Get a quote for' })} {t(s.title).toLowerCase()} <ArrowRight size={16} />
-        </button>
-        {s.caso && (
-          <button type="button" className="srv-ficha-caso" onClick={() => abrirCaso(s.caso.id)}>
-            {t({ es: 'Ver caso real', en: 'See real case' })}: {s.caso.nombre} <ArrowUpRight size={14} />
-          </button>
-        )}
-      </div>
+      <Acciones s={s} />
     </>
   );
 }
@@ -201,18 +209,46 @@ function Ficha({ s, i }) {
  * toda la espiral.
  */
 const PASO = 95; // grados entre una escena y la siguiente
+// En celular las tarjetas van a escala (con transform, no zoom: Kai necesita su medida real).
+// La escala sale de lo que SOBRA de alto: barra, números, titular, aire de Kai, botón y "Ver caso real" ≈ 455 px;
+// la tarjeta más alta llena el resto. La calcula Helice (necesita medir las tarjetas).
+let escala = 0.8;
+const escalaCarta = () => (window.innerWidth <= 900 ? escala : 1);
 const acota = (v, a, b) => Math.max(a, Math.min(b, v));
 
-function Helice({ progreso, activo }) {
+function Helice({ progreso, activo, kai }) {
   const anillo = useRef(null);
   const cartas = useRef([]);
+  const ponerRef = useRef(null); // re-acomodar las tarjetas al cambiar la escala
+  // Kai se trepa en la esquina de arriba a la derecha de la tarjeta del frente
+  useLayoutEffect(() => {
+    if (!kai) return;
+    // Las medidas van en la caja de la hélice (.srv-forma): las heredan la percha de Kai y,
+    // en celular, las tarjetas (alineadas arriba) y el alto de la caja (= la más alta)
+    const poner = () => {
+      const esc = cartas.current[activo]?.querySelector('.esc');
+      const caja = anillo.current?.parentElement;
+      if (!esc || !caja) return;
+      const altos = cartas.current.map((c) => c?.querySelector('.esc')?.offsetHeight || 0);
+      const alto = Math.max(...altos) || 1;
+      escala = acota((window.innerHeight - 455) / alto, 0.55, 0.85);
+      const k = escalaCarta();
+      caja.style.setProperty('--w', `${esc.offsetWidth * k}px`);
+      caja.style.setProperty('--h', `${esc.offsetHeight * k}px`);
+      caja.style.setProperty('--h-max', `${alto * k}px`);
+      ponerRef.current?.(progreso.get());
+    };
+    poner();
+    window.addEventListener('resize', poner);
+    return () => window.removeEventListener('resize', poner);
+  }, [activo, kai, progreso]);
   const poner = useCallback((v) => {
     const u = acota(v, 0, 1) * N * 0.99999;
     const k = Math.min(N - 1, Math.floor(u));
     const f = k < N - 1 ? acota((u - k - 0.62) / 0.38, 0, 1) : 0;
     const a = k + f * f * (3 - 2 * f);
-    const radio = Math.min(300, window.innerWidth * 0.19);
-    const dy = window.innerHeight * 0.3;
+    const radio = window.innerWidth <= 900 ? window.innerWidth * 0.3 : kai ? Math.min(360, window.innerWidth * 0.23) : Math.min(300, window.innerWidth * 0.19);
+    const dy = window.innerHeight * (window.innerWidth <= 900 ? 0.16 : 0.3);
     cartas.current.forEach((el, i) => {
       if (!el) return;
       const rel = i - a;
@@ -222,11 +258,19 @@ function Helice({ progreso, activo }) {
         return;
       }
       el.style.visibility = '';
-      el.style.transform = `translate(-50%, -50%) translateZ(${-radio}px) rotateY(${rel * PASO}deg) translateZ(${radio}px) translateY(${rel * dy}px)`;
-      el.style.opacity = acota(1 - lejos * 0.6, 0.2, 1);
+      // De espaldas el texto se ve en espejo ("ARBA ARAP OTSIL"): esa cara va lisa,
+      // como vidrio, y su contenido se apaga (lo pidió Zahir, 11-nov)
+      el.classList.toggle('is-dorso', Math.cos((rel * PASO * Math.PI) / 180) < 0.05);
+      el.style.transform = `translate(-50%, -50%) translateZ(${-radio}px) rotateY(${rel * PASO}deg) translateZ(${radio}px) translateY(${rel * dy}px) scale(${escalaCarta()})`;
+      // Las vecinas se ven más. (Sin desenfoque: un blur que cambia cada cuadro se repinta
+      // en cada scroll y lo trababa — 12-nov)
+      el.style.opacity = kai ? acota(1 - lejos * 0.42, 0.32, 1) : acota(1 - lejos * 0.6, 0.2, 1);
       el.style.pointerEvents = lejos < 0.3 ? '' : 'none';
     });
-  }, []);
+  }, [kai]);
+  useEffect(() => {
+    ponerRef.current = poner;
+  }, [poner]);
   useMotionValueEvent(progreso, 'change', poner);
   useEffect(() => {
     const on = () => poner(progreso.get());
@@ -258,6 +302,16 @@ function Helice({ progreso, activo }) {
   }, [poner, progreso]);
   return (
     <div ref={anillo} className="srv-helice">
+      {kai && (
+        <span
+          className="kai-lugar kai-lugar--percha"
+          data-kai={`srv-${SERVICIOS[activo].forma}`}
+          data-kai-talla="0.5"
+          data-kai-linea
+          data-kai-movil
+          aria-hidden="true"
+        />
+      )}
       {SERVICIOS.map((x, i) => (
         <div key={x.forma} ref={(el) => { cartas.current[i] = el; }} className="srv-helice-carta" aria-hidden={i !== activo}>
           {/* Al quedar de frente se vuelve a montar: sus renglones entran en cascada */}
@@ -375,10 +429,9 @@ export default function Servicios() {
           </div>
 
           <div className="srv-forma">
-            {/* Parada de Kai: presenta cada servicio (su línea cambia con el activo) */}
-            <span className="kai-lugar kai-lugar--escena" data-kai={`srv-${s.forma}`} data-kai-talla="0.72" aria-hidden="true" />
-            <Helice progreso={scrollYProgress} activo={activo} />
+            <Helice progreso={scrollYProgress} activo={activo} kai />
           </div>
+          <Acciones s={s} className="srv-acciones-movil" />
         </div>
       </div>
     </section>

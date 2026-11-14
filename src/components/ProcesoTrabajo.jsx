@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import SectionHead from './SectionHead';
 import { useLang } from '../lib/LangContext';
@@ -16,6 +16,37 @@ const ProcesoTrabajo = () => {
   // casillas y ~0.6 pantallas de móvil. No se perdió el mensaje — la firma vive
   // ahora dentro de "Propuesta y Acuerdo" y las juntas dentro de "Desarrollo".
   const { t } = useLang();
+  // Kai baja escalón por escalón: se para junto al paso que estás leyendo (el último
+  // renglón cuyo borde de arriba ya cruzó el 55% de la pantalla)
+  const listaRef = useRef(null);
+  const [activo, setActivo] = useState(-1);
+  useEffect(() => {
+    let raf = 0;
+    const medir = () => {
+      raf = 0;
+      const filas = listaRef.current?.children;
+      if (!filas) return;
+      const linea = window.innerHeight * 0.55;
+      let a = -1;
+      for (let i = 0; i < filas.length; i++) {
+        const r = filas[i].getBoundingClientRect();
+        if (r.top < linea && r.bottom > 80) a = i;
+      }
+      setActivo(a);
+    };
+    const alMover = () => {
+      if (!raf) raf = requestAnimationFrame(medir);
+    };
+    medir();
+    window.addEventListener('scroll', alMover, { passive: true });
+    window.addEventListener('resize', alMover);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', alMover);
+      window.removeEventListener('resize', alMover);
+    };
+  }, []);
+
   const steps = [
     {
       num: '01',
@@ -85,7 +116,7 @@ const ProcesoTrabajo = () => {
         {t({ es: <>Cómo <em>trabajamos</em></>, en: <>How we <em>work</em></> })}
       </SectionHead>
 
-      <ol className="process-list rule-list">
+      <ol ref={listaRef} className="process-list rule-list">
         {steps.map((step, idx) => (
           <motion.li
             key={step.num}
@@ -96,6 +127,9 @@ const ProcesoTrabajo = () => {
             transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
           >
             <span className="process-num">{step.num}</span>
+            {idx === activo && (
+              <span className="kai-lugar kai-lugar--paso" data-kai={`paso-${step.num}`} data-kai-talla="0.55" aria-hidden="true" />
+            )}
             <h3>{t(step.title)}</h3>
             <p>{t(step.desc)}</p>
           </motion.li>

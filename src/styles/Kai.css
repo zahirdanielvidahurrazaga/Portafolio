@@ -26,15 +26,52 @@
   align-self: flex-end;
   margin: -124px 0 -22px -0.25rem;
 }
-/* Servicios: junto a la hélice, presentando cada servicio */
-.srv-forma {
-  position: relative;
-}
-.kai-lugar--escena {
+/* Servicios (12-nov): Kai encaramado en la esquina de arriba a la derecha de la tarjeta del
+   frente de la hélice (Servicios.jsx → Helice pone --w y --h de esa tarjeta). Se probaron
+   y DESCARTARON: frase en tarjeta de vidrio sobre la hélice, Kai en un renglón propio de la
+   ficha, Kai en lugar del "04 / 07" y Kai mudo como puntero del índice. */
+.kai-lugar--percha {
   right: auto;
-  left: -64px;
-  top: 0;
-  margin-top: -62px;
+  left: calc(50% + var(--w, 360px) / 2 + 18px);
+  top: calc(50% - var(--h, 300px) / 2 - 32px);
+  margin: -88px 0 0 -88px;
+  transition: top 0.5s cubic-bezier(0.16, 1, 0.3, 1), left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* …y su frase a su izquierda, sobre el borde de arriba de la tarjeta, terminando junto a él */
+.kai--linea.kai--izq .kai-globo {
+  left: auto;
+  right: 144px;
+  max-width: var(--kai-tope, none); /* lib/kai.js: lo que cabe hasta la orilla */
+  width: min(25rem, 31vw);
+  text-align: right;
+  transform: translate(6px, -50%);
+  transform-origin: right center;
+}
+.kai--linea.kai--izq.kai--habla .kai-globo {
+  transform: translate(0, -50%);
+}
+.kai--linea.kai--izq .kai-frase {
+  font-family: var(--font-display);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--text-strong);
+}
+.kai--linea.kai--izq .kai-acciones {
+  position: absolute;
+  top: 100%;
+  right: 0;
+}
+
+/* Demos (celular, carrusel): en la esquina de arriba a la derecha de la demo del frente
+   (Demos.jsx → Carrusel pone --fw/--fh de esa tarjeta en la escena) */
+.kai-lugar--demo {
+  right: auto;
+  left: calc(50% + var(--fw, 240px) / 2 - 22px);
+  top: calc(50% + var(--dm-aire, 92px) / 2 - var(--fh, 370px) / 2 - 36px);
+  margin: -88px 0 0 -88px;
+  transition: top 0.45s cubic-bezier(0.16, 1, 0.3, 1), left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 /* Contacto: más arriba, para que su globo quepa dentro de la losa */
 .footer-losa .kai-lugar {
@@ -132,6 +169,42 @@ html.intro:not(.cargado) .kai {
 .kai--abajo.kai--habla .kai-globo {
   transform: scale(1);
 }
+/* Frase suelta (parada con data-kai-linea): texto a su lado, sin vidrio ni sombra */
+.kai--linea .kai-globo {
+  left: 132px;
+  right: auto;
+  /* lo que queda de la ficha a la derecha de Kai */
+  width: min(17rem, calc(23vw - 50px));
+  max-width: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  transform: translate(-6px, -50%);
+  transform-origin: left center;
+}
+.kai--linea.kai--habla .kai-globo {
+  transform: translate(0, -50%);
+}
+.kai--linea .kai-frase {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--text-color);
+}
+.kai--linea .kai-acciones {
+  margin-top: 0.15rem;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+/* Minimalismo: "Escuchar · Callar" solo al pasar el cursor por la frase */
+.kai--linea .kai-globo:hover .kai-acciones,
+.kai--linea .kai-globo:focus-within .kai-acciones {
+  opacity: 1;
+}
+/* "renglón": frase en UNA línea discreta, del tamaño del renglón que reemplaza */
 .kai-frase {
   margin: 0;
   font-size: 1.02rem;
@@ -179,9 +252,21 @@ html.intro:not(.cargado) .kai {
     visibility: hidden;
   }
   .kai-lugar--marca,
-  .kai-lugar--botones,
-  .kai-lugar--escena {
+  .kai-lugar--botones {
     display: none !important;
+  }
+  /* Servicios: Kai sí se trepa en la tarjeta de la hélice (un poco más adentro: no cabe
+     a la derecha de la tarjeta en una pantalla de 390) */
+  .kai-lugar--percha {
+    left: calc(50% + var(--w, 280px) / 2 - 22px);
+    top: calc(var(--kai-aire, 92px) - 36px);
+  }
+  .kai--linea.kai--izq .kai-globo {
+    /* termina junto a Kai y nunca llega a la orilla (16 px de margen como el resto) */
+    width: min(15rem, calc(100vw - 175px));
+  }
+  .kai--linea.kai--izq .kai-frase {
+    font-size: 0.92rem;
   }
   .kai--esquina canvas {
     scale: 0.46;
@@ -192,5 +277,193 @@ html.intro:not(.cargado) .kai {
   }
   .kai-frase {
     font-size: 0.88rem;
+  }
+  /* El globo no se come los toques (tapaba los botones del formulario de Contacto):
+     solo sus botones los reciben */
+  .kai--habla .kai-globo {
+    pointer-events: none;
+  }
+  .kai--habla .kai-acciones button {
+    pointer-events: auto;
+  }
+}
+
+/* GUARDADO EN LA BARRA (14-nov, como Buddy de adamperlis.com): sin lugar a la vista,
+   Kai se encoge en el hueco .kai-dock de la barra. Va ENCIMA de la cápsula (1000) y
+   su globo abre hacia abajo, alineado a su derecha. Gana a .kai--esquina en todo tamaño. */
+.kai.kai--barra {
+  z-index: 1001;
+}
+.kai.kai--barra canvas {
+  scale: 0.27;
+}
+.kai.kai--barra .kai-globo {
+  left: auto;
+  right: 52px;
+  top: 116px;
+  max-width: min(23rem, calc(100vw - 32px));
+  transform: scale(0.92);
+  transform-origin: right top;
+  border-radius: 20px 6px 20px 20px;
+}
+.kai.kai--barra.kai--habla .kai-globo {
+  transform: scale(1);
+}
+
+/* Testimonios: en la esquina de arriba a la derecha del video del cliente */
+.kai-lugar--video {
+  right: -66px;
+  top: -72px;
+  margin-top: 0;
+}
+
+
+/* Globo DEBAJO de Kai, alineado a su izquierda (data-kai-globo="debajo") */
+.kai.kai--debajo .kai-globo {
+  left: 34px;
+  right: auto;
+  top: 136px;
+  transform: scale(0.92);
+  transform-origin: left top;
+  border-radius: 6px 20px 20px 20px;
+}
+.kai.kai--debajo.kai--habla .kai-globo {
+  transform: scale(1);
+}
+
+/* Nosotros: sentado sobre la línea, justo en medio de las dos mitades */
+.kai-lugar--union {
+  right: auto;
+  left: calc(50% - 88px);
+  top: -124px;
+  margin-top: 0;
+}
+/* Proceso: junto al número del paso que estás leyendo */
+.kai-lugar--paso {
+  right: auto;
+  left: clamp(4.5rem, 7vw, 7.5rem);
+  top: -96px;
+  margin-top: 0;
+}
+/* FAQ: en el margen derecho de la pregunta abierta */
+.kai-lugar--faq {
+  right: -118px;
+  top: -42px;
+  margin-top: 0;
+}
+/* (las escenas que reciben una parada son su caja de referencia) */
+.nos-mitades,
+.process-row,
+.faq-item,
+.footer-form-card,
+.footer-bottom {
+  position: relative;
+}
+
+/* Contacto: en la esquina de arriba a la derecha del formulario */
+.kai-lugar--form {
+  right: -64px;
+  top: -76px;
+  margin-top: 0;
+}
+@media (max-width: 820px) {
+  .kai-lugar--form {
+    right: -48px;
+  }
+}
+
+/* Celular, guardado en la barra: el globo ocupa el ancho de la pantalla (16 px por lado)
+   en vez de colgar de Kai, que queda a media barra y lo sacaba por la orilla */
+@media (max-width: 820px) {
+  .kai.kai--barra .kai-globo {
+    left: calc(16px - var(--kai-x, 0px));
+    right: auto;
+    width: calc(100vw - 32px);
+    max-width: none;
+    transform-origin: center top;
+    border-radius: 20px;
+  }
+}
+/* Con el menú abierto no habla encima de los capítulos */
+body.menu-abierto .kai .kai-globo {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Globo abajo y angosto (Testimonios): cae sobre la parte de arriba del video, no sobre el título */
+.kai.kai--angosto .kai-globo {
+  top: 128px;
+  right: 46px;
+  max-width: 12.5rem;
+}
+
+/* ── LA PÍLDORA (KaiPildora.jsx, 14-nov): Kai asomado a la izquierda y su frase dentro ── */
+.kai-pildora {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 70px;
+  width: max-content;
+  max-width: min(34rem, calc(100vw - 32px));
+  padding: 0.75rem 1.5rem 0.75rem 116px; /* Kai + su mini celular */
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-color-elevated) 72%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28), inset 0 1px 0 var(--tint-4);
+}
+.kai-lugar--pildora {
+  right: auto;
+  left: -36px; /* Kai centrado a 52 px de la orilla izquierda de la cápsula */
+  top: 50%;
+  margin-top: -88px;
+}
+.kai-pildora-texto {
+  margin: 0;
+  min-width: 14rem;
+  font-size: 1rem;
+  line-height: 1.38;
+  color: var(--text-strong);
+}
+.kai-pildora-texto span {
+  opacity: 0;
+  animation: kaiLee 0.35s ease forwards;
+}
+/* En la píldora no hay globo: la frase va en la cápsula */
+.kai.kai--pildora .kai-globo {
+  display: none;
+}
+/* Demos: abajo al centro del escenario del anillo */
+.kai-pildora--demos {
+  position: absolute;
+  z-index: 7;
+  left: 50%;
+  bottom: clamp(1.5rem, 6vh, 3.5rem);
+  transform: translateX(-50%);
+}
+/* Proyectos: se queda fija abajo mientras recorres la lista */
+.kai-pildora--proyectos {
+  position: sticky;
+  z-index: 30;
+  bottom: 28px;
+  margin: 3rem auto 0;
+}
+@media (hover: none), (max-width: 900px) {
+  .kai-pildora--proyectos {
+    display: none;
+  }
+}
+
+/* Despedida: arriba de la última línea del pie, a la derecha, viendo el botón de WhatsApp */
+.kai-lugar--adios {
+  right: 90px;
+  top: -112px; /* más arriba, su globo tapaba el aviso de privacidad del formulario */
+  margin-top: 0;
+}
+@media (max-width: 820px) {
+  .kai-lugar--adios {
+    right: 40px;
+    top: -140px;
   }
 }

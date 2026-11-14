@@ -110,6 +110,8 @@ const Faq = () => {
                   <span className="faq-q-texto">{t(f.q)}</span>
                   <Plus className="faq-chevron" size={22} aria-hidden="true" />
                 </button>
+                {/* Kai se va junto a la pregunta que abres y mira la respuesta */}
+                {isOpen && <span className="kai-lugar kai-lugar--faq" data-kai={`faq-${i + 1}`} data-kai-talla="0.5" data-kai-mira="" aria-hidden="true" />}
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div

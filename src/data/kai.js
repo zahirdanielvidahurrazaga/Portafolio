@@ -60,3 +60,48 @@ export const KAI_SERVICIOS = {
   'srv-ia': { es: 'Lo repetitivo, que lo haga la máquina.', en: 'Let the machine handle the repetitive stuff.' },
   'srv-telefono': { es: 'Tu negocio, en el celular de tus clientes.', en: 'Your business, on your customers’ phones.' },
 };
+
+// En Demos (celular: carrusel), Kai se trepa en la demo del frente y dice una línea por giro
+// (llave = "demo-" + id de GIROS en Demos.jsx). ⚠️ BORRADOR de Claude (12-nov), SIN VOZ:
+// confirmar con Zahir y Karime que cada demo sí hace eso (salen de los `que` de Demos.jsx).
+export const KAI_DEMOS = {
+  'demo-alma': { es: 'Reservan su clase y entran con su pase, sin llamarte.', en: 'They book their class and walk in with their pass, no calls.' },
+  'demo-atlas': { es: 'Sabes cuánta gente hay en el gym, en vivo.', en: 'You know how many people are in the gym, live.' },
+  'demo-hoja': { es: 'El pedido llega sin que nadie conteste el teléfono.', en: 'Orders come in without anyone answering the phone.' },
+  'demo-dalia': { es: 'Eligen el ramo y lo piden desde su celular.', en: 'They pick the bouquet and order it from their phone.' },
+  'demo-raiz': { es: 'Tus pacientes siguen su plan todos los días, no solo en consulta.', en: 'Your patients follow their plan every day, not just at the appointment.' },
+  'demo-bisagra': { es: 'La caja y las ventas del día, a la vista.', en: 'The register and the day’s sales, at a glance.' },
+};
+
+// PAPELES POR ESCENA (14-nov-2026, como Buddy de adamperlis.com: en cada escena Kai tiene
+// un lugar y algo que hacer). ⚠️ BORRADOR de Claude, SIN VOZ grabada: solo se leen hasta
+// que Zahir y Karime las aprueben y se graben.
+export const KAI_ESCENAS = {
+  // Testimonios: trepado en la esquina del video del cliente, viéndolo
+  'caso-befit': { es: 'Ellas lo cuentan mejor que yo. Dale play.', en: 'They tell it better than I do. Hit play.' },
+  'caso-pos': { es: 'Carlos cobra con esto todos los días. Escúchalo a él.', en: 'Carlos runs his register on this every day. Hear it from him.' },
+  // Proceso: baja escalón por escalón junto al paso que estás leyendo
+  'paso-01': { es: 'Primero te escuchamos. Nada de cotizar a ciegas.', en: 'First we listen. No blind quotes.' },
+  'paso-02': { es: 'Todo por escrito antes de empezar.', en: 'Everything in writing before we start.' },
+  'paso-03': { es: 'Aquí es donde tu idea toma forma.', en: 'This is where your idea takes shape.' },
+  'paso-04': { es: 'Lo probamos antes de que lo pruebe tu cliente.', en: 'We test it before your customer does.' },
+  'paso-05': { es: 'Y te lo dejamos funcionando, a tu nombre.', en: 'And we hand it over running, in your name.' },
+  // Despedida, al final de la página
+  despedida: { es: 'Fin del recorrido. Yo me quedo aquí cuidando el botón de WhatsApp.', en: 'End of the tour. I’ll stay right here guarding the WhatsApp button.' },
+  // Proyectos: en su píldora, del proyecto que señalas con el cursor
+  proyectos: { es: 'Pasa el cursor por un proyecto y te cuento de qué va.', en: 'Hover over a project and I’ll tell you what it’s about.' },
+  'proyecto-natural': { es: 'Una familia que hace aguas, con su propia vitrina en línea.', en: 'A family that makes fruit waters, with its own online showcase.' },
+  'proyecto-befit': { es: 'Un estudio de pilates que ya no agenda por WhatsApp.', en: 'A pilates studio that stopped booking over WhatsApp.' },
+  'proyecto-pos': { es: 'Una tienda que cobra con esto todo el día.', en: 'A store that rings up sales with this all day.' },
+  'proyecto-boda': { es: 'Las fotos de la boda, en vivo, desde el celular de los invitados.', en: 'Wedding photos, live, from the guests’ phones.' },
+  // OUTFITS: al tocarlo da una vuelta y sale con otro (lib/kai.js → ORDEN_OUTFITS)
+  'outfit-casco': { es: 'Casco puesto. Ellos programan, yo superviso.', en: 'Hard hat on. They code, I supervise.' },
+  'outfit-lentes': { es: 'Lentes oscuros. No te ignoro, es que ya soy famoso.', en: 'Shades on. I’m not ignoring you, I’m just famous now.' },
+  'outfit-gala': { es: 'De gala. Para un sitio web, sí. Así de formal soy.', en: 'Black tie. For a website, yes. That’s how formal I am.' },
+  'outfit-audifonos': { es: 'Audífonos puestos. Prende el sonido y platicamos.', en: 'Headphones on. Turn the sound on and let’s talk.' },
+  'outfit-normal': { es: 'Y otra vez como salí de fábrica.', en: 'And back to factory settings.' },
+  // Contacto: al enviar el formulario (mientras lo llenas mira el campo, sin hablar)
+  'contacto-listo': { es: '¡Eso! Ahora solo dale enviar en WhatsApp.', en: 'Nice! Now just hit send in WhatsApp.' },
+  // Proyectos (sobre el mockup que sigue al cursor), Nosotros (entre las dos mitades) y
+  // FAQ (junto a la pregunta abierta): ahí acompaña SIN hablar (sus llaves no tienen frase).
+};

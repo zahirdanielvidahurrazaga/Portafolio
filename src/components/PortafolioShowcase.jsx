@@ -1,3 +1,4 @@
+import KaiPildora from './KaiPildora';
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
@@ -143,6 +144,8 @@ const PortafolioShowcase = () => {
         ))}
       </ol>
       <Flotante lista={lista} activo={hover} />
+      {/* Kai, en su píldora fija abajo: te cuenta del proyecto que señalas (solo con mouse) */}
+      <KaiPildora className="kai-pildora--proyectos" kai={hover ? `proyecto-${hover}` : 'proyectos'} />
 
       {/* Se guarda el id (no el objeto) para que el modal siga al idioma si se cambia con él abierto */}
       <ProjectModal project={lista.find((pr) => pr.id === active) || null} onClose={() => setActive(null)} />

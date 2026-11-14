@@ -143,147 +143,266 @@
       #carga {
         display: none;
       }
-      html.intro #carga {
+      html.intro #carga,
+      #carga.is-sale {
         --tinta: #ece8df;
         position: fixed;
         inset: 0;
-        z-index: 200;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 28px;
-        background: #000;
+        z-index: 880; /* bajo Kai (900), que actúa encima; la barra (1000) está oculta mientras tanto */
+        display: block;
         color: var(--tinta);
-        transition: opacity 0.8s ease, visibility 0.8s;
+        pointer-events: none;
       }
-      html[data-theme='light'].intro #carga {
+      html[data-theme='light'].intro #carga,
+      html[data-theme='light'] #carga.is-sale {
         --tinta: #1d1d1f;
+      }
+      #carga .carga-velo {
+        position: absolute;
+        inset: 0;
+        background: #000;
+        transition: opacity 0.22s ease;
+      }
+      html[data-theme='light'] #carga .carga-velo {
         background: #fff;
       }
+      #carga.is-sale .carga-velo,
       #carga.is-fuera {
         opacity: 0;
+      }
+      #carga.is-fuera {
+        transition: opacity 0.8s ease, visibility 0.8s;
         visibility: hidden;
       }
-      /* El logo se dibuja y Kai (el guía) ya está encaramado en su esquina: es
-         un Kai de CSS, en el mismo lugar donde luego aparece el de verdad. */
+      /* KAI IMPRIME EL LOGO (13-nov-2026). El Kai 3D de verdad (lib/kai.js, modo
+         dirigido) pasa sobre ΚΛΙΖΣΝ con un haz de luz que lo va imprimiendo: lo que
+         aparece es el logo EXACTO (sus rutas, sin piezas). El avance de la carga es
+         cuánto lleva impreso. El logo nace del tamaño y en el lugar del ΚΛΙΖΣΝ de
+         partículas; al terminar explota y se rearma (nube.js, html.carga-armada). */
       #carga .carga-marca {
-        position: relative;
-        width: min(62vw, 340px);
+        position: absolute;
+        left: 50%;
+        top: 46%;
+        width: min(84vw, 980px, calc((100svh - 400px) * 4.15));
+        translate: -50% -50%;
       }
-      #carga svg {
+      #carga .carga-marca.is-puesta {
+        translate: none;
+      }
+      #carga .carga-marca svg {
         display: block;
         width: 100%;
         height: auto;
         overflow: visible;
+        /* lo impreso: hasta el cabezal, con un borde suave */
+        -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--a, 0px) - 4px), transparent calc(var(--a, 0px) + 18px));
+        mask-image: linear-gradient(90deg, #000 calc(var(--a, 0px) - 4px), transparent calc(var(--a, 0px) + 18px));
       }
-      #carga path {
-        stroke-dasharray: 1;
-        stroke-dashoffset: 1;
-        /* se dibuja UNA vez, letra por letra, y se queda (antes se dibujaba y se borraba en bucle) */
-        animation: carga-trazo 1.1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-      }
-      #carga path:nth-child(2) { animation-delay: 0.14s; }
-      #carga path:nth-child(3) { animation-delay: 0.28s; }
-      #carga path:nth-child(4) { animation-delay: 0.42s; }
-      #carga path:nth-child(5) { animation-delay: 0.56s; }
-      #carga path:nth-child(6) { animation-delay: 0.7s; }
-      #carga .carga-kai {
+      #carga .carga-haz {
         position: absolute;
-        right: -30px;
-        top: -52px;
-        width: 60px;
-        height: 60px;
-        animation: carga-flota 2.4s ease-in-out infinite;
-      }
-      /* Kai con su aspecto FINAL (ya no evoluciona): la perla de cromo con su aro.
-         El aro va en dos mitades: la de atrás (::before) y la de enfrente (::after). */
-      #carga .carga-kai::before,
-      #carga .carga-kai::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 58px;
-        height: 20px;
-        margin: -10px -29px;
-        border-radius: 50%;
-        border: 2px solid var(--tinta);
-        opacity: 0.85;
-        transform: rotate(-16deg);
-      }
-      #carga .carga-kai::before { clip-path: inset(0 0 50% 0); opacity: 0.4; }
-      #carga .carga-kai::after { clip-path: inset(50% 0 0 0); }
-      /* la perla, con su visor y sus dos ojos de luz */
-      #carga .carga-kai i {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 42px;
-        height: 42px;
-        margin: -21px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 24%, #fff 0 7%, #b9b9b9 20%, #4a4a4a 52%, #151515 100%);
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
-      }
-      #carga .carga-kai b {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 27px;
-        height: 15px;
-        margin: -10px -13.5px;
-        border-radius: 8px;
-        background: #000;
-      }
-      #carga .carga-kai b::before,
-      #carga .carga-kai b::after {
-        content: '';
-        position: absolute;
-        top: 4px;
-        width: 3px;
-        height: 7px;
-        border-radius: 2px;
-        background: #f6f2e8;
-        animation: carga-parpadea 3.2s infinite;
-      }
-      #carga .carga-kai b::before { left: 8px; }
-      #carga .carga-kai b::after { right: 8px; }
-      #carga .carga-riel {
-        width: 120px;
-        height: 1px;
-        background: color-mix(in srgb, var(--tinta) 18%, transparent);
-        overflow: hidden;
-      }
-      #carga .carga-riel i {
-        display: block;
+        inset: 0;
+        width: 100%;
         height: 100%;
-        background: var(--tinta);
-        transform-origin: left;
-        transform: scaleX(calc(0.08 + 0.92 * var(--p, 0)));
-        transition: transform 0.6s ease;
+        opacity: 0;
+        transition: opacity 0.35s ease;
       }
-      @keyframes carga-trazo { to { stroke-dashoffset: 0; } }
-      @keyframes carga-flota { 50% { transform: translateY(-5px); } }
-      @keyframes carga-parpadea { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.15); } }
+      #carga .carga-cabezal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 2px;
+        margin-left: -1px;
+        border-radius: 2px;
+        background: linear-gradient(transparent, var(--tinta) 16%, var(--tinta) 84%, transparent);
+        box-shadow: 0 0 16px 2px color-mix(in srgb, var(--tinta) 45%, transparent);
+        opacity: 0;
+        transition: opacity 0.35s ease;
+      }
+      #carga.is-espera .carga-cabezal {
+        opacity: 1;
+        animation: carga-late 0.9s ease-in-out infinite;
+      }
+      #carga.is-imprime .carga-haz,
+      #carga.is-imprime .carga-cabezal {
+        opacity: 1;
+      }
+      /* mientras actúa, el Kai 3D se ve aunque siga la carga */
+      html.kai-dirigido .kai {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      /* el logo de la barra espera a que llegue la bandada de partículas (nube.js) */
+      html.logo-viaja .nav-logo svg {
+        opacity: 0;
+      }
+      html.carga-armada .nav-logo svg {
+        transition: opacity 0.35s ease;
+      }
+      @keyframes carga-late { 50% { opacity: 0.25; } }
     </style>
   </head>
   <body>
     <div id="carga" aria-hidden="true">
+      <div class="carga-velo"></div>
+      <svg class="carga-haz">
+        <defs>
+          <linearGradient id="carga-luz" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="currentColor" stop-opacity="0.32" />
+            <stop offset="1" stop-color="currentColor" stop-opacity="0.04" />
+          </linearGradient>
+        </defs>
+        <polygon fill="url(#carga-luz)" points="0,0 0,0 0,0 0,0" />
+      </svg>
       <div class="carga-marca">
         <!-- ΚΛΙΖΣΝ: el mismo trazo de KaizenWordmark.jsx -->
         <svg viewBox="-8 -10 498 120" fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter">
-          <path pathLength="1" d="M7 0V100 M66 0 12 54 M30 37 70 100" />
-          <path pathLength="1" d="M92 100 132 6 172 100" />
-          <path pathLength="1" d="M201 0V100" />
-          <path pathLength="1" d="M230 7H300L230 93H300" />
-          <path pathLength="1" d="M388 7H322L360 50 322 93H388" />
-          <path pathLength="1" d="M417 100V7L473 93V0" />
+          <path d="M7 0V100 M66 0 12 54 M30 37 70 100" />
+          <path d="M92 100 132 6 172 100" />
+          <path d="M201 0V100" />
+          <path d="M230 7H300L230 93H300" />
+          <path d="M388 7H322L360 50 322 93H388" />
+          <path d="M417 100V7L473 93V0" />
         </svg>
-        <div class="carga-kai"><i></i><b></b></div>
       </div>
-      <div class="carga-riel"><i></i></div>
+      <div class="carga-cabezal"></div>
     </div>
+    <script>
+      /* KAI IMPRIME EL LOGO. src/lib/carga.js le pasa el avance (progreso) y avisa
+         cuando todo cargó (fin); Kai.jsx avisa si Kai existe (kai). Kai 3D entra,
+         imprime ΚΛΙΖΣΝ con su haz, se sienta en la Ν y ahí se abre el sitio (cerrar):
+         el logo explota en partículas que se rearman (nube.js). */
+      (function () {
+        var raiz = document.documentElement;
+        var el = document.getElementById('carga');
+        if (!raiz.classList.contains('intro') || !el) return;
+        raiz.classList.add('carga-armada');
+        var marca = el.querySelector('.carga-marca');
+        var poli = el.querySelector('.carga-haz polygon');
+        var cab = el.querySelector('.carga-cabezal');
+        var progreso = 0, alAbrir = null, cerrado = false, saliendo = false;
+        var kaiOk = null;            // null = aún no se sabe si Kai existe
+        var puesta = false;
+        var fase = 'espera', tFase = 0, a = 0, v = 0, t0 = performance.now(), antes = t0;
+        var kx = 0, ky = 0, dx0 = 0, dy0 = 0;
+
+        // El logo, del tamaño y en el lugar del ΚΛΙΖΣΝ de partículas (cuando React lo pinta)
+        var ajustar = function () {
+          var f = document.querySelector('.hero-kaizen .interludio-forma');
+          var r = f && f.getBoundingClientRect();
+          if (!r || r.width < 10) return false;
+          marca.classList.add('is-puesta');
+          marca.style.left = r.left + 'px';
+          marca.style.top = r.top + 'px';
+          marca.style.width = r.width + 'px';
+          return (puesta = true);
+        };
+        addEventListener('resize', function () { if (!saliendo) ajustar(); });
+
+        var suave = function (x) { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+        var chico = function () { return innerWidth < 820; };
+        var dirige = function (x, y, mira) {
+          // que nunca se salga de la pantalla
+          var m = chico() ? 50 : 90;
+          kx = Math.min(innerWidth - m, Math.max(m, x)); ky = Math.max(m * 0.8, y);
+          if (kaiOk) window.__kaiDirector = { x: kx, y: ky, mira: mira, talla: chico() ? 0.58 : 1 };
+        };
+        // Donde se sienta: el lugar del Kai en el hero (escritorio); si no se ve, sobre la Ν
+        var lugarKai = function (r) {
+          var l = document.querySelector('.hero-kaizen .kai-lugar--marca');
+          var b = l && l.getBoundingClientRect();
+          if (b && b.width > 0) return [b.left + b.width / 2, b.top + b.height / 2];
+          return [r.left + r.width * 0.985, r.top - r.height * 0.42];
+        };
+
+        function cuadro(ahora) {
+          if (saliendo) return;
+          requestAnimationFrame(cuadro);
+          var dt = Math.min(0.05, (ahora - antes) / 1000); antes = ahora;
+          if (!puesta) ajustar();
+          var r = marca.getBoundingClientRect();
+          if (r.width < 10) return;
+          var yK = r.top - (chico() ? 52 : Math.max(64, r.height * 0.5));   // Kai flota sobre el logo
+          var mitad = r.top + r.height * 0.6;
+
+          if (fase === 'espera') {
+            // el cabezal late al inicio del logo mientras llega Kai (o se decide que no viene)
+            el.classList.add('is-espera');
+            cab.style.transform = 'translate(' + r.left + 'px,' + (r.top - 10) + 'px)';
+            cab.style.height = r.height + 20 + 'px';
+            var decidido = kaiOk !== null || ahora - t0 > 2600;
+            if ((puesta || ahora - t0 > 1200) && decidido) {
+              el.classList.remove('is-espera');
+              if (kaiOk) {
+                raiz.classList.add('kai-dirigido');
+                fase = 'entra';
+              } else fase = 'imprime';
+              tFase = ahora;
+            }
+          }
+
+          if (fase === 'entra') {
+            // entra volando desde arriba a la izquierda hasta el principio del logo
+            var u = (ahora - tFase) / 800, e = suave(u);
+            var x0 = r.left - 220, y0 = yK - 240;
+            dirige(x0 + (r.left - x0) * e, y0 + (yK - y0) * e - Math.sin(Math.min(1, u) * Math.PI) * 40, [r.left, mitad]);
+            if (u >= 1) { fase = 'imprime'; tFase = ahora; }
+          }
+
+          if (fase === 'imprime') {
+            el.classList.add('is-imprime');
+            // imprime hasta donde la carga "pagó" (nunca termina antes que la página) y a
+            // lo más a 1/2 del logo por segundo, con arranque y frenado suaves
+            var meta = progreso >= 1 ? 1 : Math.max(0.1, Math.min(0.94, progreso));
+            var quiere = Math.min(1 / 2, Math.max(0, meta - a) * 4);
+            v += (quiere - v) * Math.min(1, dt * 7);
+            a = Math.min(meta, a + v * dt);
+            var ax = r.left + a * r.width;
+            marca.style.setProperty('--a', (a >= 0.999 ? r.width + 40 : a * r.width) + 'px');
+            var flota = Math.sin(ahora / 320) * 3;
+            dirige(ax, yK + flota, [ax, mitad]);
+            // el haz: de la panza de Kai al logo, abriéndose
+            var y1 = ky + (chico() ? 26 : 44), y2 = r.top + r.height + 10, w = Math.max(18, r.height * 0.16);
+            // (arriba sale de Kai, que en la orilla puede quedar más adentro que el cabezal)
+            poli.setAttribute('points', (kx - 4) + ',' + y1 + ' ' + (kx + 4) + ',' + y1 + ' ' + (ax + w) + ',' + y2 + ' ' + (ax - w) + ',' + y2);
+            cab.style.transform = 'translate(' + ax + 'px,' + (r.top - 10) + 'px)';
+            if (a >= 0.999 && alAbrir) {
+              el.classList.remove('is-imprime');
+              fase = 'posa'; tFase = ahora; dx0 = kx; dy0 = ky;
+            }
+          }
+
+          if (fase === 'posa') {
+            // listo el logo: Kai brinca a su lugar sobre la Ν y ahí se abre el sitio
+            var l = lugarKai(r), u2 = (ahora - tFase) / 650, e2 = suave(u2);
+            dirige(dx0 + (l[0] - dx0) * e2, dy0 + (l[1] - dy0) * e2 - Math.sin(Math.min(1, u2) * Math.PI) * 46, null);
+            if (u2 >= 1.45) salir();
+          }
+        }
+        requestAnimationFrame(cuadro);
+
+        // Salida: el sitio se abre y el logo cede su lugar a la nube: sus partículas nacen
+        // sobre él, explotan y se rearman en ΚΛΙΖΣΝ; una bandada forma el logo de la barra
+        // (nube.js quita html.logo-viaja cuando llega). Kai se queda donde está.
+        function salir() {
+          if (saliendo) return;
+          saliendo = true;
+          el.classList.add('is-sale');
+          raiz.classList.add('logo-viaja');
+          if (alAbrir) alAbrir();
+          window.__kaiDirector = null;
+          marca.animate([{ opacity: 1 }, { opacity: 1, offset: 0.25 }, { opacity: 0 }], { duration: 260, fill: 'forwards' });
+          setTimeout(function () { raiz.classList.remove('kai-dirigido'); el.remove(); }, 900);
+          // respaldo: si la nube no llegara a quitarlas
+          setTimeout(function () { raiz.classList.remove('logo-viaja'); raiz.classList.remove('intro'); }, 4500);
+        }
+
+        window.__carga = {
+          progreso: function (p) { progreso = Math.max(progreso, p); },
+          fin: function (cb) { progreso = 1; alAbrir = function () { if (!cerrado) { cerrado = true; cb(); } }; },
+          kai: function (ok) { if (kaiOk === null) kaiOk = !!ok; }
+        };
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

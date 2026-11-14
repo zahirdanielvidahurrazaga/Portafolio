@@ -26,6 +26,10 @@ const espera = [];
 let listo = typeof document === 'undefined' || !document.documentElement.classList.contains('intro');
 let cita = 0;
 
+// El armado de index.html (Kai pone el logo pieza por pieza). Si no está —un
+// error en ese script— se cae a la carga simple: desvanecer.
+const armado = () => (typeof window !== 'undefined' ? window.__carga : null);
+
 function cerrar() {
   if (listo) return;
   listo = true;
@@ -33,7 +37,7 @@ function cerrar() {
   // (Kai.css: el Kai de verdad espera a esta clase para aparecer; antes se veía encima de la carga)
   document.documentElement.classList.add('cargado');
   const el = document.getElementById('carga');
-  if (el) {
+  if (el && !armado()) {
     el.style.setProperty('--p', '1');
     el.classList.add('is-fuera');
     setTimeout(() => el.remove(), 900);
@@ -41,9 +45,17 @@ function cerrar() {
   espera.splice(0).forEach((cb) => cb());
 }
 
-// Ya llegó todo: se cierra, pero no antes del mínimo
+// Ya llegó todo. Con el armado, ÉL decide cuándo abrir: termina de poner las
+// piezas, Kai se sienta y en ese instante llama a cerrar() y el logo vuela a la
+// barra. Sin armado, la carga simple con su mínimo de siempre.
 function terminar() {
   if (listo || cita) return;
+  const a = armado();
+  if (a) {
+    a.fin(cerrar);
+    cita = setTimeout(cerrar, 6000); // por si el armado se trabara
+    return;
+  }
   const falta = MINIMO - (performance.now() - inicio);
   if (falta > 0) cita = setTimeout(cerrar, falta);
   else cerrar();
@@ -53,7 +65,9 @@ function terminar() {
 export function cargado(nombre) {
   try { performance.mark(`carga:${nombre}`); } catch { /* sin Performance API */ }
   if (listo || !pendientes.delete(nombre)) return;
-  document.getElementById('carga')?.style.setProperty('--p', String((TOTAL - pendientes.size) / TOTAL));
+  const p = (TOTAL - pendientes.size) / TOTAL;
+  document.getElementById('carga')?.style.setProperty('--p', String(p));
+  armado()?.progreso(p);
   if (!pendientes.size) terminar();
 }
 
@@ -94,4 +108,5 @@ export function precargar() {
 }
 
 // Respaldo: si algo se atora (red lenta, sin WebGL raro), no dejar al visitante esperando
-if (!listo) setTimeout(cerrar, TOPE);
+// Tope: algo no avisó. Se da por cargado (con el armado, Kai termina el logo rápido y abre).
+if (!listo) setTimeout(() => { pendientes.clear(); armado()?.progreso(1); terminar(); }, TOPE);

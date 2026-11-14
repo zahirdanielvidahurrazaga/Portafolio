@@ -108,6 +108,7 @@ const Footer = () => {
     window.open(url, '_blank', 'noopener');
     setStatus('success');
     setFormData({ nombre: '', email: '', tipo: '', descripcion: '' });
+    window.dispatchEvent(new Event('kai:gira')); // Kai lo celebra con una vuelta
   };
 
   const set = (field) => (e) => setFormData({ ...formData, [field]: e.target.value });
@@ -164,6 +165,17 @@ const Footer = () => {
           </div>
 
           <div className="footer-form-card">
+            {/* Kai, sentado en la esquina del formulario: mira el campo que llenas y al
+                enviar da una vuelta y te dice que falta darle enviar en WhatsApp */}
+            <span
+              className="kai-lugar kai-lugar--form"
+              data-kai={status === 'success' ? 'contacto-listo' : 'contacto-form'}
+              data-kai-talla="0.62"
+              data-kai-mira="foco"
+              data-kai-cel="whatsapp"
+              data-kai-movil=""
+              aria-hidden="true"
+            />
 
             {status === 'success' ? (
               <div className="footer-success" role="status">
@@ -279,6 +291,16 @@ const Footer = () => {
 
       {/* ── Pie: firma de la revista ── */}
       <div className="footer-bottom">
+        {/* La despedida: al llegar al final, Kai se despide mirando el botón de WhatsApp */}
+        <span
+          className="kai-lugar kai-lugar--adios"
+          data-kai="despedida"
+          data-kai-talla="0.62"
+          data-kai-mira=".floating-whatsapp"
+          data-kai-gana=""
+          data-kai-movil=""
+          aria-hidden="true"
+        />
         <span>© {new Date().getFullYear()} KaiZen</span>
         <nav className="footer-legal" aria-label="Legal">
           <a href="/aviso-de-privacidad">{t({ es: 'Aviso de privacidad', en: 'Privacy notice' })}</a>

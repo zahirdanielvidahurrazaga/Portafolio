@@ -80,7 +80,9 @@ html.intro .barra-scroll {
     right: 6px;
     height: 24vh;
   }
-  .barra-scroll-cap {
+  .barra-scroll-cap,
+  /* Las rayitas de sección se montaban sobre el texto (el contenedor deja 16px) */
+  .barra-scroll-marca {
     display: none;
   }
 }

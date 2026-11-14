@@ -118,8 +118,24 @@ function CasoVideo({ t, n, total, onAbrir }) {
     if (enPantalla) setVisto(true);
     const v = videoRef.current;
     if (!v) return;
-    if (enPantalla) v.play().catch(() => {});
-    else v.pause();
+    if (!enPantalla) {
+      v.pause();
+      return;
+    }
+    v.play().catch(() => {});
+    // Mientras deslizas la vista previa se queda quieta y sigue al detenerte: dos videos
+    // decodificándose a la vez trababan el scroll justo en esta sección (medido, 12-nov)
+    let espera = 0;
+    const alDeslizar = () => {
+      if (!v.paused) v.pause();
+      clearTimeout(espera);
+      espera = setTimeout(() => v.play().catch(() => {}), 220);
+    };
+    window.addEventListener('scroll', alDeslizar, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', alDeslizar);
+      clearTimeout(espera);
+    };
   }, [enPantalla, visto]);
 
   return (
@@ -139,6 +155,16 @@ function CasoVideo({ t, n, total, onAbrir }) {
           <Play size={26} fill="currentColor" strokeWidth={0} />
         </span>
         <span className="testimonio-video-dur">{t.videoDuracion}</span>
+        {/* Kai, trepado en la esquina del video, lo ve con nosotros (data-kai-mira = el video) */}
+        <span
+          className="kai-lugar kai-lugar--video"
+          data-kai={`caso-${t.proyecto}`}
+          data-kai-talla="0.62"
+          data-kai-mira=""
+          data-kai-globo="abajo-angosto"
+          data-kai-movil=""
+          aria-hidden="true"
+        />
       </button>
       <div className="caso-cuerpo">
         <p className="caso-cuenta">{n} / {total}</p>
