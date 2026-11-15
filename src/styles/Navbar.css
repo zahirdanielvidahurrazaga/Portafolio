@@ -312,3 +312,41 @@ body.menu-abierto .floating-whatsapp {
     animation: none;
   }
 }
+/* Voz prendida pero bloqueada por el navegador: el botón late y dice "Toca para oír a Kai" */
+.nav-sonido.is-bloqueada {
+  animation: nav-pide 1.4s ease-in-out infinite;
+}
+@keyframes nav-pide {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--text-strong) 35%, transparent); }
+  50% { box-shadow: 0 0 0 7px transparent; }
+}
+.nav-sonido-aviso {
+  /* a la IZQUIERDA del botón: la barra recorta lo que sale por abajo */
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  translate: 0 -50%;
+  white-space: nowrap;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: var(--text-strong);
+  color: var(--bg-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  pointer-events: none;
+  animation: nav-aviso 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-sonido-aviso::before {
+  content: '';
+  position: absolute;
+  top: calc(50% - 5px);
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+@keyframes nav-aviso {
+  from { opacity: 0; transform: translateX(6px) scale(0.9); }
+}

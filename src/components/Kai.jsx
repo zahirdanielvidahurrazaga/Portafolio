@@ -1,4 +1,4 @@
-import { fijarVoz, registrarAlternar } from '../lib/kaiVoz';
+import { fijarVoz, registrarAlternar, vozBloqueada, vozLibre } from '../lib/kaiVoz';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { useTheme } from '../lib/ThemeContext';
@@ -130,7 +130,7 @@ export default function Kai() {
         alargarBloqueo(9000); // con voz: hasta que termine de hablar (tope de seguridad)
         a.onended = () => alargarBloqueo(250);
       }
-      a.play().catch(() => {
+      a.play().then(vozLibre, () => {
         /* el navegador aún no deja sonar (no ha habido clic desde que cargó): se queda en texto
            y la frase se GUARDA; suena en el primer clic o tecla (14-nov-2026: al recargar, el
            saludo del hero no sonaba hasta mutear y desmutear) */
@@ -138,8 +138,12 @@ export default function Kai() {
         const reintentar = () => {
           window.removeEventListener('pointerdown', reintentar, true);
           window.removeEventListener('keydown', reintentar, true);
-          if (a.src.endsWith(`/${id}.mp3`) && vozRef.current) a.play().catch(() => {});
+          if (a.src.endsWith(`/${id}.mp3`) && vozRef.current) a.play().then(vozLibre, () => {});
         };
+        // y la barra enseña "toca para oír a Kai": un toque al botón la hace sonar
+        vozBloqueada(() => {
+          if (vozRef.current) a.play().then(vozLibre, () => {});
+        });
         window.addEventListener('pointerdown', reintentar, true);
         window.addEventListener('keydown', reintentar, true);
       });

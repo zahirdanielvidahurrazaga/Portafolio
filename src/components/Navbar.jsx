@@ -26,7 +26,7 @@ const LINKS = [
 
 const Navbar = () => {
   const { t } = useLang();
-  const { hay: hayVoz, voz } = useVozKai();
+  const { hay: hayVoz, voz, bloqueada } = useVozKai();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activa, setActiva] = useState(null);
@@ -109,7 +109,7 @@ const Navbar = () => {
               {hayVoz && (
                 <button
                   type="button"
-                  className={`nav-redondo nav-sonido${voz ? ' is-on' : ''}`}
+                  className={`nav-redondo nav-sonido${voz ? ' is-on' : ''}${voz && bloqueada ? ' is-bloqueada' : ''}`}
                   onClick={alternarVoz}
                   aria-pressed={voz}
                   aria-label={voz ? t({ es: 'Quitar la voz de Kai', en: 'Turn Kai’s voice off' }) : t({ es: 'Escuchar a Kai', en: 'Hear Kai' })}
@@ -120,6 +120,12 @@ const Navbar = () => {
                     <span className="nav-eq" aria-hidden="true"><i /><i /><i /><i /></span>
                   ) : (
                     <VolumeX size={16} strokeWidth={1.8} />
+                  )}
+                  {/* El navegador no deja sonar hasta un clic (el scroll no cuenta): aquí se pide */}
+                  {voz && bloqueada && (
+                    <span className="nav-sonido-aviso" aria-hidden="true">
+                      {t({ es: 'Toca para oír a Kai', en: 'Tap to hear Kai' })}
+                    </span>
                   )}
                 </button>
               )}

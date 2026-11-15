@@ -320,10 +320,11 @@
     padding: var(--spacing-4);
   }
   /* En celular un 9:16 a lo ancho mide más que la pantalla: se recorta a 4:5 */
+  /* 14-nov-2026: "en celular los videos se ven un poquito grandes" → más bajos (4:5 → 1:1 y tope 48vh) */
   .caso--video .caso-video {
     width: 100%;
-    aspect-ratio: 4 / 5;
-    max-height: 62vh;
+    aspect-ratio: 1 / 1;
+    max-height: 48vh;
   }
   .caso-voz {
     font-size: 1.55rem;
