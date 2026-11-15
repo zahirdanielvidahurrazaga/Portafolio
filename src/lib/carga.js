@@ -17,7 +17,8 @@
  * ⚠️ Cada pieza DEBE avisar con `cargado()` también cuando falla; si alguna se
  * queda colgada, el tope de 9 s abre la página de todos modos.
  */
-const pendientes = new Set(['nube', 'cinta', 'fuentes', 'kai', 'resto', 'medios']);
+// (la cinta del hero se quitó el 14-nov-2026: ya no se espera)
+const pendientes = new Set(['nube', 'fuentes', 'kai', 'resto', 'medios']);
 const TOTAL = pendientes.size;
 const MINIMO = 2600; // ms (el logo tarda ~1.9 s en dibujarse letra por letra)
 const TOPE = 9000;

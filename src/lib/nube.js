@@ -18,6 +18,7 @@ import { cargaLista } from './carga';
  *   una forma (ΚΛΙΖΣΝ, un teléfono, la Κ…), se queda mientras se lee la frase y
  *   luego EXPLOTA de vuelta a polvo.
  * - APERTURA (la primera estación, modo "apertura"): al cargar, el polvo se
+ *   [14-nov-2026: SIN cinta — las letras viajan a KAI al centro del escenario, ver IMÁN]
  *   arma solo en ΚΛΙΖΣΝ; al bajar, las partículas viajan hasta la cinta 3D
  *   (que publica su recorrido en cintaPuente.js) y se apagan mientras la cinta
  *   se solidifica. Polvo → marca → materia.
@@ -740,6 +741,14 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
     }
     const sy = window.scrollY;
     const est = estado(t);
+    // IMÁN (14-nov-2026, ya sin cinta): durante el flujo de la apertura las letras viajan
+    // a KAI, que está parado al centro del escenario (.kai-lugar--centro de Hero.jsx).
+    // Se mide su parada una vez por cuadro, solo mientras hace falta.
+    let iman = null;
+    if (est && est.st.apertura && est.flujo > 0 && !cinta.listo) {
+      const r = est.st.el.querySelector('.kai-lugar--centro')?.getBoundingClientRect();
+      if (r && r.width) iman = { x: r.left + r.width / 2 - vw / 2, y: vh / 2 - (r.top + r.height / 2), r: r.width * 0.42 };
+    }
     const M = est ? est.pts.length / 2 : 0;
     const MB = est && est.ptsB ? est.ptsB.length / 2 : 0;
     // Sin forma en pantalla no hay nada que ver: no se calcula ni se dibuja
@@ -889,6 +898,26 @@ export function createNube(canvas, { theme = 'dark' } = {}) {
             const giro = Math.sin(Math.PI * f) * 0.25 * (burst[i] - 0.6);
             x = x + vx * f - vy * giro;
             y = y + vy * f + vx * giro;
+          } else if (iman && M > 0) {
+            // REMOLINO hacia Kai (14-nov-2026, pulido): 1) se despegan de las letras y forman
+            // un disco que gira alrededor de él (g), 2) el disco se cierra en espiral cada vez
+            // más rápido (f², muchas vueltas) y 3) al tocarlo se apagan: Kai se las "traga".
+            const ola = clamp01((est.pts[k] + est.w / 2) / (est.w || 1)) * 0.35;
+            const f = clamp01((est.flujo - ola) / 0.65);
+            const g = smooth(clamp01(f * 1.6));
+            const cierre = Math.pow(1 - smooth(clamp01((f - 0.25) / 0.75)), 1.3);
+            const radio = iman.r * (0.95 + burst[i] * 2.2) * cierre + iman.r * 0.12;
+            const ang = cang[i] + f * f * (8 + burst[i] * 6) + t * 0.6 * (1 - f);
+            const tx = iman.x + Math.cos(ang) * radio;
+            const ty = iman.y + Math.sin(ang) * radio * 0.62;
+            const vx = tx - x;
+            const vy = ty - y;
+            const giro = Math.sin(Math.PI * g) * 0.4 * (burst[i] - 0.6);
+            x = x + vx * g - vy * giro;
+            y = y + vy * g + vx * giro;
+            // brillan más al acelerar y se apagan al entrar en él
+            al = Math.min(1, al * (1 + 0.5 * Math.sin(Math.PI * f)));
+            al *= 1 - smooth(clamp01((f - 0.78) / 0.22));
           }
           al *= 1 - est.cruce;
         }

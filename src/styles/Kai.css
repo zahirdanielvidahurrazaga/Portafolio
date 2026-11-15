@@ -300,11 +300,12 @@ html.intro:not(.cargado) .kai {
 .kai.kai--barra .kai-globo {
   left: auto;
   right: 52px;
-  top: 116px;
+  top: auto;
+  bottom: 118px; /* 14-nov-2026: se guarda en la píldora de ABAJO → el globo va encima */
   max-width: min(23rem, calc(100vw - 32px));
   transform: scale(0.92);
-  transform-origin: right top;
-  border-radius: 20px 6px 20px 20px;
+  transform-origin: right bottom;
+  border-radius: 20px 20px 6px 20px;
 }
 .kai.kai--barra.kai--habla .kai-globo {
   transform: scale(1);
@@ -380,7 +381,7 @@ html.intro:not(.cargado) .kai {
     right: auto;
     width: calc(100vw - 32px);
     max-width: none;
-    transform-origin: center top;
+    transform-origin: center bottom;
     border-radius: 20px;
   }
 }
@@ -405,7 +406,8 @@ body.menu-abierto .kai .kai-globo {
   min-height: 70px;
   width: max-content;
   max-width: min(34rem, calc(100vw - 32px));
-  padding: 0.75rem 1.5rem 0.75rem 116px; /* Kai + su mini celular */
+  padding: 0.75rem 1.5rem; /* sin Kai: sin hueco (14-nov-2026) */
+  transition: padding 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 999px;
   background: color-mix(in srgb, var(--bg-color-elevated) 72%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
@@ -466,4 +468,58 @@ body.menu-abierto .kai .kai-globo {
     right: 40px;
     top: -140px;
   }
+}
+
+/* Testimonios (14-nov-2026): Kai junto al botón "Ver su experiencia", mirándolo; ya no
+   trepado en el video (lo tapaba). Globo debajo, sobre el aire de la tarjeta. */
+.caso-play-fila {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+/* Kai a la derecha del botón, sin ocupar lugar en la fila (si no, el botón se partía) */
+.kai-lugar--play {
+  right: auto;
+  left: 100%;
+  top: 50%;
+  margin: -88px 0 0 -30px; /* caja de 176 (la medida de Kai); con talla 0.55 se ve de ~97 px */
+}
+.caso-play-ancla {
+  position: relative;
+  display: inline-flex;
+}
+.caso-kai-texto {
+  flex-basis: 100%;
+  min-width: 0;
+  margin-top: 0.55rem;
+  font-size: 0.86rem;
+  font-style: italic;
+  color: var(--text-muted);
+}
+.caso-kai-texto:empty {
+  display: none;
+}
+
+/* Hero sin cinta (14-nov-2026): Kai AL CENTRO del escenario mientras las letras de ΚΛΙΖΣΝ
+   viajan a él (nube.js → IMÁN). La caja va centrada; su talla (1.9) la crece desde ahí. */
+.kai-lugar--centro {
+  right: auto;
+  left: 50%;
+  top: 50%;
+  margin: -88px 0 0 -88px;
+}
+@media (max-width: 820px) {
+  .kai-lugar--centro {
+    top: 46%;
+  }
+}
+/* Con su mini celular el lienzo va cuadrado: el círculo (border-radius 50%) se comía el teléfono */
+.kai.kai--cel canvas {
+  border-radius: 0;
+}
+
+/* Con Kai adentro (lib/kai.js pone .tiene-kai) se abre su hueco: Kai + su mini celular */
+.kai-pildora.tiene-kai {
+  padding-left: 116px;
 }

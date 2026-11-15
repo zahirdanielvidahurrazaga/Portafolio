@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, VolumeX } from 'lucide-react';
+import { VolumeX } from 'lucide-react';
 import LiquidGlass from './LiquidGlass';
 import ThemeToggle from './ThemeToggle';
 import KaizenWordmark from './KaizenWordmark';
@@ -15,7 +15,7 @@ import '../styles/Navbar.css';
 // etiqueta de cada sección (SectionHead). Contacto lo cubre el botón Cotizar.
 const LINKS = [
   ['about', { es: 'Servicios', en: 'Services' }],
-  ['testimonios', { es: 'Testimonios', en: 'Testimonials' }],
+  ['testimonios', { es: 'Familia KaiZen', en: 'KaiZen family' }],
   ['demos', { es: 'Demos', en: 'Demos' }],
   ['portfolio', { es: 'Proyectos', en: 'Work' }],
   ['sobre-mi', { es: 'Nosotros', en: 'About' }],
@@ -88,24 +88,8 @@ const Navbar = () => {
         >
           <LiquidGlass shape="rounded" radius={0.5} intensity={0.45} className="nav-glass" />
           <div className="nav-container">
-            <a href="#" className="nav-logo" aria-label="KaiZen">
-              <KaizenWordmark />
-            </a>
-            <div className="nav-actions">
-              {/* Aquí se guarda Kai cuando no tiene lugar en la escena (lib/kai.js) */}
-              <span className="kai-dock" aria-hidden="true" />
-              {hayVoz && (
-                <button
-                  type="button"
-                  className={`nav-redondo nav-sonido${voz ? ' is-on' : ''}`}
-                  onClick={alternarVoz}
-                  aria-pressed={voz}
-                  aria-label={voz ? t({ es: 'Quitar la voz de Kai', en: 'Turn Kai’s voice off' }) : t({ es: 'Escuchar a Kai', en: 'Hear Kai' })}
-                  title={voz ? t({ es: 'Quitar la voz de Kai', en: 'Turn Kai’s voice off' }) : t({ es: 'Escuchar a Kai', en: 'Hear Kai' })}
-                >
-                  {voz ? <Volume2 size={16} strokeWidth={1.8} /> : <VolumeX size={16} strokeWidth={1.8} />}
-                </button>
-              )}
+            {/* Menú a la IZQUIERDA, junto al logo (14-nov-2026: la derecha se sentía cargada) */}
+            <div className="nav-izq">
               <button
                 type="button"
                 className={`nav-redondo nav-menu${menuOpen ? ' is-open' : ''}`}
@@ -116,6 +100,29 @@ const Navbar = () => {
                 <span />
                 <span />
               </button>
+              <a href="#" className="nav-logo" aria-label="KaiZen">
+                <KaizenWordmark />
+              </a>
+            </div>
+            <div className="nav-actions">
+              {/* (14-nov-2026: Kai ya no se guarda aquí sino en la píldora "Pregúntale a Kai") */}
+              {hayVoz && (
+                <button
+                  type="button"
+                  className={`nav-redondo nav-sonido${voz ? ' is-on' : ''}`}
+                  onClick={alternarVoz}
+                  aria-pressed={voz}
+                  aria-label={voz ? t({ es: 'Quitar la voz de Kai', en: 'Turn Kai’s voice off' }) : t({ es: 'Escuchar a Kai', en: 'Hear Kai' })}
+                  title={voz ? t({ es: 'Quitar la voz de Kai', en: 'Turn Kai’s voice off' }) : t({ es: 'Escuchar a Kai', en: 'Hear Kai' })}
+                >
+                  {/* Prendida: ecualizador que baila; apagada: bocina tachada y un pulso que invita */}
+                  {voz ? (
+                    <span className="nav-eq" aria-hidden="true"><i /><i /><i /><i /></span>
+                  ) : (
+                    <VolumeX size={16} strokeWidth={1.8} />
+                  )}
+                </button>
+              )}
               <a href="#contact" className="btn-metallic nav-btn nav-cta" onClick={cerrar}>
                 {t({ es: 'Cotizar', en: 'Get a quote' })}
               </a>

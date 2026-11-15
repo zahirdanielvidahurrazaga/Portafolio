@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import SectionHead from './SectionHead';
 import Escena from './ServiciosEscenas';
 import { useLang } from '../lib/LangContext';
@@ -31,7 +31,7 @@ const SERVICIOS = [
     linea: 'Brand',
     tipo: 'marca',
     title: { es: 'Identidad de marca', en: 'Brand identity' },
-    gancho: { es: <>Que te reconozcan <em>a la primera.</em></>, en: <>Be recognized <em>at first glance.</em></> },
+    gancho: { es: <>Una marca que se reconoce <em>a primera vista.</em></>, en: <>A brand recognized <em>at first sight.</em></> },
     desc: {
       es: 'Una identidad coherente en todo lo que tu negocio muestra, de la papelería a las redes.',
       en: 'One consistent identity across everything your business shows, from stationery to social media.',
@@ -40,6 +40,7 @@ const SERVICIOS = [
       es: ['Logo y sus variantes', 'Paleta y tipografías', 'Manual de marca y papelería'],
       en: ['Logo and its variations', 'Palette and typography', 'Brand guidelines and stationery'],
     },
+    caso: { id: 'natural', nombre: 'Somos Natural' },
   },
   {
     grupo: 'conocer',
@@ -47,7 +48,7 @@ const SERVICIOS = [
     linea: 'Social',
     tipo: 'redes',
     title: { es: 'Redes sociales', en: 'Social media' },
-    gancho: { es: <>Publica cada semana <em>sin que te quite el día.</em></>, en: <>Post every week <em>without losing your day.</em></> },
+    gancho: { es: <>Presencia constante en redes, <em>sin descuidar tu negocio.</em></>, en: <>A steady social presence, <em>without neglecting your business.</em></> },
     desc: {
       es: 'Nos encargamos de la estrategia, el diseño y la conversación con tu comunidad, mes con mes.',
       en: 'We handle the strategy, the design and the conversation with your community, month after month.',
@@ -63,7 +64,7 @@ const SERVICIOS = [
     linea: 'Launch',
     tipo: 'lanzamiento',
     title: { es: 'Lanzamiento', en: 'Launch' },
-    gancho: { es: <>Abre tu negocio <em>con todo listo.</em></>, en: <>Open your business <em>fully ready.</em></> },
+    gancho: { es: <>Tu negocio listo <em>desde el primer día.</em></>, en: <>Your business ready <em>from day one.</em></> },
     desc: {
       es: 'Marca, redes y página en un solo paquete, para salir al mercado desde el primer día sin armarlo por partes.',
       en: 'Brand, social and website in one package, to go to market on day one without piecing it together.',
@@ -79,7 +80,7 @@ const SERVICIOS = [
     linea: 'Web',
     tipo: 'sitio',
     title: { es: 'Sitios web', en: 'Websites' },
-    gancho: { es: <>Que te encuentren en Google <em>y te escriban.</em></>, en: <>Get found on Google <em>and get messages.</em></> },
+    gancho: { es: <>Un sitio que te posiciona en Google <em>y genera contactos.</em></>, en: <>A website that ranks on Google <em>and brings in leads.</em></> },
     desc: {
       es: 'Landing pages y sitios empresariales a la medida, rápidos y pensados para que el visitante te contacte.',
       en: 'Custom landing pages and business websites, fast and built so visitors reach out to you.',
@@ -88,6 +89,7 @@ const SERVICIOS = [
       es: ['Diseño a la medida, sin plantillas', 'Adaptado a celular', 'SEO y contacto directo a WhatsApp'],
       en: ['Custom design, no templates', 'Mobile-ready', 'SEO and straight-to-WhatsApp contact'],
     },
+    caso: { id: 'natural', nombre: 'Somos Natural' },
   },
   {
     grupo: 'vender',
@@ -95,7 +97,7 @@ const SERVICIOS = [
     linea: 'Commerce',
     tipo: 'tienda',
     title: { es: 'Tiendas y punto de venta', en: 'Stores & point of sale' },
-    gancho: { es: <>Vende, cobra y controla <em>desde el celular.</em></>, en: <>Sell, charge and keep track <em>from your phone.</em></> },
+    gancho: { es: <>Ventas, cobros e inventario <em>bajo control.</em></>, en: <>Sales, payments and inventory <em>under control.</em></> },
     desc: {
       es: 'Tienda en línea con pagos o punto de venta para tu mostrador, con el inventario siempre al día.',
       en: 'An online store with payments or a point of sale for your counter, with inventory always up to date.',
@@ -112,7 +114,7 @@ const SERVICIOS = [
     linea: 'Automate',
     tipo: 'ia',
     title: { es: 'Automatización e IA', en: 'Automation & AI' },
-    gancho: { es: <>Que lo repetitivo <em>se haga solo.</em></>, en: <>Let the repetitive work <em>run itself.</em></> },
+    gancho: { es: <>Procesos que se resuelven <em>de forma automática.</em></>, en: <>Processes that run <em>automatically.</em></> },
     desc: {
       es: 'Procesos automáticos y asistentes con IA que le devuelven horas de trabajo manual a tu equipo.',
       en: 'Automated processes and AI assistants that give your team back hours of manual work.',
@@ -121,6 +123,7 @@ const SERVICIOS = [
       es: ['Flujos automáticos entre tus herramientas', 'Asistentes con IA', 'Avisos y reportes que llegan solos'],
       en: ['Automated flows between your tools', 'AI assistants', 'Alerts and reports that arrive on their own'],
     },
+    caso: { id: 'befit', nombre: 'Be Fit Lab' },
   },
   // Aquí viven las apps (Be Fit Lab): reservaciones, lista de espera, pagos, Wallet
   {
@@ -129,7 +132,7 @@ const SERVICIOS = [
     linea: 'Experience',
     tipo: 'app',
     title: { es: 'Apps y experiencias', en: 'Apps & experiences' },
-    gancho: { es: <>Tu negocio <em>en el bolsillo de tus clientes.</em></>, en: <>Your business <em>in your customers’ pocket.</em></> },
+    gancho: { es: <>Tu negocio, <em>en el celular de tus clientes.</em></>, en: <>Your business, <em>on your customers’ phones.</em></> },
     desc: {
       es: 'Apps de reservaciones con lista de espera y pagos, pases digitales, álbumes compartidos e invitaciones.',
       en: 'Booking apps with waitlists and payments, digital passes, shared albums and invitations.',
@@ -148,7 +151,6 @@ const irAContacto = (tipo) => {
   window.dispatchEvent(new CustomEvent('kaizen:cotizar', { detail: { tipo } }));
   document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
 };
-const abrirCaso = (id) => window.dispatchEvent(new CustomEvent('kaizen:proyecto', { detail: { id } }));
 
 /** "Cotizar X" y el caso real. En celular la escena los repite debajo de la hélice */
 function Acciones({ s, className = '' }) {
@@ -158,11 +160,8 @@ function Acciones({ s, className = '' }) {
       <button type="button" className="btn-metallic srv-ficha-cta" onClick={() => irAContacto(s.tipo)}>
         {t({ es: 'Cotizar', en: 'Get a quote for' })} {t(s.title).toLowerCase()} <ArrowRight size={16} />
       </button>
-      {s.caso && (
-        <button type="button" className="srv-ficha-caso" onClick={() => abrirCaso(s.caso.id)}>
-          {t({ es: 'Ver caso real', en: 'See real case' })}: {s.caso.nombre} <ArrowUpRight size={14} />
-        </button>
-      )}
+      {/* (14-nov-2026: "Ver caso real" se quitó de aquí — Zahir: "que se vea más limpia". El caso
+          se abre desde el sello "Caso real · X" de la tarjeta, ServiciosEscenas.jsx → Origen) */}
     </div>
   );
 }
@@ -209,6 +208,7 @@ function Ficha({ s, i }) {
  * toda la espiral.
  */
 const PASO = 95; // grados entre una escena y la siguiente
+const GIRA = 0.3; // fracción del tramo de cada servicio en la que se sostiene antes de girar
 // En celular las tarjetas van a escala (con transform, no zoom: Kai necesita su medida real).
 // La escala sale de lo que SOBRA de alto: barra, números, titular, aire de Kai, botón y "Ver caso real" ≈ 455 px;
 // la tarjeta más alta llena el resto. La calcula Helice (necesita medir las tarjetas).
@@ -245,7 +245,9 @@ function Helice({ progreso, activo, kai }) {
   const poner = useCallback((v) => {
     const u = acota(v, 0, 1) * N * 0.99999;
     const k = Math.min(N - 1, Math.floor(u));
-    const f = k < N - 1 ? acota((u - k - 0.62) / 0.38, 0, 1) : 0;
+    // 14-nov: se sostiene solo el 30% del tramo y GIRA el 70% (antes 62/38: se sentía
+    // detenida; en madetodisrupt la espiral casi nunca está quieta)
+    const f = k < N - 1 ? acota((u - k - GIRA) / (1 - GIRA), 0, 1) : 0;
     const a = k + f * f * (3 - 2 * f);
     const radio = window.innerWidth <= 900 ? window.innerWidth * 0.3 : kai ? Math.min(360, window.innerWidth * 0.23) : Math.min(300, window.innerWidth * 0.19);
     const dy = window.innerHeight * (window.innerWidth <= 900 ? 0.16 : 0.3);
@@ -346,7 +348,8 @@ export default function Servicios() {
 
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     const u = Math.min(1, Math.max(0, v)) * N * 0.99999;
-    setActivo(Math.min(N - 1, Math.floor(u + 0.19)));
+    // el texto cambia a media vuelta
+    setActivo(Math.min(N - 1, Math.floor(u + (1 - GIRA) / 2)));
   });
 
   const irA = (i) => {
@@ -354,7 +357,7 @@ export default function Servicios() {
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
     const travel = el.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: top + ((i + 0.35) / N) * travel, behavior: 'smooth' });
+    window.scrollTo({ top: top + ((i + 0.15) / N) * travel, behavior: 'smooth' });
   };
 
   const head = (
@@ -364,8 +367,8 @@ export default function Servicios() {
         className="factor-header"
         label={t({ es: 'Servicios', en: 'Services' })}
         lede={t({
-          es: 'De la marca y las redes al software a la medida: todo lo que tu negocio necesita para crecer, en un solo estudio.',
-          en: 'From branding and social media to custom software: everything your business needs to grow, in one studio.',
+          es: 'Te ayudamos a que tu negocio se vea bien, aparezca en internet y trabaje más fácil: tu logo, tus redes, tu página web y apps hechas a tu medida. Todo en un solo lugar.',
+          en: 'We help your business look good, show up online and run more easily: your logo, your social media, your website and apps made for you. All in one place.',
         })}
       >
         {t({ es: <>Lo que <em>hacemos</em></>, en: <>What we <em>do</em></> })}

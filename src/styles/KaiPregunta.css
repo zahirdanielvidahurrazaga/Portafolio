@@ -1,0 +1,226 @@
+/* PREGÚNTALE A KAI (KaiPregunta.jsx, 14-nov-2026): píldora junto al botón de WhatsApp + chat */
+.kp-pildora {
+  position: fixed;
+  z-index: 1000;
+  right: 102px; /* a la izquierda del botón de WhatsApp (30 + 60 + 12) */
+  bottom: 39px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.15rem 0 0.2rem;
+  border-radius: 999px;
+  overflow: hidden;
+  /* Vidrio líquido como el botón de WhatsApp: frost de CSS + luz del WebGL encima */
+  background: linear-gradient(135deg, var(--tint-3), var(--tint-1));
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.22), inset 0 1px 0 var(--tint-4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.kp-pildora:hover {
+  transform: translateY(-2px);
+}
+.kp-vidrio {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+/* El hueco donde se guarda Kai (lib/kai.js lo mide y se para encima) */
+.kp-pildora .kai-dock {
+  position: relative;
+  z-index: 1;
+  display: block;
+  /* cerrado mide 1 px (lib/kai.js necesita medirlo para saber a dónde volar); con Kai se abre */
+  width: 1px;
+  height: 44px;
+  margin-left: 0.85rem;
+  flex: none;
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.kp-pildora.tiene-kai .kai-dock {
+  width: 44px;
+  margin-left: 0;
+}
+.kp-abrir {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: none;
+  padding: 0 0 0 0.35rem;
+  height: 100%;
+  color: var(--text-strong);
+  font: 600 0.88rem var(--font-body, inherit);
+  cursor: pointer;
+}
+.kp-abrir::after {
+  /* toda la píldora es botón (menos el hueco de Kai, que es suyo: al tocarlo cambia de outfit) */
+  content: '';
+  position: absolute;
+  inset: 0 -1.15rem 0 0;
+}
+.kp-pildora.is-oculta,
+html.intro .kp-pildora,
+body.pm-open .kp-pildora,
+body.menu-abierto .kp-pildora {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kp-panel {
+  position: fixed;
+  z-index: 1002;
+  right: 30px;
+  bottom: 30px;
+  width: min(380px, calc(100vw - 32px));
+  height: min(560px, calc(100dvh - 120px));
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  border: 1px solid var(--border-strong);
+  background: color-mix(in srgb, var(--bg-color-elevated) 88%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  color: var(--text-color);
+}
+.kp-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.kp-cabeza b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text-strong);
+}
+.kp-cabeza small {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.kp-x {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--tint-2);
+  color: var(--text-strong);
+  cursor: pointer;
+}
+.kp-lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.kp-msg {
+  margin: 0;
+  max-width: 88%;
+  padding: 0.65rem 0.9rem;
+  border-radius: 18px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+.kp-msg--kai {
+  align-self: flex-start;
+  background: var(--tint-3);
+  color: var(--text-strong);
+  border-bottom-left-radius: 6px;
+}
+.kp-msg--yo {
+  align-self: flex-end;
+  background: var(--text-strong);
+  color: var(--bg-color);
+  border-bottom-right-radius: 6px;
+}
+.kp-ir {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.kp-sugeridas {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding: 0 1rem 0.7rem;
+  scrollbar-width: none;
+}
+.kp-sugeridas button {
+  flex: none;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-strong);
+  font: 500 0.8rem inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.kp-sugeridas button:hover {
+  background: var(--tint-2);
+}
+.kp-form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+.kp-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--tint-1);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 16px; /* 16 px: iPhone no hace zoom al enfocar */
+}
+.kp-form button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--text-strong);
+  color: var(--bg-color);
+  cursor: pointer;
+}
+.kp-form button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  .kp-pildora {
+    right: 84px; /* 22 + 52 + 10 */
+    bottom: 25px;
+    height: 42px;
+  }
+  .kp-abrir {
+    font-size: 0.82rem;
+  }
+  .kp-panel {
+    right: 16px;
+    left: 16px;
+    bottom: 16px;
+    width: auto;
+    height: min(520px, calc(100dvh - 96px));
+  }
+}

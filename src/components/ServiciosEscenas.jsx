@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLang } from '../lib/LangContext';
 import '../styles/ServiciosEscenas.css';
 
@@ -46,213 +47,297 @@ const Qr = () => (
   </svg>
 );
 
+// Sello de dónde sale la escena: un caso real (con su nombre) o un ejemplo
+// Con caso real es un BOTÓN: abre ese proyecto en Proyectos (evento kaizen:proyecto)
+const CASO_ID = { 'Somos Natural': 'natural', Tito: 'pos', 'Be Fit Lab': 'befit' };
+// Clientes sin proyecto en Proyectos: el sello lleva a su red (Studio Kala = redes que manejamos)
+const CASO_URL = { 'Studio Kala': 'https://www.instagram.com/studiokala27/' };
+const Origen = ({ t, caso }) =>
+  caso ? (
+    <button
+      type="button"
+      className="esc-origen esc-origen--real"
+      onClick={() => {
+        if (CASO_URL[caso]) window.open(CASO_URL[caso], '_blank', 'noopener');
+        else if (CASO_ID[caso]) window.dispatchEvent(new CustomEvent('kaizen:proyecto', { detail: { id: CASO_ID[caso] } }));
+      }}
+      title={t({ es: 'Ver el proyecto', en: 'See the project' })}
+    >
+      {t({ es: 'Caso real', en: 'Real case' })} · {caso} ↗
+    </button>
+  ) : (
+    <span className="esc-origen">{t({ es: 'Ejemplo', en: 'Example' })}</span>
+  );
+
+// 14-nov-2026 (Zahir: "usemos ejemplos reales, no importa que salga del estilo"): Marca, Web,
+// Tienda, Automatización y App enseñan a NUESTROS clientes con sus colores; Redes y
+// Lanzamiento siguen con "Aurora" y dicen que son ejemplo.
 function Marca({ t }) {
   return (
-    <div className="esc">
+    <div className="esc esc--natural">
       <Fila i={0} className="esc-cabeza">
         <span>{t({ es: 'Manual de marca', en: 'Brand guidelines' })}</span>
-        <span className="esc-tenue">v1.0</span>
+        <Origen t={t} caso="Somos Natural" />
       </Fila>
-      <Fila i={1} className="esc-logo">
-        <span className="esc-logo-marca">Aurora</span>
-        <span className="esc-tenue">{t({ es: 'Café de especialidad', en: 'Specialty coffee' })}</span>
+      <Fila i={1} className="esc-logo esc-logo--natural">
+        <img src="/logos/natural-crema.svg" alt="Natural" className="esc-logo-img" />
+        <span>{t({ es: 'Aguas de sabor', en: 'Flavored waters' })}</span>
       </Fila>
       <Fila i={2} className="esc-swatches">
-        {[1, 2, 3, 4].map((n) => (
-          <span key={n} className={`esc-sw esc-sw--${n}`} />
+        {['#8C66BB', '#FFFDF2', '#E0F2F6', '#2A1A40', '#F07A1A'].map((c) => (
+          <span key={c} className="esc-sw" style={{ background: c }} title={c} />
         ))}
       </Fila>
       <Fila i={3} className="esc-tipos">
-        <span className="esc-aa">Aa</span>
+        <span className="esc-aa esc-aa--serif">Aa</span>
         <span>
-          Familjen Grotesk
+          Fraunces
           <br />
-          <span className="esc-tenue">Inter · {t({ es: 'texto', en: 'body' })}</span>
+          <span className="esc-tenue">Rubik · {t({ es: 'texto', en: 'body' })}</span>
         </span>
       </Fila>
       <Fila i={4} className="esc-pie">
-        <Check /> {t({ es: 'Papelería, redes y fachada listas', en: 'Stationery, social and signage ready' })}
+        <Check /> {t({ es: 'Etiquetas, sitio y redes con la misma cara', en: 'Labels, website and social with one face' })}
       </Fila>
     </div>
   );
 }
 
+// REDES: la publicación REAL de una clienta (Zahir, 14-nov). Mientras no esté la imagen en
+// public/clientes/, sale la de ejemplo (Aurora) y el sello dice "Ejemplo".
+const REDES_CASO = { usuario: 'studiokala27', nombre: 'Studio Kala', foto: '/clientes/redes-post.jpg', likes: '1,2 mil', compartidos: '43' };
 function Redes({ t }) {
+  const [real, setReal] = useState(!!REDES_CASO.usuario);
   return (
-    <div className="esc">
+    <div className="esc esc--ig">
       <Fila i={0} className="esc-perfil">
-        <span className="esc-avatar" />
+        {/* sin fotito de perfil (14-nov: el círculo arcoíris no le gustó) */}
         <span>
-          <b>aurora.cafe</b>
+          <b>{real ? REDES_CASO.usuario : 'aurora.cafe'}</b>
           <br />
-          <span className="esc-tenue">{t({ es: 'Programado · Hoy 7:00 p. m.', en: 'Scheduled · Today 7:00 p.m.' })}</span>
+          <span className="esc-tenue">{real ? t({ es: 'Uñas · Juxtlahuaca', en: 'Nails · Juxtlahuaca' }) : t({ es: 'Programado · Hoy 7:00 p. m.', en: 'Scheduled · Today 7:00 p.m.' })}</span>
+        </span>
+        <Origen t={t} caso={real ? REDES_CASO.nombre : null} />
+      </Fila>
+      <Fila i={1} className="esc-ig-foto">
+        {real ? (
+          <img src={REDES_CASO.foto} alt="" onError={() => setReal(false)} />
+        ) : (
+          <span className="esc-ig-ejemplo">
+            <small>{t({ es: 'Nuevo en la barra', en: 'New at the bar' })}</small>
+            <b>Latte de<br />cajeta</b>
+            <i>$68</i>
+          </span>
+        )}
+      </Fila>
+      <Fila i={2} className="esc-ig-acciones">
+        {real ? (
+          <>
+            <span>♥ {REDES_CASO.likes}</span>
+            <span>{t({ es: `${REDES_CASO.compartidos} compartidos`, en: `${REDES_CASO.compartidos} reposts` })}</span>
+            <span className="esc-derecha esc-tenue">Nails · Inspo Otoño</span>
+          </>
+        ) : (
+          <>
+            <span>♥ 248</span>
+            <span>{t({ es: '32 comentarios', en: '32 comments' })}</span>
+            <span className="esc-derecha esc-tenue">{t({ es: '+41 seguidores esta semana', en: '+41 followers this week' })}</span>
+          </>
+        )}
+      </Fila>
+      <Fila i={3} className="esc-pie">
+        <Check /> {real ? t({ es: 'Agenda tu cita por DM o WhatsApp', en: 'Book by DM or WhatsApp' }) : t({ es: 'Calendario de noviembre: 12 de 12 publicadas', en: 'November calendar: 12 of 12 posted' })}
+      </Fila>
+    </div>
+  );
+}
+
+// LANZAMIENTO: inventado pero completo (no hay caso real todavía): el cartel de apertura
+// con su cuenta regresiva y lo que ya quedó listo.
+function Lanzamiento({ t }) {
+  const listos = [
+    { es: 'Logo', en: 'Logo' },
+    { es: 'Redes', en: 'Social' },
+    { es: 'Página', en: 'Website' },
+    { es: '8 posts', en: '8 posts' },
+  ];
+  return (
+    <div className="esc esc--apertura">
+      <Fila i={0} className="esc-cabeza">
+        <span>{t({ es: 'Listo para abrir', en: 'Ready to open' })}</span>
+        <Origen t={t} />
+      </Fila>
+      <Fila i={1} className="esc-cartel">
+        <small>Aurora · {t({ es: 'café de especialidad', en: 'specialty coffee' })}</small>
+        <b>{t({ es: 'Gran apertura', en: 'Grand opening' })}</b>
+        <span>{t({ es: 'Sábado 22 · 9:00 a. m.', en: 'Saturday 22 · 9:00 a.m.' })}</span>
+        <span className="esc-cuenta">
+          <i><b>03</b>{t({ es: 'días', en: 'days' })}</i>
+          <i><b>14</b>{t({ es: 'horas', en: 'hours' })}</i>
+          <i><b>22</b>min</i>
         </span>
       </Fila>
-      <Fila i={1} className="esc-post">
-        <span className="esc-post-texto">{t({ es: 'Nuevo en la barra', en: 'New at the bar' })}</span>
-      </Fila>
-      <Fila i={2} className="esc-reacciones">
-        <span>♥ 248</span>
-        <span>{t({ es: '32 comentarios', en: '32 comments' })}</span>
-        <span className="esc-tenue">{t({ es: '+41 seguidores', en: '+41 followers' })}</span>
+      <Fila i={2} className="esc-chips">
+        {listos.map((x) => (
+          <span key={x.es}><Check /> {t(x)}</span>
+        ))}
       </Fila>
       <Fila i={3} className="esc-noti">
         <span className="esc-vivo" />
         <span>
-          <b>{t({ es: 'Mensaje nuevo', en: 'New message' })}</b>
+          <b>{t({ es: '48 personas confirmaron', en: '48 people RSVP’d' })}</b>
           <br />
-          <span className="esc-tenue">{t({ es: '“¿Hacen pedidos para eventos?”', en: '“Do you cater events?”' })}</span>
-        </span>
-      </Fila>
-      <Fila i={4} className="esc-pie">
-        <Check /> {t({ es: 'Calendario de noviembre: 12 de 12', en: 'November calendar: 12 of 12' })}
-      </Fila>
-    </div>
-  );
-}
-
-function Lanzamiento({ t }) {
-  const items = [
-    { es: 'Logo y paleta', en: 'Logo and palette' },
-    { es: 'Instagram y Facebook', en: 'Instagram and Facebook' },
-    { es: 'Página en línea', en: 'Website live' },
-    { es: 'Primeras 8 publicaciones', en: 'First 8 posts' },
-  ];
-  return (
-    <div className="esc">
-      <Fila i={0} className="esc-cabeza">
-        <span>{t({ es: 'Listo para abrir', en: 'Ready to open' })}</span>
-        <span className="esc-tenue">4 / 4</span>
-      </Fila>
-      {items.map((x, n) => (
-        <Fila key={n} i={n + 1} className="esc-lista">
-          <Check /> {t(x)}
-        </Fila>
-      ))}
-      <Fila i={5} className="esc-noti">
-        <span className="esc-vivo" />
-        <span>
-          <b>{t({ es: 'Primer cliente', en: 'First customer' })}</b>
-          <br />
-          <span className="esc-tenue">{t({ es: 'Llegó por el formulario de tu página', en: 'Came in through your website form' })}</span>
+          <span className="esc-tenue">{t({ es: 'desde el formulario de la página', en: 'through the website form' })}</span>
         </span>
       </Fila>
     </div>
   );
 }
 
+// WEB: el sitio REAL de Natural en un navegador, con su búsqueda arriba
 function Web({ t }) {
   return (
     <div className="esc">
       <Fila i={0} className="esc-buscador">
-        <span className="esc-tenue">{t({ es: 'café de especialidad en puebla', en: 'specialty coffee in puebla' })}</span>
+        <span className="esc-tenue">{t({ es: 'aguas de sabor natural', en: 'natural flavored waters' })}</span>
       </Fila>
-      <Fila i={1} className="esc-resultado">
-        <span className="esc-tenue">aurora.cafe</span>
-        <b className="esc-resultado-titulo">Aurora · {t({ es: 'Café de especialidad en Puebla', en: 'Specialty coffee in Puebla' })}</b>
-        <span className="esc-tenue">
-          {t({ es: 'Menú, horarios y pedidos por WhatsApp. Abierto hoy hasta las 9 p. m.', en: 'Menu, hours and WhatsApp orders. Open today until 9 p.m.' })}
+      <Fila i={1} className="esc-nav">
+        <span className="esc-nav-barra">
+          <i /><i /><i />
+          <span>somos-natural.pages.dev</span>
+        </span>
+        <span className="esc-nav-sitio">
+          <img src="/logos/natural-crema.svg" alt="Natural" />
+          <small>{t({ es: 'Elige tu sabor', en: 'Pick your flavor' })}</small>
+          <span className="esc-sabores">
+            {['#C8243E', '#F2C230', '#F07A1A', '#7CB342', '#E0F2F6'].map((c) => (
+              <i key={c} style={{ background: c }} />
+            ))}
+          </span>
+          <span className="esc-nav-boton">{t({ es: 'Pedir por WhatsApp', en: 'Order on WhatsApp' })}</span>
         </span>
       </Fila>
-      <Fila i={2} className="esc-resultado esc-resultado--otro">
-        <span className="esc-raya" />
-        <span className="esc-raya esc-raya--corta" />
-      </Fila>
-      <Fila i={3} className="esc-noti">
+      <Fila i={2} className="esc-noti">
         <span className="esc-vivo" />
         <span>
           <b>WhatsApp</b>
           <br />
-          <span className="esc-tenue">{t({ es: '“Hola, vi su página. ¿Tienen mesa para 6?”', en: '“Hi, I saw your website. Table for 6?”' })}</span>
+          <span className="esc-tenue">{t({ es: '“Hola, vi su página. ¿Me mandan 2 de jamaica?”', en: '“Hi, I saw your website. Can I get 2 hibiscus?”' })}</span>
         </span>
+      </Fila>
+      <Fila i={3} className="esc-pie">
+        <Origen t={t} caso="Somos Natural" />
       </Fila>
     </div>
   );
 }
 
+// TIENDA: el punto de venta REAL de Plásticos Tito (artículos y montos de ejemplo)
 function Tienda({ t }) {
+  const renglones = [
+    [{ es: 'Cubeta 19 L', en: 'Bucket 19 L' }, '×3', '$165'],
+    [{ es: 'Escoba de mijo', en: 'Broom' }, '×2', '$130'],
+    [{ es: 'Jerga', en: 'Floor cloth' }, '×6', '$108'],
+  ];
   return (
-    <div className="esc">
-      <Fila i={0} className="esc-noti esc-noti--arriba">
-        <span className="esc-vivo" />
+    <div className="esc esc--tito">
+      <Fila i={0} className="esc-marca-fila">
+        <img src="/logos/tito.png" alt="" />
         <span>
-          <b>{t({ es: 'Nueva venta', en: 'New sale' })}</b>
+          <b>Plásticos y Jarciería Tito</b>
           <br />
-          <span className="esc-tenue">$1,250 · {t({ es: 'Caja 2 · Sucursal Centro', en: 'Register 2 · Downtown' })}</span>
+          <span className="esc-tenue">{t({ es: 'Caja 1 · Folio 0842', en: 'Register 1 · Ticket 0842' })}</span>
         </span>
+        <Origen t={t} caso="Tito" />
       </Fila>
-      <Fila i={1} className="esc-cabeza">
-        <span>{t({ es: 'Ventas de la semana', en: 'Sales this week' })}</span>
-        <span className="esc-tenue">{t({ es: 'L–D', en: 'M–S' })}</span>
+      <Fila i={1} className="esc-ticket">
+        {renglones.map(([n, c, m]) => (
+          <span key={n.es}><span>{t(n)} <i>{c}</i></span><b>{m}</b></span>
+        ))}
+        <span className="esc-ticket-mayoreo"><span>{t({ es: 'Precio de mayoreo aplicado', en: 'Wholesale price applied' })}</span><b>−$38</b></span>
+        <span className="esc-ticket-total"><span>Total</span><b>$365</b></span>
       </Fila>
-      <Fila i={2} className="esc-grafica">
+      <Fila i={2} className="esc-grafica esc-grafica--tito">
         {[38, 52, 46, 64, 58, 80, 72].map((h, n) => (
           <span key={n} style={{ '--h': `${h}%`, '--j': n }} />
         ))}
       </Fila>
-      <Fila i={3} className="esc-lista">
-        <span className="esc-tenue">{t({ es: 'Inventario', en: 'Inventory' })}</span>
-        <span className="esc-derecha">{t({ es: '3 por surtir', en: '3 to restock' })}</span>
-      </Fila>
-      <Fila i={4} className="esc-pie">
-        <Check /> {t({ es: 'Corte del día cuadrado', en: 'End-of-day count balanced' })}
+      <Fila i={3} className="esc-pie">
+        <Check /> {t({ es: 'Inventario al día y corte de caja cuadrado', en: 'Inventory up to date, register balanced' })}
       </Fila>
     </div>
   );
 }
 
+// AUTOMATIZACIÓN: la lista de espera REAL de Be Fit Lab (oferta con tiempo, cascada)
 function Automatizacion({ t }) {
   return (
-    <div className="esc esc--chat">
+    <div className="esc esc--befit">
       <Fila i={0} className="esc-cabeza">
-        <span>{t({ es: 'Asistente · 24/7', en: 'Assistant · 24/7' })}</span>
-        <span className="esc-vivo" />
+        <span>{t({ es: 'Lista de espera automática', en: 'Automatic waitlist' })}</span>
+        <Origen t={t} caso="Be Fit Lab" />
       </Fila>
-      <Fila i={1} className="esc-burbuja esc-burbuja--cliente">
-        {t({ es: '¿Tienen clase mañana a las 7?', en: 'Any class tomorrow at 7?' })}
+      <Fila i={1} className="esc-push">
+        <img src="/logos/befit-mark.png" alt="" />
+        <span>
+          <small>BE FIT LAB · {t({ es: 'ahora', en: 'now' })}</small>
+          <b>{t({ es: '¡Se liberó tu lugar!', en: 'Your spot opened up!' })}</b>
+          <span>Reformer · {t({ es: 'mañana 7:00 a. m.', en: 'tomorrow 7:00 a.m.' })}</span>
+        </span>
       </Fila>
-      <Fila i={2} className="esc-burbuja">
-        {t({ es: 'Sí, quedan 3 lugares en Pilates 7:00. ¿Te aparto uno?', en: 'Yes, 3 spots left in Pilates 7:00. Want one?' })}
+      <Fila i={2} className="esc-oferta">
+        <span className="esc-oferta-reloj">59:12</span>
+        <span className="esc-oferta-botones">
+          <i className="si">{t({ es: 'Confirmar', en: 'Confirm' })}</i>
+          <i>{t({ es: 'Ceder', en: 'Pass' })}</i>
+        </span>
       </Fila>
-      <Fila i={3} className="esc-burbuja esc-burbuja--cliente">
-        {t({ es: 'Sí, porfa', en: 'Yes please' })}
+      <Fila i={3} className="esc-fila-espera">
+        <span className="on">1 · {t({ es: 'Tú', en: 'You' })}</span>
+        <span>2 · Ana</span>
+        <span>3 · Lucía</span>
+        <span className="esc-tenue">{t({ es: 'si no confirmas, pasa a la siguiente', en: 'no reply → next in line' })}</span>
       </Fila>
       <Fila i={4} className="esc-pie">
-        <Check /> {t({ es: 'Reservado y cobrado, sin que nadie lo tocara', en: 'Booked and paid, untouched by staff' })}
+        <Check /> {t({ es: 'Clase llena sin una sola llamada', en: 'Class full without a single call' })}
       </Fila>
     </div>
   );
 }
 
+// APP: Be Fit Lab REAL — la reserva y su pase de Wallet, con sus colores
 function App({ t }) {
   return (
-    <div className="esc esc--tel">
-      <Fila i={0} className="esc-cabeza">
-        <span>9:41</span>
-        <span className="esc-tenue">{t({ es: 'Tu app', en: 'Your app' })}</span>
-      </Fila>
-      <Fila i={1} className="esc-noti esc-noti--arriba">
-        <span className="esc-vivo" />
+    <div className="esc esc--befit esc--tel">
+      <Fila i={0} className="esc-marca-fila">
+        <img src="/logos/befit-mark.png" alt="" />
         <span>
-          <b>{t({ es: 'Reserva confirmada', en: 'Booking confirmed' })}</b>
+          <b>Be Fit Lab</b>
           <br />
-          <span className="esc-tenue">{t({ es: 'Pilates · Mañana 7:00', en: 'Pilates · Tomorrow 7:00' })}</span>
+          <span className="esc-tenue">{t({ es: 'Hola, Ana', en: 'Hi, Ana' })}</span>
         </span>
+        <Origen t={t} caso="Be Fit Lab" />
       </Fila>
-      <Fila i={2} className="esc-pase">
+      <Fila i={1} className="esc-clase">
         <span>
-          <span className="esc-tenue">{t({ es: 'Pase de acceso', en: 'Access pass' })}</span>
+          <small>{t({ es: 'Tu próxima clase', en: 'Your next class' })}</small>
+          <b>Reformer</b>
+          <span>{t({ es: 'Mañana · 7:00 a. m. · Coach Pili', en: 'Tomorrow · 7:00 a.m. · Coach Pili' })}</span>
+        </span>
+        <i>{t({ es: 'Reservada', en: 'Booked' })}</i>
+      </Fila>
+      <Fila i={2} className="esc-pase esc-pase--befit">
+        <span>
+          <span className="esc-pase-k">Wallet · {t({ es: 'Pase de acceso', en: 'Access pass' })}</span>
           <br />
           <b>Ana López</b>
+          <br />
+          <span className="esc-pase-k">{t({ es: '7 clases restantes', en: '7 classes left' })}</span>
         </span>
         <Qr />
       </Fila>
-      <Fila i={3} className="esc-lista">
-        <span className="esc-tenue">{t({ es: 'Clases restantes', en: 'Classes left' })}</span>
-        <span className="esc-derecha">7</span>
-      </Fila>
-      <Fila i={4} className="esc-pie">
-        <Check /> {t({ es: 'En App Store y Google Play', en: 'On the App Store and Google Play' })}
+      <Fila i={3} className="esc-pie">
+        <Check /> {t({ es: 'Publicada en App Store y Google Play', en: 'Live on the App Store and Google Play' })}
       </Fila>
     </div>
   );

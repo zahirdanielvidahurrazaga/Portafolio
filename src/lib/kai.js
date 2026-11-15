@@ -214,6 +214,12 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
   const matGris = plastico(0x2a2a2a, 0.55);
   // lentes de ESPEJO: reflejan las cajas de luz (negros mate se perdían sobre el cromo oscuro)
   const matEspejo = new THREE.MeshPhysicalMaterial({ color: 0x8a8f99, metalness: 1, roughness: 0.06, clearcoat: 1 });
+  const matArmazon = plastico(0xf1efe9, 0.3); // armazón claro: sobre su cara negra se lee
+  // 14-nov (Zahir: "cuando se pone lentes tapa sus ojitos"): las micas son de vidrio
+  // AHUMADO translúcido y el espejo quedó solo en el armazón: los ojos se ven a través.
+  const matMica = new THREE.MeshPhysicalMaterial({
+    color: 0xdfe6f0, metalness: 0.25, roughness: 0.12, clearcoat: 1, transparent: true, opacity: 1, depthWrite: false,
+  });
   const geosOutfit = [];
   const g = (geo) => (geosOutfit.push(geo), geo);
   const OUTFITS = {
@@ -232,19 +238,55 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
       o.rotation.x = -0.12;
       return o;
     })(),
+    // LENTES v3 (14-nov-2026, noche: los de aro de espejo "no le encantaron"): tipo wayfarer
+    // con ceja de cromo y micas de ESPEJO DEGRADADO (plateadas arriba, transparentes abajo):
+    // sobre su cara negra se ven (los negros se perdían) y los ojos se asoman por abajo.
     lentes: (() => {
       const o = new THREE.Group();
+      const forma = new THREE.Shape();
+      // en 0…1 (así las UV de ShapeGeometry ya sirven para el degradado)
+      forma.moveTo(0.04, 1);
+      forma.lineTo(0.96, 1);
+      forma.quadraticCurveTo(1, 1, 0.99, 0.82);
+      forma.quadraticCurveTo(0.95, 0.12, 0.62, 0.02);
+      forma.lineTo(0.38, 0.02);
+      forma.quadraticCurveTo(0.05, 0.12, 0.01, 0.82);
+      forma.quadraticCurveTo(0, 1, 0.04, 1);
+      const geoMica = g(new THREE.ShapeGeometry(forma, 24));
+      geoMica.translate(-0.5, -0.5, 0);
+      const lienzo = document.createElement('canvas');
+      lienzo.width = 4;
+      lienzo.height = 64;
+      const c2 = lienzo.getContext('2d');
+      const dg = c2.createLinearGradient(0, 0, 0, 64);
+      dg.addColorStop(0, '#e6e6e6'); // arriba: mica clara (canvas y = 0 es v = 1 por flipY)
+      dg.addColorStop(0.45, '#9a9a9a');
+      dg.addColorStop(0.8, '#3a3a3a');
+      dg.addColorStop(1, '#1e1e1e'); // abajo: casi transparente
+      c2.fillStyle = dg;
+      c2.fillRect(0, 0, 4, 64);
+      matMica.alphaMap = new THREE.CanvasTexture(lienzo);
+      matMica.opacity = 1;
+      matMica.side = THREE.DoubleSide;
+      matMica.needsUpdate = true;
       [-1, 1].forEach((lado) => {
-        const d = new THREE.Vector3(Math.sin(lado * 0.3), 0.19, Math.cos(lado * 0.3)).normalize();
-        const lente = new THREE.Mesh(g(new THREE.CylinderGeometry(0.27, 0.27, 0.05, 40)), matEspejo);
-        lente.scale.set(1.15, 1, 0.85);
-        lente.position.copy(d).multiplyScalar(1.07);
-        lente.lookAt(d.clone().multiplyScalar(3));
-        lente.rotateX(Math.PI / 2);
-        o.add(lente);
+        const d = new THREE.Vector3(Math.sin(lado * 0.29), 0.2, Math.cos(lado * 0.29)).normalize();
+        const mica = new THREE.Mesh(geoMica, matMica);
+        mica.scale.set(0.6, 0.4, 1);
+        mica.position.copy(d).multiplyScalar(1.085);
+        mica.lookAt(d.clone().multiplyScalar(3));
+        mica.rotateZ(-lado * 0.06);
+        mica.renderOrder = 2; // después de los ojos: se ven a través
+        // ceja: barra negra gruesa sobre la mica
+        const ceja = new THREE.Mesh(g(new THREE.BoxGeometry(0.64, 0.085, 0.06)), matArmazon);
+        ceja.position.copy(d).multiplyScalar(1.09);
+        ceja.lookAt(d.clone().multiplyScalar(3));
+        ceja.rotateZ(-lado * 0.06);
+        ceja.translateY(0.19);
+        o.add(mica, ceja);
       });
-      const puente = new THREE.Mesh(g(new THREE.BoxGeometry(0.2, 0.05, 0.05)), matNegro);
-      puente.position.set(0, 0.24, 1.04);
+      const puente = new THREE.Mesh(g(new THREE.BoxGeometry(0.16, 0.05, 0.05)), matArmazon);
+      puente.position.set(0, 0.36, 1.03);
       o.add(puente);
       return o;
     })(),
@@ -391,7 +433,7 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
     if (!texto || callado || director()) return;
     dicho = id;
     // En una píldora (KaiPildora.jsx) la frase va DENTRO de la cápsula, no en su globo
-    const enPildora = lugar && 'kaiPildora' in lugar.dataset ? lugar.parentElement.querySelector('.kai-pildora-texto') : null;
+    const enPildora = lugar && 'kaiPildora' in lugar.dataset ? (lugar.closest('.kai-pildora, .caso-play-fila') || lugar.parentElement).querySelector('.kai-pildora-texto') : null;
     const destino = enPildora || globo;
     destino.textContent = '';
     texto.split(' ').forEach((palabra, i) => {
@@ -443,6 +485,8 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
   let giro = -1e6;
   let dirigido = false;
   let tallaDirigida = '';
+  let pildoraConKai = null;
+  let tallaViva = '';
   let kaiXCss = '';
   let parpadeo = performance.now() + 2500;
   let volumen = 0;
@@ -540,7 +584,7 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
     if (nuevoLugar !== lugar) {
       lugar = nuevoLugar;
       lugarId = nuevoId;
-      caja.style.setProperty('--kai-talla', lugar?.dataset.kaiTalla || '1');
+      caja.style.setProperty('--kai-talla', (tallaViva = lugar?.dataset.kaiTalla || '1'));
       // `data-kai-linea`: la parada le reserva su hueco → la frase va suelta a su lado,
       // sin tarjeta (como Buddy de adamperlis.com), en vez de flotar sobre el contenido
       caja.classList.toggle('kai--linea', !!lugar && 'kaiLinea' in lugar.dataset);
@@ -602,6 +646,9 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
         vy = 0;
         tallaDirigida = '';
         caja.style.setProperty('--kai-talla', lugar?.dataset.kaiTalla || '1');
+        // Llegó a su parada mientras lo dirigían (la carga) y ahí no podía hablar: ahora sí.
+        // Así se PRESENTA en el hero en cuanto termina de imprimir el logo (14-nov-2026).
+        if (lugar && frase?.(lugarId)) decir(lugarId);
       }
       vx += ((tx - x) * 60 - vx * 13) * dt;
       vy += ((ty - y) * 60 - vy * 13) * dt;
@@ -616,6 +663,20 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
     caja.classList.toggle('kai--esquina', !lugar && !dirige);
     caja.classList.toggle('kai--pildora', !!lugar && 'kaiPildora' in lugar.dataset);
     caja.classList.toggle('kai--barra', !lugar && !dirige && !!enBarra());
+    // La PÍLDORA donde está Kai abre su hueco; las demás se cierran (14-nov-2026: un hueco
+    // vacío a la izquierda del texto "se ve raro"). Casa = la de "Pregúntale a Kai".
+    const casa = !lugar && !dirige && dock ? dock.closest('.kp-pildora') : null;
+    const conKai = lugar && 'kaiPildora' in lugar.dataset ? lugar.closest('.kai-pildora, .kp-pildora') : casa;
+    if (conKai !== pildoraConKai) {
+      pildoraConKai?.classList.remove('tiene-kai');
+      conKai?.classList.add('tiene-kai');
+      pildoraConKai = conKai;
+    }
+    // la talla de la parada puede cambiar en vivo (el hero crece a Kai mientras absorbe)
+    if (lugar && !dirige && lugar.dataset.kaiTalla && lugar.dataset.kaiTalla !== tallaViva) {
+      tallaViva = lugar.dataset.kaiTalla;
+      caja.style.setProperty('--kai-talla', tallaViva);
+    }
     // el globo abre hacia donde hay espacio
     const derecha = x + TAM / 2 > vw / 2;
     caja.classList.toggle('kai--izq', derecha);
@@ -701,6 +762,8 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
     if (quiereCel !== celSrc) {
       celSrc = quiereCel;
       tCel = ahora;
+      // con celular el lienzo deja de ser redondo (el círculo le comía la orilla)
+      caja.classList.toggle('kai--cel', !!celSrc);
       if (celSrc) {
         matPantalla.map = pantallaDe(celSrc);
         matPantalla.needsUpdate = true;
@@ -710,8 +773,10 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
     const celEsc = celSrc ? rebote(tc) : 1 - smooth(tc);
     cel.visible = celEsc > 0.01;
     if (cel.visible) {
-      cel.scale.setScalar(celEsc * 0.86);
-      cel.position.set(1.12, -0.48 + Math.sin(t * 1.6) * 0.04, 0.75);
+      // 14-nov: más adentro y un poco más chico — el lienzo de Kai es REDONDO
+      // (border-radius 50%) y en (1.12, −0.48) la esquina del celular se cortaba
+      cel.scale.setScalar(celEsc * 0.82);
+      cel.position.set(1.0, -0.36 + Math.sin(t * 1.6) * 0.04, 0.75);
       cel.rotation.set(-0.08, -0.38 + Math.sin(t * 0.9) * 0.05, 0.1);
     }
 
@@ -744,7 +809,7 @@ export function createKai(caja, canvas, globo, { theme = 'dark', frase, alDecir,
       canvas.removeEventListener('click', alTocar);
       window.removeEventListener('kai:gira', alGirar);
       for (const geo of [geoCuerpo, geoOjo, geoAro, geoP, geoCel, geoPantalla, ...geosOutfit]) geo.dispose();
-      for (const m of [matCuerpo, matAro, matOjo, matHalo, matP, matNegro, matAmarillo, matGris, matEspejo, matPantalla]) m.dispose();
+      for (const m of [matCuerpo, matAro, matOjo, matHalo, matP, matNegro, matAmarillo, matGris, matEspejo, matMica, matArmazon, matPantalla]) m.dispose();
       Object.values(texturas).forEach((tx) => tx.dispose());
       visor.dispose();
       barniz.dispose();

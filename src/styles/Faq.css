@@ -137,3 +137,22 @@
     padding-left: 0;
   }
 }
+
+/* "O pregúntale a Kai" (14-nov-2026): abre el chat de KaiPregunta.jsx */
+.faq-otra-kai {
+  display: block;
+  margin: 0.8rem 0 0.2rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.92rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--border-strong);
+  cursor: pointer;
+}
+.faq-otra-kai:hover {
+  text-decoration-color: var(--text-strong);
+}

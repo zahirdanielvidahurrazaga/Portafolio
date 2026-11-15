@@ -3,9 +3,9 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Servicios from './components/Servicios';
+import KaiPregunta from './components/KaiPregunta';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import BarraScroll from './components/BarraScroll';
-import HeroRibbon from './components/HeroRibbon';
 import Nube from './components/Nube';
 import Kai from './components/Kai';
 import { useSmoothScroll } from './lib/useSmoothScroll';
@@ -31,8 +31,8 @@ function App() {
   return (
     <div className="app-container">
       <Navbar />
-      {/* Cinta 3D: nace de las partículas de la apertura, vive en el hero y sale de escena con el scroll */}
-      <HeroRibbon />
+      {/* (La CINTA 3D del hero se quitó el 14-nov-2026 a pedido de Zahir: ahora las letras viajan a
+          Kai, que es el protagonista. HeroRibbon.jsx / heroRibbon.js quedan en el repo sin montar.) */}
       {/* La nube de partículas: toma el relevo de la cinta y se arma en cada Interludio */}
       <Nube />
       {/* (El HILO que recorría la página se quitó el 11-nov-2026 a pedido de Zahir; Hilo.jsx
@@ -69,6 +69,8 @@ function App() {
       {/* Kai, el guía: aparece al entrar Servicios y acompaña hasta Contacto */}
       <Kai />
       <FloatingWhatsApp />
+      {/* Pregúntale a Kai: respuestas preparadas (data/kaiRespuestas.js) */}
+      <KaiPregunta />
       <BarraScroll />
     </div>
   );

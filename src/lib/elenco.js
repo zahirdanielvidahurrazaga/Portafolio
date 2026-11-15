@@ -31,9 +31,12 @@ const T = [
   [0.88, 1],
 ];
 // Por formación: foco (cuánto desenfoca la distancia), reflejo del piso y cabeceo de la escena
+// 14-nov-2026 (Zahir: "que empiece directo con esta formación en lugar de dispersa"): la
+// formación 0 YA ES el anillo (la nube quedó en el código sin usarse); por eso 0 y 1 son iguales.
 const FOCO = [1, 1, 0, 0];
-const REFLEJO = [0, 0.5, 0, 0.16]; // en la fila casi nada: ahí van los nombres
-const CABECEO = [0, 0.13, 0, 0.05];
+const REFLEJO = [0.5, 0.5, 0, 0.16]; // en la fila casi nada: ahí van los nombres
+const CABECEO = [0.13, 0.13, 0, 0.05];
+const EMPIEZA_EN_ANILLO = true;
 const FOV = 35;
 const CAM_Z = 10;
 const ASP = 0.56; // tarjeta vertical (las capturas son 0.52: casi no se recortan)
@@ -41,6 +44,96 @@ const ASP_ANCHA = 1.7;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 const smooth = (x) => x * x * (3 - 2 * x);
 const lerp = (a, b, t) => a + (b - a) * t;
+
+/** Laptop: la captura con su bisel negro y una base de aluminio debajo (fondo transparente) */
+function dibujarLaptop(cv, img) {
+  const sw = Math.min(1600, img.naturalWidth);
+  const sh = Math.round((sw * img.naturalHeight) / img.naturalWidth);
+  const b = Math.round(sw * 0.022); // bisel
+  const tapaW = sw + 2 * b;
+  const tapaH = sh + b + Math.round(b * 1.6); // la "barbilla" de abajo un poco más gruesa
+  const baseW = Math.round(tapaW * 1.14);
+  const baseH = Math.round(tapaW * 0.034);
+  cv.width = baseW;
+  cv.height = tapaH + baseH;
+  const g = cv.getContext('2d');
+  g.clearRect(0, 0, cv.width, cv.height);
+  const x0 = (baseW - tapaW) / 2;
+  const r = b * 1.4;
+  // tapa
+  g.fillStyle = '#0c0c0e';
+  g.beginPath();
+  g.roundRect(x0, 0, tapaW, tapaH, [r, r, b * 0.4, b * 0.4]);
+  g.fill();
+  g.strokeStyle = 'rgba(255,255,255,0.16)';
+  g.lineWidth = Math.max(2, b * 0.12);
+  g.stroke();
+  g.drawImage(img, x0 + b, b, sw, sh);
+  // base de aluminio con la muesca para abrirla
+  const grad = g.createLinearGradient(0, tapaH, 0, tapaH + baseH);
+  grad.addColorStop(0, '#d9dade');
+  grad.addColorStop(0.45, '#b9bbc1');
+  grad.addColorStop(1, '#6f7177');
+  g.fillStyle = grad;
+  g.beginPath();
+  g.roundRect(0, tapaH, baseW, baseH, [2, 2, baseH * 0.9, baseH * 0.9]);
+  g.fill();
+  g.fillStyle = 'rgba(0,0,0,0.22)';
+  const mW = tapaW * 0.16;
+  g.beginPath();
+  g.roundRect((baseW - mW) / 2, tapaH, mW, baseH * 0.38, [0, 0, baseH * 0.3, baseH * 0.3]);
+  g.fill();
+}
+
+/** Teléfono: la captura con bisel negro, esquinas de iPhone, isla y un filo de titanio */
+function dibujarTelefono(cv, img) {
+  const sw = Math.min(900, img.naturalWidth);
+  const sh = Math.round((sw * img.naturalHeight) / img.naturalWidth);
+  const b = Math.round(sw * 0.045); // bisel
+  const W = sw + 2 * b;
+  const H = sh + 2 * b;
+  cv.width = W;
+  cv.height = H;
+  const g = cv.getContext('2d');
+  g.clearRect(0, 0, W, H);
+  const rOut = W * 0.15;
+  const rIn = rOut - b * 0.9;
+  // cuerpo: titanio oscuro con un filo claro
+  const borde = g.createLinearGradient(0, 0, W, H);
+  borde.addColorStop(0, '#8d8f95');
+  borde.addColorStop(0.25, '#3b3c40');
+  borde.addColorStop(0.6, '#2a2b2e');
+  borde.addColorStop(1, '#a3a5ab');
+  g.fillStyle = borde;
+  g.beginPath();
+  g.roundRect(0, 0, W, H, rOut);
+  g.fill();
+  const t = Math.max(3, b * 0.16);
+  g.fillStyle = '#050506';
+  g.beginPath();
+  g.roundRect(t, t, W - 2 * t, H - 2 * t, rOut - t);
+  g.fill();
+  // pantalla
+  g.save();
+  g.beginPath();
+  g.roundRect(b, b, sw, sh, rIn);
+  g.clip();
+  g.drawImage(img, b, b, sw, sh);
+  // brillo del vidrio
+  const vidrio = g.createLinearGradient(0, 0, W, H * 0.6);
+  vidrio.addColorStop(0, 'rgba(255,255,255,0.10)');
+  vidrio.addColorStop(0.35, 'rgba(255,255,255,0)');
+  g.fillStyle = vidrio;
+  g.fillRect(b, b, sw, sh);
+  g.restore();
+  // isla
+  const iw = sw * 0.3;
+  const ih = sw * 0.085;
+  g.fillStyle = '#000';
+  g.beginPath();
+  g.roundRect((W - iw) / 2, b + sw * 0.03, iw, ih, ih / 2);
+  g.fill();
+}
 
 const VERT = /* glsl */ `
   uniform float uTan;
@@ -109,7 +202,7 @@ const FRAG = /* glsl */ `
     vec2 q = abs(vUv - 0.5) * caja - (caja * 0.5 - rad);
     float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - rad;
     float suave = 0.004 + b * 0.04;
-    float a = 1.0 - smoothstep(-suave, suave, d);
+    float a = (1.0 - smoothstep(-suave, suave, d)) * texture2D(uTex, uv).a;
     if (a < 0.01) discard;
     // brillo que barre el vidrio cuando la tarjeta gira
     float s = (vUv.x * uAsp + vUv.y * 0.55) - uBrillo;
@@ -207,9 +300,40 @@ export function crearElenco(pista, { demos: DEMOS, textos, alElegir } = {}) {
       aspImg: d.ancha ? 1.79 : 0.52,
       sube: 0,
     };
-    const tex = loader.load(d.img, (t) => {
-      o.aspImg = t.image.width / t.image.height;
-    });
+    let tex;
+    if (!d.ancha) {
+      // 14-nov-2026 (Zahir: "no se ven al cien los mockups de los celulares"): cada captura
+      // vertical va dentro de un TELÉFONO dibujado (bisel, esquinas, isla y filo de luz).
+      const lienzo = document.createElement('canvas');
+      tex = new THREE.CanvasTexture(lienzo);
+      o.lap = true;
+      o.aspImg = 0.5;
+      const img = new Image();
+      img.onload = () => {
+        dibujarTelefono(lienzo, img);
+        o.aspImg = lienzo.width / lienzo.height;
+        tex.needsUpdate = true;
+      };
+      img.src = d.img;
+    } else if (d.ancha) {
+      // 14-nov-2026 (Zahir: "pon un mockup"): la captura de compu va DENTRO de una laptop
+      // dibujada en un canvas (pantalla con bisel + base). La tarjeta toma la proporción de
+      // la laptop completa (o.lap) y lo de fuera queda transparente (alfa de la textura).
+      const lienzo = document.createElement('canvas');
+      tex = new THREE.CanvasTexture(lienzo);
+      o.lap = true;
+      const img = new Image();
+      img.onload = () => {
+        dibujarLaptop(lienzo, img);
+        o.aspImg = lienzo.width / lienzo.height;
+        tex.needsUpdate = true;
+      };
+      img.src = d.img;
+    } else {
+      tex = loader.load(d.img, (t) => {
+        o.aspImg = t.image.width / t.image.height;
+      });
+    }
     tex.anisotropy = 8;
     uniforms.uTex.value = tex;
     o.mesh.frustumCulled = false;
@@ -277,6 +401,7 @@ export function crearElenco(pista, { demos: DEMOS, textos, alElegir } = {}) {
   };
   let anillo = 0; // qué giro va al frente (puede ir entre dos)
   const formacion = (k, c, t, m, out) => {
+    if (k === 0 && EMPIEZA_EN_ANILLO) k = 1;
     const { hC, centro } = m;
     const i = c.i;
     const prop = c.ancha ? 0.6 : 1; // la horizontal mide menos de alto
@@ -393,7 +518,7 @@ export function crearElenco(pista, { demos: DEMOS, textos, alElegir } = {}) {
     for (const c of cartas) {
       const fi = smooth(clamp01(f * 1.3 - c.i * 0.05));
       formacion(k, c, t, m, A);
-      if (fi > 0 && k < T.length - 1) {
+      if (fi > 0 && k < T.length - 1 && !(k === 0 && EMPIEZA_EN_ANILLO)) {
         formacion(k + 1, c, t, m, B);
         A.pos.lerp(B.pos, fi);
         // un arco hacia la cámara a media mezcla: se cruzan en profundidad, no en plano
@@ -406,7 +531,7 @@ export function crearElenco(pista, { demos: DEMOS, textos, alElegir } = {}) {
         A.piso = lerp(A.piso, B.piso, fi);
       }
       piso = A.piso;
-      const asp = c.ancha ? ASP_ANCHA : ASP;
+      const asp = c.lap ? c.aspImg : c.ancha ? ASP_ANCHA : ASP;
       const alto = m.hC * A.esc * (c.ancha ? 0.6 : 1);
       c.mesh.position.copy(A.pos);
       c.mesh.quaternion.copy(A.quat);

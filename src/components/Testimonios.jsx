@@ -155,24 +155,30 @@ function CasoVideo({ t, n, total, onAbrir }) {
           <Play size={26} fill="currentColor" strokeWidth={0} />
         </span>
         <span className="testimonio-video-dur">{t.videoDuracion}</span>
-        {/* Kai, trepado en la esquina del video, lo ve con nosotros (data-kai-mira = el video) */}
-        <span
-          className="kai-lugar kai-lugar--video"
-          data-kai={`caso-${t.proyecto}`}
-          data-kai-talla="0.62"
-          data-kai-mira=""
-          data-kai-globo="abajo-angosto"
-          data-kai-movil=""
-          aria-hidden="true"
-        />
       </button>
       <div className="caso-cuerpo">
         <p className="caso-cuenta">{n} / {total}</p>
         <p className="caso-voz">{tr(t.voz)}</p>
-        <button type="button" className="caso-play" onClick={() => onAbrir(t)}>
-          <Play size={14} fill="currentColor" strokeWidth={0} />
-          {tr({ es: 'Ver su experiencia', en: 'Watch their story' })} · {t.videoDuracion}
-        </button>
+        <div className="caso-play-fila">
+          <span className="caso-play-ancla">
+          <button type="button" className="caso-play" onClick={() => onAbrir(t)}>
+            <Play size={14} fill="currentColor" strokeWidth={0} />
+            {tr({ es: 'Ver su experiencia', en: 'Watch their story' })} · {t.videoDuracion}
+          </button>
+          {/* Kai junto al botón de play, mirándolo (14-nov: trepado en el video lo tapaba) */}
+          <span
+            className="kai-lugar kai-lugar--play"
+            data-kai={`caso-${t.proyecto}`}
+            data-kai-talla="0.55"
+            data-kai-mira=".caso-play"
+            data-kai-pildora=""
+            data-kai-movil=""
+            aria-hidden="true"
+          />
+          </span>
+          {/* Su frase va aquí, bajo el botón (lib/kai.js escribe en .kai-pildora-texto) */}
+          <p className="kai-pildora-texto caso-kai-texto" role="status" />
+        </div>
         <Autor t={t} />
         <Cambio t={t} />
       </div>
@@ -246,13 +252,13 @@ const Testimonios = () => {
       <div className="section-container testimonios-head">
         <SectionHead
           num="03"
-          label={tr({ es: 'Testimonios', en: 'Testimonials' })}
+          label={tr({ es: 'Familia KaiZen', en: 'KaiZen family' })}
           lede={tr({
-            es: 'Negocios reales que ya operan con lo que construimos.',
-            en: 'Real businesses already running on what we built.',
+            es: 'Negocios que crecen con nosotros, contado por ellos mismos.',
+            en: 'Businesses growing with us, in their own words.',
           })}
         >
-          {tr({ es: <>Lo que dicen <em>nuestros clientes</em></>, en: <>What our <em>clients say</em></> })}
+          {tr({ es: <>La familia <em>KaiZen</em></>, en: <>The KaiZen <em>family</em></> })}
         </SectionHead>
       </div>
 

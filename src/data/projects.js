@@ -385,12 +385,11 @@ const allProjects = [
   {
     id: 'boda',
     category: 'Eventos & Tiempo Real',
-    title: 'Galería de Bodas',
-    tagline: 'El álbum del evento, construido por los invitados.',
-    description:
-      'Plataforma interactiva para eventos. Los invitados acceden con un código único, suben fotos desde la cámara y visualizan el álbum compartido en tiempo real.',
-    result:
-      'Los invitados arman el álbum del evento en vivo: entran con un código y suben fotos en tiempo real, sin descargar ninguna app ni juntar memorias después.',
+    // 14-nov-2026: "Galería de fotos" (sirve para bodas, comuniones, XV…) y texto más corto
+    title: 'Galería de fotos',
+    tagline: 'Las fotos del evento, en vivo.',
+    description: 'Los invitados escanean un QR, suben sus fotos y todos las ven al momento.',
+    result: 'Un álbum del evento armado por los invitados, sin descargar ninguna app.',
     tags: ['React', 'Supabase Storage', 'Realtime', 'Cloudflare'],
     type: 'phone',
     slides: ['/screenshots/boda-entrada.jpg', '/screenshots/boda-album.jpg'],
@@ -613,12 +612,10 @@ const EN = {
   },
   boda: {
     category: 'Events & Real Time',
-    title: 'Wedding Gallery',
-    tagline: 'The event album, built by the guests.',
-    description:
-      'Interactive platform for events. Guests join with a unique code, upload photos from their camera and see the shared album in real time.',
-    result:
-      'Guests build the event album live: they join with a code and upload photos in real time, without downloading an app or collecting memories afterward.',
+    title: 'Photo Gallery',
+    tagline: 'Event photos, live.',
+    description: 'Guests scan a QR code, upload their photos and everyone sees them instantly.',
+    result: 'An event album built by the guests, no app download needed.',
     captions: {
       app: 'Guests join by scanning a QR code on their table.',
     },

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import SectionHead from './SectionHead';
 import { useLang } from '../lib/LangContext';
+import { REDES } from '../data/contacto';
 import '../styles/SobreMi.css';
 
 /**
@@ -28,6 +29,7 @@ const MITADES = [
       es: ['Identidad de marca', 'Redes sociales', 'Lanzamiento'],
       en: ['Brand identity', 'Social media', 'Launch'],
     },
+    redes: true,
   },
   {
     num: 'II',
@@ -40,8 +42,67 @@ const MITADES = [
       es: ['Sitios web', 'Tiendas y punto de venta', 'Automatización e IA', 'Apps y experiencias'],
       en: ['Websites', 'Stores & point of sale', 'Automation & AI', 'Apps & experiences'],
     },
+    tiendas: true,
   },
 ];
+
+// Insignias de tienda (14-nov-2026, decorativas a pedido de Zahir: no llevan enlace —
+// KaiZen no tiene app propia; dicen que las apps que hacemos se publican ahí).
+const APPLE = 'M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701';
+// Insignias de REDES (14-nov-2026, par de las de tiendas): llevan a las cuentas de KaiZen
+const ICONOS_RED = {
+  Instagram: (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="3" width="18" height="18" rx="5.5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  ),
+  Facebook: (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+      <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z" />
+    </svg>
+  ),
+  TikTok: (
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor">
+      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+    </svg>
+  ),
+};
+function Redes() {
+  const { t } = useLang();
+  return (
+    <div className="nos-tiendas">
+      {REDES.map(([nombre, url]) => (
+        <a key={nombre} className="nos-tienda nos-red" href={url} target="_blank" rel="noopener noreferrer" aria-label={`KaiZen ${t({ es: 'en', en: 'on' })} ${nombre}`}>
+          {ICONOS_RED[nombre]}
+          <span><small>{t({ es: 'Síguenos en', en: 'Follow us on' })}</small>{nombre}</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function Tiendas() {
+  const { t } = useLang();
+  return (
+    <div className="nos-tiendas" role="img" aria-label={t({ es: 'Publicamos apps en App Store y Google Play', en: 'We publish apps on the App Store and Google Play' })}>
+      <span className="nos-tienda" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d={APPLE} fill="currentColor" /></svg>
+        <span><small>{t({ es: 'Descárgala en', en: 'Download on the' })}</small>App Store</span>
+      </span>
+      <span className="nos-tienda" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="22">
+          <path d="M3.6 1.8 13.5 12 3.6 22.2c-.4-.2-.6-.6-.6-1.1V2.9c0-.5.2-.9.6-1.1z" fill="#00d7fe" />
+          <path d="m16.9 8.6-3.4 3.4-9.9-10.2c.2-.1.5-.1.8 0l12.5 6.8z" fill="#32bb5d" />
+          <path d="m16.9 15.4-12.5 6.8c-.3.1-.6.1-.8 0l9.9-10.2 3.4 3.4z" fill="#f5333f" />
+          <path d="m21.1 13.1-4.2 2.3-3.4-3.4 3.4-3.4 4.2 2.3c.9.5.9 1.7 0 2.2z" fill="#ffd000" />
+        </svg>
+        <span><small>{t({ es: 'Disponible en', en: 'Get it on' })}</small>Google Play</span>
+      </span>
+    </div>
+  );
+}
 
 // Borrador de KaiZen (5-oct): que Karime y Zahir lo ajusten a su voz.
 const MVV = [
@@ -109,6 +170,8 @@ function Mitades() {
               <li key={x}>{x}</li>
             ))}
           </ul>
+          {m.tiendas && <Tiendas />}
+          {m.redes && <Redes />}
         </motion.div>
       ))}
     </div>

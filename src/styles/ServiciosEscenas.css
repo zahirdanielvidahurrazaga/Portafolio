@@ -348,3 +348,453 @@
     padding: 0.85rem;
   }
 }
+
+/* ── Casos reales (14-nov-2026): cada escena dice si es un cliente nuestro o un ejemplo ── */
+.esc-origen {
+  flex: none;
+  margin-left: auto;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.esc-origen--real {
+  color: var(--text-strong);
+  border-color: var(--border-strong);
+}
+.esc-pie .esc-origen {
+  margin-left: auto;
+}
+.esc-pie:has(.esc-origen) {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+/* Natural con SUS colores (lavanda + crema): sale del mármol a propósito */
+.esc-logo--natural {
+  background: #8c66bb;
+  color: #fffdf2;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.esc-logo-img {
+  width: 62%;
+  height: auto;
+  display: block;
+}
+.esc-aa--serif {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* ── Escenas "llenas" (14-nov-2026, 2ª): cada cliente con SUS colores, aunque salga del mármol ── */
+.esc-marca-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+.esc-marca-fila img {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
+  padding: 0.25rem;
+  flex: none;
+}
+.esc-swatches:has(.esc-sw:nth-child(5)) {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* Redes: publicación de Instagram */
+.esc-avatar--ig {
+  background: conic-gradient(#feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5, #feda75);
+  padding: 2px;
+}
+.esc-ig-foto {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  aspect-ratio: 1.45 / 1;
+}
+.esc-ig-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.esc-ig-ejemplo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 78% 30%, #e8b678 0 18%, transparent 19%),
+    radial-gradient(circle at 78% 30%, #6b3d22 0 26%, transparent 27%),
+    linear-gradient(150deg, #f3e3cc, #c98d5a);
+  color: #2b170b;
+}
+.esc-ig-ejemplo small {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.esc-ig-ejemplo b {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+.esc-ig-ejemplo i {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  font-style: normal;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #2b170b;
+  color: #f3e3cc;
+  font-size: 0.8rem;
+}
+.esc-ig-acciones {
+  display: flex;
+  gap: 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+/* Lanzamiento: cartel de apertura */
+.esc-cartel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 1.1rem 1.1rem 1rem;
+  border-radius: 18px;
+  /* 14-nov (4ª): ni naranja ni espresso → cartel de PAPEL crema con tinta café (claro, limpio) */
+  background: linear-gradient(160deg, #f7f2ea, #ece3d4);
+  color: #2b1d14;
+  border: 1px solid rgba(43, 29, 20, 0.12);
+}
+.esc-cartel small {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.esc-cartel > b {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.esc-cartel > span {
+  font-size: 0.82rem;
+  opacity: 0.9;
+}
+.esc-cuenta {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+.esc-cuenta i {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3.2rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 10px;
+  background: #2b1d14;
+  color: #f7f2ea;
+  font-style: normal;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.esc-cuenta i b {
+  font-size: 1.1rem;
+  letter-spacing: 0;
+}
+.esc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.esc-chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.6rem 0.3rem 0.4rem;
+  border-radius: 999px;
+  background: var(--tint-3);
+  font-size: 0.76rem;
+  color: var(--text-strong);
+}
+
+/* Web: navegador con el sitio de Natural */
+.esc-nav {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+}
+.esc-nav-barra {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.6rem;
+  background: var(--tint-3);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+.esc-nav-barra i {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--tint-6);
+}
+.esc-nav-barra span {
+  margin-left: 0.4rem;
+}
+.esc-nav-sitio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1rem 0.8rem 0.9rem;
+  background: #8c66bb;
+  color: #fffdf2;
+}
+.esc-nav-sitio img {
+  width: 58%;
+}
+.esc-nav-sitio small {
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.esc-sabores {
+  display: flex;
+  gap: 0.35rem;
+}
+.esc-sabores i {
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  border: 2px solid #fffdf2;
+}
+.esc-nav-boton {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: #fffdf2;
+  color: #2a1a40;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* Tienda: ticket de Tito */
+.esc-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 14px;
+  background: #fbfaf7;
+  color: #0f172a;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.74rem;
+  -webkit-mask: radial-gradient(circle at 50% 100%, transparent 4px, #000 4.5px) 0 0 / 12px 100%;
+  mask: radial-gradient(circle at 50% 100%, transparent 4px, #000 4.5px) 0 0 / 12px 100%;
+  padding-bottom: 1rem;
+}
+.esc-ticket > span {
+  display: flex;
+  justify-content: space-between;
+}
+.esc-ticket i {
+  font-style: normal;
+  color: #64748b;
+}
+.esc-ticket-mayoreo {
+  color: #15803d;
+}
+.esc-ticket-total {
+  margin-top: 0.2rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.esc-grafica--tito {
+  height: 4rem;
+}
+
+/* Be Fit Lab: coral y salvia de su marca */
+.esc--befit {
+  --bf: #eb8466;
+  --bf-salvia: #8a9a7b;
+}
+.esc-push {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.75rem 0.85rem;
+  border-radius: 18px;
+  background: var(--tint-4);
+  border: 1px solid var(--border-color);
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+.esc-push img {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 11px;
+  background: #fff;
+  padding: 0.2rem;
+  flex: none;
+}
+.esc-push span {
+  display: flex;
+  flex-direction: column;
+}
+.esc-push small {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.esc-push b {
+  color: var(--text-strong);
+}
+.esc-oferta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 0.85rem;
+  border-radius: 16px;
+  background: var(--bf);
+  color: #fff;
+}
+.esc-oferta-reloj {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.esc-oferta-botones {
+  display: flex;
+  gap: 0.35rem;
+}
+.esc-oferta-botones i {
+  font-style: normal;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+.esc-oferta-botones i.si {
+  background: #fff;
+  color: var(--bf);
+  border-color: #fff;
+}
+.esc-fila-espera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+}
+.esc-fila-espera span:not(.esc-tenue) {
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: var(--tint-3);
+  color: var(--text-strong);
+}
+.esc-fila-espera span.on {
+  background: var(--bf-salvia);
+  color: #fff;
+}
+.esc-clase {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 16px;
+  background: var(--tint-3);
+  border-left: 4px solid var(--bf);
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+.esc-clase > span {
+  display: flex;
+  flex-direction: column;
+}
+.esc-clase small {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.esc-clase b {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--text-strong);
+}
+.esc-clase > i {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: var(--bf-salvia);
+  color: #fff;
+}
+.esc-pase--befit {
+  background: linear-gradient(135deg, #eb8466, #d9694c);
+  color: #fff;
+}
+.esc-pase--befit .esc-qr {
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px;
+  fill: #2b1a14;
+}
+.esc-pase-k {
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+button.esc-origen {
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+button.esc-origen:hover {
+  background: var(--tint-3);
+}
+.esc-ig-foto img {
+  object-position: center center;
+}
+
+/* el título del cartel con su tinta (la regla general .esc b lo pintaba del color del tema) */
+.esc-cartel > b,
+.esc-cartel .esc-cuenta b {
+  color: inherit;
+}

@@ -7,13 +7,20 @@
  * (cada audio se llama como su llave: public/kai/<idioma>/<llave>.mp3).
  */
 export const KAI_FRASES = {
+  // 14-nov-2026: Kai se PRESENTA en el hero, corto como Buddy de adamperlis.com, y avisa del
+  // botón "Pregúntale a Kai"; al terminar se va a esa píldora (Hero.jsx). ⚠️ BORRADOR, SIN VOZ.
+  hero: {
+    es: 'Hola, soy Kai. Si tienes dudas, pregúntame con este botón de aquí abajo.',
+    en: 'Hi, I’m Kai. If you have questions, ask me with this button down here.',
+  },
+  // ⚠️ BORRADOR de Claude (14-nov), SIN VOZ: el saludo ya se dijo arriba
   '02': {
-    es: 'Hola, soy Kai, tu guía. Empecemos por lo que podemos hacer por tu negocio.',
-    en: 'Hi, I’m Kai, your guide. Let’s start with what we can do for your business.',
+    es: 'Esto es todo lo que podemos hacer por tu negocio. Ve bajando.',
+    en: 'This is everything we can do for your business. Keep scrolling.',
   },
   '03': {
-    es: 'Esto no lo digo yo. Lo dicen sus clientes.',
-    en: 'Don’t take my word for it. Their clients say it.',
+    es: 'Esto no lo digo yo. Lo dice la familia KaiZen.',
+    en: 'Don’t take my word for it. Hear it from the KaiZen family.',
   },
   '04': {
     es: 'Aquí puedes probar antes de comprar. Elige la demo de tu giro.',
@@ -35,9 +42,10 @@ export const KAI_FRASES = {
     es: '¿Dudas? Aquí están las que más nos hacen.',
     en: 'Questions? Here are the ones we get the most.',
   },
+  // ⚠️ BORRADOR de Claude (14-nov), SIN VOZ: la de "llegué hecho partículas" se quitó (ya no es cierta)
   '09': {
-    es: 'Llegué hecho partículas y ya estoy completo. Así queremos dejar tu proyecto. ¿Hablamos?',
-    en: 'I arrived as particles and now I’m complete. That’s how we want to leave your project. Shall we talk?',
+    es: 'Hasta aquí el recorrido. Cuéntanos de tu negocio y lo platicamos.',
+    en: 'That’s the tour. Tell us about your business and let’s talk.',
   },
 };
 
@@ -58,7 +66,7 @@ export const KAI_SERVICIOS = {
   'srv-navegador': { es: 'Si no apareces en Google, para muchos no existes.', en: 'If you’re not on Google, for many people you don’t exist.' },
   'srv-carrito': { es: 'Vende aunque la tienda esté cerrada.', en: 'Sell even when the shop is closed.' },
   'srv-ia': { es: 'Lo repetitivo, que lo haga la máquina.', en: 'Let the machine handle the repetitive stuff.' },
-  'srv-telefono': { es: 'Tu negocio, en el celular de tus clientes.', en: 'Your business, on your customers’ phones.' },
+  'srv-telefono': { es: 'Reservan, pagan y entran con su pase, desde su celular.', en: 'They book, pay and walk in with their pass, from their phone.' },
 };
 
 // En Demos (celular: carrusel), Kai se trepa en la demo del frente y dice una línea por giro
@@ -93,7 +101,7 @@ export const KAI_ESCENAS = {
   'proyecto-natural': { es: 'Una familia que hace aguas, con su propia vitrina en línea.', en: 'A family that makes fruit waters, with its own online showcase.' },
   'proyecto-befit': { es: 'Un estudio de pilates que ya no agenda por WhatsApp.', en: 'A pilates studio that stopped booking over WhatsApp.' },
   'proyecto-pos': { es: 'Una tienda que cobra con esto todo el día.', en: 'A store that rings up sales with this all day.' },
-  'proyecto-boda': { es: 'Las fotos de la boda, en vivo, desde el celular de los invitados.', en: 'Wedding photos, live, from the guests’ phones.' },
+  'proyecto-boda': { es: 'Las fotos del evento, en vivo, desde el celular de los invitados.', en: 'Event photos, live, from the guests’ phones.' },
   // OUTFITS: al tocarlo da una vuelta y sale con otro (lib/kai.js → ORDEN_OUTFITS)
   'outfit-casco': { es: 'Casco puesto. Ellos programan, yo superviso.', en: 'Hard hat on. They code, I supervise.' },
   'outfit-lentes': { es: 'Lentes oscuros. No te ignoro, es que ya soy famoso.', en: 'Shades on. I’m not ignoring you, I’m just famous now.' },

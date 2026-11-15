@@ -184,3 +184,40 @@
     text-align: left;
   }
 }
+
+/* Insignias de tienda (14-nov-2026, decorativas): negras como las oficiales, en ambos temas */
+.nos-tiendas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+}
+.nos-tienda {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1.05rem 0.5rem 0.85rem;
+  border-radius: 12px;
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  line-height: 1.05;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  user-select: none;
+}
+.nos-tienda small {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.nos-red {
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.nos-red:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.6);
+}

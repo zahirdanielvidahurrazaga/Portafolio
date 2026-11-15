@@ -116,7 +116,7 @@ export default function Kai() {
     }
     const l = langRef.current;
     const dichas = dichasRef.current;
-    const toque = id.startsWith('toque-');
+    const toque = id.startsWith('toque-') || id.startsWith('outfit-'); // al tocarlo: suena cada vez
     const nueva = !dichas.has(id);
     const frena = CAPITULO.test(id) && nueva && !!lugar && !pedida && vieneDeScroll();
     const conVoz = vozRef.current && !!indiceRef.current?.[l]?.includes(id);
@@ -131,8 +131,17 @@ export default function Kai() {
         a.onended = () => alargarBloqueo(250);
       }
       a.play().catch(() => {
-        /* el navegador aún no deja sonar: se queda en texto (y con su freno de texto) */
+        /* el navegador aún no deja sonar (no ha habido clic desde que cargó): se queda en texto
+           y la frase se GUARDA; suena en el primer clic o tecla (14-nov-2026: al recargar, el
+           saludo del hero no sonaba hasta mutear y desmutear) */
         if (frena) alargarBloqueo(leer);
+        const reintentar = () => {
+          window.removeEventListener('pointerdown', reintentar, true);
+          window.removeEventListener('keydown', reintentar, true);
+          if (a.src.endsWith(`/${id}.mp3`) && vozRef.current) a.play().catch(() => {});
+        };
+        window.addEventListener('pointerdown', reintentar, true);
+        window.addEventListener('keydown', reintentar, true);
       });
     };
     if (frena) {

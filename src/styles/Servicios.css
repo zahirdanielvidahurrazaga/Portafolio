@@ -11,7 +11,7 @@
 .srv-pista {
   position: relative;
   /* un tramo por servicio (7) — si cambia el número, cambiar aquí también */
-  height: calc(100vh + 7 * 60vh);
+  height: calc(100vh + 7 * 52vh);
 }
 .srv-escena {
   position: sticky;
@@ -497,4 +497,136 @@
   .srv-ficha-escena .esc {
     zoom: 0.62;
   }
+}
+
+/* ── TÍTULO ARRIBA (14-nov-2026, Zahir: "que el título esté arriba para darle más espacio a la
+   hélice y que el efecto se aprecie"). Escritorio: fila 1 = la ficha a todo lo ancho (gancho
+   a la izquierda, entregables + botón a la derecha); fila 2 = índice angosto + hélice ancha. ── */
+@media (min-width: 901px) {
+  .srv-escena {
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1.58fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'ficha ficha'
+      'indice forma';
+    align-items: center;
+    row-gap: clamp(0.4rem, 2vh, 1.4rem);
+    padding-top: clamp(84px, 13vh, 120px);
+    padding-bottom: 2vh;
+  }
+  .srv-escena .srv-ficha {
+    grid-area: ficha;
+    align-self: end;
+  }
+  .srv-escena .srv-ficha > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    align-items: end;
+    column-gap: clamp(1.5rem, 4vw, 4rem);
+  }
+  .srv-escena .srv-ficha-gancho {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    margin: 0;
+    font-size: clamp(1.9rem, min(3.4vw, 6.4vh), 3.4rem);
+  }
+  .srv-escena .srv-ficha-lista {
+    grid-column: 2;
+    margin: 0 0 0.9rem;
+  }
+  .srv-escena .srv-ficha .srv-ficha-acciones {
+    grid-column: 2;
+  }
+  .srv-escena .srv-indice {
+    grid-area: indice;
+    align-self: center;
+  }
+  .srv-escena .srv-forma {
+    grid-area: forma;
+    min-height: 0;
+    height: 100%;
+  }
+  .srv-escena .srv-helice {
+    height: 100%;
+    min-height: min(56vh, 520px);
+  }
+}
+@media (min-width: 901px) {
+  .srv-escena {
+    padding-top: clamp(100px, 16vh, 136px);
+  }
+  .srv-escena .srv-ficha > div {
+    align-items: center;
+  }
+  /* entregables en UNA línea separados por "·": la fila de arriba queda baja y la hélice gana alto */
+  .srv-escena .srv-ficha-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 0;
+  }
+  .srv-escena .srv-ficha-lista li + li::before {
+    content: '·';
+    display: inline;
+    width: auto;
+    height: auto;
+    margin: 0 0.55rem;
+    background: none;
+    transform: none;
+  }
+}
+/* 14-nov (2ª): el renglón de arriba "quedó terrible" (entregables partidos con el "·" al inicio y
+   todo amontonado a la derecha). Ahora: IZQUIERDA = gancho + entregables en gris debajo;
+   DERECHA = botón y "Ver caso real", apilados y alineados abajo. */
+@media (min-width: 901px) {
+  .srv-escena .srv-ficha > div {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    row-gap: 0.7rem;
+  }
+  .srv-escena .srv-ficha-gancho {
+    grid-row: 1;
+  }
+  .srv-escena .srv-ficha-lista {
+    grid-column: 1;
+    grid-row: 2;
+    display: block;
+    margin: 0;
+  }
+  .srv-escena .srv-ficha-lista li {
+    display: inline;
+    white-space: nowrap;
+  }
+  .srv-escena .srv-ficha-lista li + li::before {
+    content: none;
+  }
+  .srv-escena .srv-ficha-lista li:not(:last-child)::after {
+    content: '·';
+    margin: 0 0.6rem;
+  }
+  .srv-escena .srv-ficha .srv-ficha-acciones {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+  }
+}
+/* 14-nov (3ª): "cuánto texto súper junto" → arriba SOLO el gancho y el botón; los entregables
+   se van (la tarjeta ya los enseña) y la frase de Kai queda con aire */
+@media (min-width: 901px) {
+  .srv-escena .srv-ficha-lista {
+    display: none !important;
+  }
+  .srv-escena .srv-ficha > div {
+    align-items: center;
+  }
+  .srv-escena {
+    row-gap: clamp(1.2rem, 5vh, 3rem);
+  }
+}
+
+/* 14-nov (4ª): sin "Cotizar X" en Servicios — ya está el Cotizar de la barra (Zahir) */
+.srv-escena .srv-ficha .srv-ficha-acciones,
+.srv-acciones-movil {
+  display: none !important;
 }

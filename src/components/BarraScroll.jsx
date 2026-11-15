@@ -16,7 +16,7 @@ const SECCIONES = ['about', 'testimonios', 'demos', 'portfolio', 'sobre-mi', 'pr
 const CAPITULOS = [
   { es: 'Inicio', en: 'Home' },
   { es: 'Servicios', en: 'Services' },
-  { es: 'Testimonios', en: 'Testimonials' },
+  { es: 'Familia KaiZen', en: 'KaiZen family' },
   { es: 'Demos', en: 'Demos' },
   { es: 'Proyectos', en: 'Work' },
   { es: 'Nosotros', en: 'About' },

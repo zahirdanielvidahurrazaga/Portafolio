@@ -17,7 +17,6 @@ const pagina =
 // pedía hasta después del primer render y la carga iba en cadena.
 if (pagina.type === App) {
   import('./lib/nube');
-  import('./lib/heroRibbon');
   import('./lib/kai');
   // …y lo de más abajo (capturas, portadas, escenas 3D): la pantalla de carga lo espera
   precargar();

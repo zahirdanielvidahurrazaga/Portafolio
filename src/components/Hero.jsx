@@ -1,5 +1,5 @@
-import React, { Fragment, useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { motion, useMotionValueEvent, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import KaizenWordmark from './KaizenWordmark';
 import { useLang } from '../lib/LangContext';
 import { RELEVO } from '../lib/cintaPuente';
@@ -106,7 +106,48 @@ const Hero = () => {
   // Paradas de Kai (lib/kai.js) en el hero: encaramado en ΚΛΙΖΣΝ mientras son letras, y
   // junto a los botones cuando ya está el titular. Fuera de su tramo no existen (display).
   const kaiMarca = useTransform(p, (v) => (v < RELEVO.flujo[0] + 0.02 ? 'block' : 'none'));
-  const kaiBotones = useTransform(p, (v) => (v > 0.76 && v < SALIDA[0] + 0.02 ? 'block' : 'none'));
+  // Kai se presenta encaramado en la Ν y, cuando termina de hablar, se va a su casa: la
+  // píldora "Pregúntale a Kai" (14-nov-2026). Cuenta desde que se va la pantalla de carga.
+  const [presentado, setPresentado] = useState(false);
+  useEffect(() => {
+    const raiz = document.documentElement;
+    let espera = 0;
+    const arrancar = () => {
+      espera = setTimeout(() => setPresentado(true), 6200);
+    };
+    if (raiz.classList.contains('cargado')) {
+      arrancar();
+      return () => clearTimeout(espera);
+    }
+    const mo = new MutationObserver(() => {
+      if (!raiz.classList.contains('cargado')) return;
+      mo.disconnect();
+      arrancar();
+    });
+    mo.observe(raiz, { attributes: true, attributeFilter: ['class'] });
+    return () => {
+      mo.disconnect();
+      clearTimeout(espera);
+    };
+  }, []);
+  const kaiCentro = useTransform(p, (v) => (v >= RELEVO.flujo[0] + 0.02 && v < 0.58 ? 'block' : 'none'));
+  // Mientras absorbe las letras Kai CRECE (lib/kai.js lee data-kai-talla en vivo), y detrás
+  // de él un halo que se carga y, al final, una onda que sale de él (14-nov-2026, pulido).
+  const centroRef = useRef(null);
+  useMotionValueEvent(p, 'change', (v) => {
+    const el = centroRef.current;
+    if (!el) return;
+    const a = rango(v, [RELEVO.flujo[0], RELEVO.cruce[1]], [0, 1]);
+    const pulso = Math.sin(Math.PI * rango(v, [0.5, 0.58], [0, 1])) * 0.18;
+    el.dataset.kaiTalla = (1.45 + 0.55 * a + pulso).toFixed(2);
+  });
+  const halo = useTransform(p, (v) =>
+    v < 0.54 ? rango(v, [RELEVO.flujo[0], 0.5], [0, 0.9]) : rango(v, [0.54, 0.62], [0.9, 0])
+  );
+  const haloEsc = useTransform(p, (v) => rango(v, [RELEVO.flujo[0], 0.52], [0.6, 1.15]));
+  const onda = useTransform(p, (v) => Math.sin(Math.PI * rango(v, [0.5, 0.62], [0, 1])) * 0.7);
+  const ondaEsc = useTransform(p, (v) => rango(v, [0.5, 0.62], [0.4, 3.2]));
+  const kaiBotones = useTransform(p, (v) => (v >= 0.58 && v < SALIDA[0] + 0.02 ? 'block' : 'none'));
 
   if (reduced) {
     return (
@@ -139,11 +180,10 @@ const Hero = () => {
         {/* Capa 1 · ΚΛΙΖΣΝ (las letras las dibuja la nube en .interludio-forma) */}
         {/* Al abrir, sus textos esperan a que la nube arme ΚΛΙΖΣΝ (html.intro) */}
         <div className="hero-kaizen hero-kaizen-textos interludio--kaizen">
-          <motion.p className="interludio-kicker" style={{ opacity: kicker }}>
-            改善 · Kaizen
-          </motion.p>
           <div className="interludio-forma">
-            <motion.span className="kai-lugar kai-lugar--marca" data-kai="hero" style={{ display: kaiMarca }} aria-hidden="true" />
+            {!presentado && (
+              <motion.span className="kai-lugar kai-lugar--marca" data-kai="hero" data-kai-talla="1.25" style={{ display: kaiMarca }} aria-hidden="true" />
+            )}
             <div className="interludio-fallback">
               <KaizenWordmark />
             </div>
@@ -164,6 +204,13 @@ const Hero = () => {
             {t({ es: 'Desliza', en: 'Scroll' })}
           </motion.p>
         </div>
+
+        {/* Kai AL CENTRO (14-nov-2026, en lugar de la cinta): las letras de ΚΛΙΖΣΝ viajan a él
+            (nube.js → IMÁN) y él las "absorbe"; luego se va junto a los botones del titular */}
+        <motion.span className="hero-halo" style={{ opacity: halo, scale: haloEsc }} aria-hidden="true" />
+        <motion.span className="hero-onda" style={{ opacity: onda, scale: ondaEsc }} aria-hidden="true" />
+        <motion.span ref={centroRef} className="kai-lugar kai-lugar--centro" data-kai="hero-centro" data-kai-talla="1.45" data-kai-movil
+          style={{ display: kaiCentro }} aria-hidden="true" />
 
         {/* Capa 2 · el hero, que se arma en el mismo lugar */}
         <div className="hero-content">

@@ -94,6 +94,10 @@ const Faq = () => {
             >
               {t({ es: 'Pregúntanos por WhatsApp', en: 'Ask us on WhatsApp' })} <ArrowUpRight size={16} />
             </a>
+            {/* 14-nov-2026: antes de escribirnos, Kai contesta lo básico al momento */}
+            <button type="button" className="faq-otra-kai" onClick={() => window.dispatchEvent(new Event('kai:pregunta'))}>
+              {t({ es: 'O pregúntale a Kai, contesta al momento', en: 'Or ask Kai for an instant answer' })}
+            </button>
             <span className="faq-otra-nota">
               {t({ es: 'Te respondemos en menos de 24 horas.', en: 'We reply within 24 hours.' })}
             </span>

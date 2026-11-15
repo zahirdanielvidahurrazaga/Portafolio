@@ -492,7 +492,51 @@ Zahir revisó adamperlis.com conmigo (Buddy: píldora con su frase, outfits al t
   de WhatsApp."
 - Frases nuevas (proyectos, outfits, despedida) = BORRADOR sin voz. Revisado en Chrome (claro), sin errores.
 
-## Rendimiento al cargar (8-nov-2026)
+## Tercera vuelta de Zahir (14-nov-2026, noche) — local, sin commit
+- **Hero:** fuera el kicker "改善 · Kaizen". **SIN CINTA** (HeroRibbon desmontado de App/main/carga; los archivos quedan):
+  las letras de ΚΛΙΖΣΝ viajan en espiral a KAI, parado al centro del escenario (`.kai-lugar--centro`, talla 1.9,
+  `data-kai-movil`) — nube.js → IMÁN, mide esa parada cada cuadro mientras `flujo > 0` y la cinta no existe. Kai
+  se PRESENTA en el hero (frase `hero` = el texto viejo del `02`; su mp3 se renombró a `hero.mp3`): lib/kai.js
+  ahora dice la línea de su parada al soltarlo el director (antes callaba porque llegaba dirigido).
+- **Barra:** menú (☰) a la IZQUIERDA junto al logo (`.nav-izq`); a la derecha Kai · sonido · Cotizar.
+- **Servicios:** lede sin "software"; ganchos más formales; **título ARRIBA** a todo lo ancho (gancho izq., entregables
+  en una línea + botón der.) y abajo índice angosto + hélice ancha; gira el 70% de cada tramo (`GIRA = 0.3`, antes
+  sostenía 62%) y la pista bajó a 7×52vh. **Casos reales** en las escenas con su sello `Origen` ("Caso real · X" /
+  "Ejemplo"): Marca y Web = Somos Natural (logo `public/logos/natural-crema.svg`, sus colores), Tienda = Plásticos
+  Tito, Automatización = lista de espera de Be Fit Lab, App = Be Fit Lab. Redes y Lanzamiento siguen "Aurora" (ejemplo).
+- **Testimonios → "La familia KaiZen"** (etiqueta, menú y BarraScroll). Kai ya no trepa el video: junto al botón de play
+  (`.caso-play-ancla` + `.kai-lugar--play`) y su frase va DEBAJO del botón (`.caso-kai-texto`, modo píldora;
+  lib/kai.js busca el texto en `.kai-pildora, .caso-play-fila`).
+- **Demos:** el elenco ARRANCA en anillo (`EMPIEZA_EN_ANILLO`; la nube quedó sin usarse). La tarjeta ancha (Bisagra) va
+  dentro de una LAPTOP dibujada en canvas (`dibujarLaptop`, alfa de la textura en el shader). Mini celular de Kai más
+  adentro (el lienzo es redondo y lo cortaba).
+- **Proyectos:** "Galería de Bodas" → "Galería de fotos", textos cortos. **Nosotros:** insignias App Store / Google Play
+  DECORATIVAS (sin enlace, decisión de Zahir). **Frase 09** nueva (sin voz; la de "partículas" y su mp3 se quitaron).
+- **Lentes de Kai:** micas ahumadas translúcidas (`matMica`) + aro de espejo: ya se le ven los ojos.
+- **PREGÚNTALE A KAI** (`KaiPregunta.jsx` + `data/kaiRespuestas.js` + css): píldora junto al WhatsApp → chat con 18
+  respuestas PREPARADAS (BORRADOR para aprobar; sin IA, decisión de Zahir), empate por palabras clave sin acentos (las de
+  ≤3 letras solo como palabra), botón "Llévame ahí"/WhatsApp; sin respuesta → WhatsApp. Cada respuesta = `kai:gira`.
+Revisado en Chrome a 1440 (oscuro), sin errores de consola. Falta: claro, celular, Safari.
+**4ª vuelta (misma noche):** Kai se presenta corto ("Hola, soy Kai. Si tienes dudas, pregúntame con este botón…",
+sin voz) y a los 6.2 s de quitarse la carga Hero.jsx quita la parada de la Ν → Kai se va a su CASA, que ahora es la
+PÍLDORA "Pregúntale a Kai" (el `.kai-dock` salió de Navbar y vive en KaiPregunta.jsx; globo de `kai--barra` ARRIBA de
+él). Píldora con LiquidGlass. Evento `kai:pregunta` abre el chat (FAQ: "O pregúntale a Kai"). Respuestas nuevas:
+pagos (efectivo, transferencia, tarjeta con comisión que paga el cliente) y plazos (se adaptan al proyecto).
+Servicios: renglón de arriba = gancho + entregables (izq.) / botón + caso (der.); escenas LLENAS con marca: Natural
++ naranja #F07A1A, navegador con el sitio de Natural, ticket de Tito (mayoreo), push + oferta con reloj de Be Fit
+Lab (coral #eb8466 / salvia #8a9a7b), app y pase Wallet de Be Fit; Lanzamiento = cartel de apertura (ejemplo).
+**Redes = Studio Kala (@studiokala27, uñas)**, post "Nails Inspo Otoño" tomado con su sesión de Instagram en Chrome (14-nov) → `public/clientes/redes-post.jpg`; su sello abre su Instagram (`CASO_URL`). Antes: `REDES_CASO` en ServiciosEscenas.jsx (usuario, nombre, foto en
+`public/clientes/redes-post.jpg`); sin eso sale "Aurora · Ejemplo" (Instagram pide sesión: no se pudo bajar).
+Demos: cada captura vertical va en un iPhone dibujado en canvas (`dibujarTelefono`). Kai con celular → lienzo cuadrado
+(`kai--cel`). Nosotros: insignias de Instagram/Facebook/TikTok (enlazan a REDES) junto a las de tiendas.
+
+**5ª vuelta:** píldoras SIN hueco vacío (lib/kai.js pone `.tiene-kai` en la píldora donde está; `.kai-dock` cerrado
+mide 1 px para poder medirlo). Hero: REMOLINO (disco que gira y se cierra en espiral, se apagan al entrar), Kai crece
+en vivo (Hero escribe `data-kai-talla` en la parada; lib/kai.js la relee cada cuadro), `.hero-halo` + `.hero-onda`.
+Lentes v3: wayfarer con armazón claro (`matArmazon`) y micas degradadas (`alphaMap`). Servicios: fuera "Ver caso real";
+el sello "Caso real · X ↗" de la tarjeta abre el proyecto. Frase 03 = "familia KaiZen" (su mp3 se quitó). Zahir va a
+regrabar TODAS las voces (lista en el chat del 14-nov); al llegar, cortarlas y llenar voz.json con todas las llaves.
+ (8-nov-2026)
 Zahir: "en teléfonos se traba el hero" / "tarda demasiado en cargar". Medido con la build servida (`vite preview`) y
 `long-animation-frame` en Chrome; resultado en la Mac: primer pintado 0.06 s, 3D listo 0.20 s (antes 0.37), se puede
 deslizar a 2.1 s (antes 3.2), sin cuadros largos durante la intro.
